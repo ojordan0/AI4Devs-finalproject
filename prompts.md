@@ -8,13 +8,13 @@
 > *In this file, record the main prompts used while building the project, showing that coding assistants were used in every phase of the development lifecycle. We expect a maximum of 3 per section, mainly the ones used for initial creation, or for fixes or additions of functionality that you consider most relevant.*
 > *You can also add the full conversation as a link or attachment if you wish.*
 
-**How to read this file.** The first part describes how AI was used: tools, models, rules and skills, context, workflows, and the manual adjustments the AI's output needed. The second part follows the template's sections, with up to 3 representative prompts each. Prompts are shown as quotes, labeled with their planning session ("Part 1" to "Part 4", listed in [Planning sessions](#planning-sessions)), turn, and model, and copied as written, including typos. Prompts from the early sessions in Spanish are translated into English and marked as such.
+**How to read this file.** The first part describes how AI was used: tools, models, rules and skills, context, workflows, and the manual adjustments the AI's output needed. The second part follows the template's sections, with up to 3 representative prompts each. Prompts are shown as quotes, labeled with their session ("Part 3", listed in [Sessions](#sessions)), turn, ticket for build sessions, and model, and copied as written, including typos. Prompts from the early sessions in Spanish are translated into English and marked as such.
 
 ## Index
 
 **How AI was used**
 
-- [Planning sessions](#planning-sessions)
+- [Sessions](#sessions)
 - [Tools and phases](#tools-and-phases)
 - [Models](#models)
 - [Rules and skills](#rules-and-skills)
@@ -34,9 +34,13 @@
 
 ---
 
-## Planning sessions
+## Sessions
 
-The documentation was planned in four conversations with Claude, called parts. Prompt labels such as "Part 3, turn 12" refer to this list.
+The project is planned and built in conversations with Claude, called parts, numbered in order across both phases. Prompt labels such as "Part 3, turn 12" refer to these tables.
+
+### Planning
+
+The documentation was planned in four conversations.
 
 | Part | Name | Model | Full conversation |
 | --- | --- | --- | --- |
@@ -44,6 +48,13 @@ The documentation was planned in four conversations with Claude, called parts. P
 | Part 2 | Final refinements: second opinion, simplified MVP, and stack | Claude Fable 5.1, then Claude Opus 5.5 from turn 10 | [part-2-final-refinements.md](docs/ai-conversations/part-2-final-refinements.md) |
 | Part 3 | Specification to PRD: rules, acceptance criteria, name, documentation structure, and work tickets | Claude Opus 5.5 | [part-3-specification-to-prd.md](docs/ai-conversations/part-3-specification-to-prd.md) |
 | Part 4 | Decisions and planning: authentication, dependencies, epics, GitHub Issues, and OpenSpec | Claude Opus 5.5 | [part-4-decisions-and-planning.md](docs/ai-conversations/part-4-decisions-and-planning.md) |
+
+### Build
+
+Build sessions start with delivery 2. Each one lists the work tickets it covers, or "—" for work outside a ticket.
+
+| Part | Ticket | Name | Tool | Model | Full conversation |
+| --- | --- | --- | --- | --- | --- |
 
 ## Tools and phases
 
