@@ -55,6 +55,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 
 | Part | Ticket | Name | Tool | Model | Full conversation |
 | --- | --- | --- | --- | --- | --- |
+| Part 5 | — | OpenSpec setup: configuration, the verify workflow, and the pull request into `main` | Claude Code | Claude Opus 5.5 | [part-5-openspec-setup.md](docs/ai-conversations/part-5-openspec-setup.md) |
 
 ## Tools and phases
 
@@ -86,7 +87,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Documentation checks | [`CLAUDE.md`](CLAUDE.md), and in CI ([Infrastructure §3](docs/06-INFRASTRUCTURE.md#3-deployment-process)) | After every change, every link, anchor, and ID must resolve, the Mermaid diagrams must parse, and the OpenAPI definition must validate. |
 | Naming conventions | [Work tickets §1 and §2](docs/08-WORK-TICKETS.md#1-how-tickets-work), [PRD](docs/01-PRD.md#how-to-read-this-document) for IDs, [`CLAUDE.md`](CLAUDE.md) for tests | ID prefixes (`BR`, `FR`, `E`, `US`, `AC`, `T`); numbered documents (`01-PRD.md` to `08-WORK-TICKETS.md`); ticket branches named after the ticket (`t-07-groups-api`); course delivery branches (`feature/entrega-1-OJE`, `feature/entrega-2-OJE`, `final-project-OJE`); OpenSpec changes named like their branch; GitHub issues titled with their ID; tests named after their acceptance criterion (`AC-59`). |
 | Agent rules | [`CLAUDE.md`](CLAUDE.md) | Which document to read for each kind of task, the documents as the source of truth, layering, text only from translation files, only listed dependencies, and recording prompts here. |
-| Spec first | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) and [`CLAUDE.md`](CLAUDE.md) | Each work ticket becomes one OpenSpec change, reviewed before implementation; requirements cite PRD IDs, and scenarios are named after acceptance criteria. |
+| Spec first | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) and [`CLAUDE.md`](CLAUDE.md), applied to every OpenSpec artifact by [`openspec/config.yaml`](openspec/config.yaml) | Each work ticket becomes one OpenSpec change, reviewed before implementation; requirements cite PRD IDs, and scenarios are named after acceptance criteria. |
 | Definition of done | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) | What every ticket needs before it is merged. |
 
 **Skills** used in Claude. No custom skills have been created yet.
@@ -494,4 +495,6 @@ Examples of the AI's output that the product owner corrected or redirected:
 
 ## 7. Pull requests
 
-Added during the build.
+**Prompt 1** (Part 5, turn 11 · — · Claude Opus 5.5)
+
+> push the changes to the repo, create a PR to merge this branch to main, and then it can be deleoted. Then, let's end this session so you can write the export and update the prompts.md
