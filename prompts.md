@@ -8,13 +8,13 @@
 > *In this file, record the main prompts used while building the project, showing that coding assistants were used in every phase of the development lifecycle. We expect a maximum of 3 per section, mainly the ones used for initial creation, or for fixes or additions of functionality that you consider most relevant.*
 > *You can also add the full conversation as a link or attachment if you wish.*
 
-**How to read this file.** The first part describes how AI was used: tools, models, rules and skills, context, workflows, and the manual adjustments the AI's output needed. The second part follows the template's sections, with up to 3 representative prompts each. Prompts are shown as quotes, labeled with their planning session ("Part 1" to "Part 4", listed in [Planning sessions](#planning-sessions)), turn, and model, and copied as written, including typos. Prompts from the early sessions in Spanish are translated into English and marked as such.
+**How to read this file.** The first part describes how AI was used: tools, models, rules and skills, context, workflows, and the manual adjustments the AI's output needed. The second part follows the template's sections, with up to 3 representative prompts each. Prompts are shown as quotes, labeled with their session ("Part 3", listed in [Sessions](#sessions)), turn, ticket for build sessions, and model, and copied as written, including typos. Prompts from the early sessions in Spanish are translated into English and marked as such.
 
 ## Index
 
 **How AI was used**
 
-- [Planning sessions](#planning-sessions)
+- [Sessions](#sessions)
 - [Tools and phases](#tools-and-phases)
 - [Models](#models)
 - [Rules and skills](#rules-and-skills)
@@ -34,9 +34,13 @@
 
 ---
 
-## Planning sessions
+## Sessions
 
-The documentation was planned in four conversations with Claude, called parts. Prompt labels such as "Part 3, turn 12" refer to this list.
+The project is planned and built in conversations with Claude, called parts, numbered in order across both phases. Prompt labels such as "Part 3, turn 12" refer to these tables.
+
+### Planning
+
+The documentation was planned in four conversations.
 
 | Part | Name | Model | Full conversation |
 | --- | --- | --- | --- |
@@ -44,6 +48,14 @@ The documentation was planned in four conversations with Claude, called parts. P
 | Part 2 | Final refinements: second opinion, simplified MVP, and stack | Claude Fable 5.1, then Claude Opus 5.5 from turn 10 | [part-2-final-refinements.md](docs/ai-conversations/part-2-final-refinements.md) |
 | Part 3 | Specification to PRD: rules, acceptance criteria, name, documentation structure, and work tickets | Claude Opus 5.5 | [part-3-specification-to-prd.md](docs/ai-conversations/part-3-specification-to-prd.md) |
 | Part 4 | Decisions and planning: authentication, dependencies, epics, GitHub Issues, and OpenSpec | Claude Opus 5.5 | [part-4-decisions-and-planning.md](docs/ai-conversations/part-4-decisions-and-planning.md) |
+
+### Build
+
+Build sessions start with delivery 2. Each one lists the work tickets it covers, or "—" for work outside a ticket.
+
+| Part | Ticket | Name | Tool | Model | Full conversation |
+| --- | --- | --- | --- | --- | --- |
+| Part 5 | — | OpenSpec setup: configuration, the verify workflow, and the pull request into `main` | Claude Code | Claude Opus 5.5 | [part-5-openspec-setup.md](docs/ai-conversations/part-5-openspec-setup.md) |
 
 ## Tools and phases
 
@@ -75,7 +87,7 @@ The documentation was planned in four conversations with Claude, called parts. P
 | Documentation checks | [`CLAUDE.md`](CLAUDE.md), and in CI ([Infrastructure §3](docs/06-INFRASTRUCTURE.md#3-deployment-process)) | After every change, every link, anchor, and ID must resolve, the Mermaid diagrams must parse, and the OpenAPI definition must validate. |
 | Naming conventions | [Work tickets §1 and §2](docs/08-WORK-TICKETS.md#1-how-tickets-work), [PRD](docs/01-PRD.md#how-to-read-this-document) for IDs, [`CLAUDE.md`](CLAUDE.md) for tests | ID prefixes (`BR`, `FR`, `E`, `US`, `AC`, `T`); numbered documents (`01-PRD.md` to `08-WORK-TICKETS.md`); ticket branches named after the ticket (`t-07-groups-api`); course delivery branches (`feature/entrega-1-OJE`, `feature/entrega-2-OJE`, `final-project-OJE`); OpenSpec changes named like their branch; GitHub issues titled with their ID; tests named after their acceptance criterion (`AC-59`). |
 | Agent rules | [`CLAUDE.md`](CLAUDE.md) | Which document to read for each kind of task, the documents as the source of truth, layering, text only from translation files, only listed dependencies, and recording prompts here. |
-| Spec first | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) and [`CLAUDE.md`](CLAUDE.md) | Each work ticket becomes one OpenSpec change, reviewed before implementation; requirements cite PRD IDs, and scenarios are named after acceptance criteria. |
+| Spec first | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) and [`CLAUDE.md`](CLAUDE.md), applied to every OpenSpec artifact by [`openspec/config.yaml`](openspec/config.yaml) | Each work ticket becomes one OpenSpec change, reviewed before implementation; requirements cite PRD IDs, and scenarios are named after acceptance criteria. |
 | Definition of done | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) | What every ticket needs before it is merged. |
 
 **Skills** used in Claude. No custom skills have been created yet.
@@ -483,4 +495,6 @@ Examples of the AI's output that the product owner corrected or redirected:
 
 ## 7. Pull requests
 
-Added during the build.
+**Prompt 1** (Part 5, turn 11 · — · Claude Opus 5.5)
+
+> push the changes to the repo, create a PR to merge this branch to main, and then it can be deleoted. Then, let's end this session so you can write the export and update the prompts.md

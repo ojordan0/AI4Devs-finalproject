@@ -1,4 +1,4 @@
-# CLAUDE.md
+# Agent guidance
 
 Guidance for AI coding agents working in this repository.
 
@@ -30,7 +30,10 @@ Use the traceability table (PRD §19) to find every story, rule, endpoint, and e
 - **Text:** all interface text, emails, and WhatsApp messages come from the translation files; never hard-code strings.
 - **Documentation:** written in English, with no notes to the author and no references to earlier versions. Each document's version and date go in its header, never in its file name. After changing any document, check that every link, anchor, and ID resolves, that the Mermaid diagrams parse, and that the OpenAPI definition validates.
 - **Naming:** branches, OpenSpec changes, pull requests, and GitHub issues are named as described in [docs/08-WORK-TICKETS.md §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) and [§2](docs/08-WORK-TICKETS.md#2-tracking-in-github).
-- **AI usage record:** at the end of each work session, add the session's most representative prompts to [prompts.md](prompts.md) under the matching section, at most 3 per section as the course template asks, labeled with the ticket ID and model, and copied as written.
+- **AI usage record:** at the end of each work session, before the last commit:
+  1. Export the session to `docs/ai-conversations/part-<N>-<short-name>.md`, continuing the numbering of the existing parts, for example `part-5-project-scaffold.md`. Follow the format of the existing exports: a title, the export date, and an "About this export" list with the model, the effort, and what is included and left out; then one section per turn with the prompt copied as written and the visible text of the response. Summarize tool activity in one line per turn, and name files instead of embedding them. If earlier turns are no longer in context, say which ones in "About this export" instead of reconstructing them.
+  2. Add a row for the session to the Build table in [prompts.md, Sessions](prompts.md#sessions): part, tickets (or "—" for work outside a ticket), name, tool, model, and a link to the export.
+  3. Add the session's most representative prompts to [prompts.md](prompts.md) under the matching section, at most 3 per section as the course template asks, labeled like `(Part 5, turn 3 · T-01 · Claude Opus 5.5)`, and copied as written.
 
 ## Commands (planned)
 

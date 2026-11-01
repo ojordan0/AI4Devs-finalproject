@@ -1,0 +1,36 @@
+schema: spec-driven
+
+# Shown to the AI when it creates any artifact. Points to the documents that
+# own each fact instead of repeating them.
+context: |
+  Project: ComproParaTi, an assisted shopping platform. Read CLAUDE.md first;
+  it lists the project rules and which document to read for each task.
+
+  The documents in docs/ are the source of truth. Each change implements one
+  work ticket from docs/08-WORK-TICKETS.md §4 and is generated from that ticket
+  and the documents it references. Use the traceability table in
+  docs/01-PRD.md §19 to find every story, rule, endpoint, and entity related to
+  a requirement.
+
+  ID prefixes: US (user story), FR (functional requirement), BR (business
+  rule), AC (acceptance criterion), E (epic), T (work ticket).
+
+  If the ticket needs behavior the documents don't define, or the documents
+  and the code disagree, stop and ask. The documents are updated first.
+
+rules:
+  proposal:
+    - Name the change like the ticket's branch, for example t-07-groups-api (docs/08-WORK-TICKETS.md §1).
+    - Start with the ticket ID and title, and link the ticket's GitHub issue from the ticket overview (docs/08-WORK-TICKETS.md §3).
+    - List the stories, functional requirements, business rules, and acceptance criteria the ticket covers, by ID only.
+    - Keep to the ticket's scope. Anything outside it goes under a Non-goals heading.
+  specs:
+    - Cite PRD IDs in each requirement instead of copying rule text.
+    - Name each scenario after the acceptance criterion it verifies, starting with its ID, for example "AC-59 ...".
+    - Interface text, emails, and WhatsApp messages are referenced by meaning, never written out; the wording lives in the translation files and docs/02-UX-DESIGN.md.
+  design:
+    - Follow docs/03-ARCHITECTURE.md for structure and layering, docs/04-DATA-MODEL.md for the schema, and docs/05-API.md for endpoints and errors.
+    - Use only packages listed in docs/03-ARCHITECTURE.md §1.6. If another one is needed, stop and ask.
+  tasks:
+    - Include one task per acceptance criterion for its automated test, named with its ID (docs/07-SECURITY-AND-TESTING.md §2).
+    - Include tasks for each item of the definition of done in docs/08-WORK-TICKETS.md §1 that applies to the ticket, such as updating the owning document or the generated OpenAPI document.
