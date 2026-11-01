@@ -1,4 +1,4 @@
-# CLAUDE.md
+# Agent guidance
 
 Guidance for AI coding agents working in this repository.
 
