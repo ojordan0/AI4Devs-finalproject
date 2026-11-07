@@ -56,6 +56,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Part | Ticket | Name | Tool | Model | Full conversation |
 | --- | --- | --- | --- | --- | --- |
 | Part 5 | — | OpenSpec setup: configuration, the verify workflow, and the pull request into `main` | Claude Code | Claude Opus 5.5 | [part-5-openspec-setup.md](docs/ai-conversations/part-5-openspec-setup.md) |
+| Part 6 | — | UI design setup: review of the Stitch screens, the design system, and the GitHub CLI | Claude Code | Claude Opus 5.5 | [part-6-ui-design-setup.md](docs/ai-conversations/part-6-ui-design-setup.md) |
 
 ## Tools and phases
 
@@ -66,6 +67,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Product requirements, architecture, and planning | Claude Desktop for Mac, in a Claude Project | Wrote and refined the PRD and the technical documents, checked current facts on the web, proposed options for each decision, and kept the documents consistent (parts 3 and 4). |
 | Product's name screening | Claude in Chrome | Searched US trademarks at tmsearch.uspto.gov for the name finalists. |
 | Work tracking | Claude, with the GitHub CLI | Wrote [`scripts/setup-github-issues.py`](scripts/setup-github-issues.py), which creates the GitHub issues for every user story and ticket from the documents. |
+| Interface design | Google Stitch, reviewed with Claude Code | Stitch generated the screen mockups and a first design system. Claude compared them with the PRD and the UX design, wrote feedback for Stitch screen by screen, and consolidated the design system into [`DESIGN.md`](DESIGN.md), with the mockups kept as a visual reference in `design/stitch/` (part 6). |
 | Build | Claude Code with OpenSpec | Spec-driven development, one OpenSpec change per work ticket ([Architecture §3](docs/03-ARCHITECTURE.md#3-technical-decisions)). Starts with delivery 2. |
 
 ## Models
@@ -130,6 +132,7 @@ Examples of the AI's output that the product owner corrected or redirected:
 - **Planning.** Added the missing epic layer, the user stories each ticket implements, and the corrected course deadlines.
 - **Readability.** Asked to split the data model diagram, which rendered too small to read, and to introduce and organize the data model and API sections of the readme.
 - **Product description.** Rewrote the product summary, and chose one brand, ComproParaTi, over a separate English name.
+- **Interface design.** Kept one responsive layout that reuses the mobile screens on desktop, instead of the desktop mockup Claude suggested, and renamed the People screen folders to `07-person-list` and `07-person-detail`.
 
 ---
 
@@ -202,6 +205,27 @@ Examples of the AI's output that the product owner corrected or redirected:
 > Problem. Many people, often immigrants, buy products for relatives in countries where those products are hard to find or cannot be bought online. Requests arrive scattered across emails, phone calls, WhatsApp messages: sizes and preferences get lost, two relatives buy the same product, and nobody is sure what was bought, what was shipped, or how it was sent.
 > Solution. A web application where a family keeps shared lists of what they need, along with each person’s sizes and preferences. The buyers they invite reserve items, buy them, and record each shipment, so everyone can see where each item stands, from the request to the shipment. Conversations stay on WhatsApp, one tap away from any item, while the vital information lives in one place. Payment and shipping happen outside the platform.
 > Goal of the MVP: make simpler to buy products and ship them with custom lists and workflow for tracking.
+
+### 1.3. Design and user experience
+
+**Prompt 1** (Part 6, turn 2 · — · Claude Opus 5.5)
+
+> I added the files to the folder design/stitch. Review them only and let me know what to do next.
+> The folder `warm_utilitarian_care` contains the file DESIGN.md (Should the folder warm_utilitarian_care  be moved out of the stitch folder or renamed?)
+
+**Prompt 2** (Part 6, turn 4 · — · Claude Opus 5.5)
+
+> In the folder design/stitch you can find the folders exported from Stitch.
+> The screenshots show mobile but on desktop the same concept will apply using a responsive design with the goal of reusing the same code and layouts.
+>
+> There are three folders that contain a design.md file, evaluate the content of those files against design/DESIGN.md and identify any updates from the files that need to be applied to design/DESIGN.md  in order to match the discrepancies you founde earlier.
+
+**Prompt 3** (Part 6, turn 10 · — · Claude Opus 5.5)
+
+> i restored the folder guided_setup_comproparati
+>
+> Explain how The docs contradict each other here.
+> What are your recommendations to resolve the contradictions?
 
 ---
 
