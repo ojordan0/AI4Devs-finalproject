@@ -1,6 +1,6 @@
 # UX design
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.5 · **Date:** October 18, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 7, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
