@@ -234,7 +234,9 @@ Planned layout of the repository:
 │   └── e2e/                      Browser tests of the main flows
 ├── scripts/                      Setup, seed, OpenAPI generation, and GitHub issue setup scripts
 ├── docs/                         This documentation, the setup checklist, and the generated openapi.yaml
+├── design/stitch/                Stitch screen mockups, one folder per screen
 ├── openspec/                     OpenSpec specs and changes, one change per work ticket
+├── DESIGN.md                     Design system: tokens, components, and how to use the mockups
 ├── docker-compose.yml            Local Postgres
 ├── drizzle.config.ts
 ├── vercel.json                   Cron schedule

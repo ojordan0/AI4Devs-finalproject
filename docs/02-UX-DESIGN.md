@@ -12,7 +12,7 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 1. Chooses a language and taps **Continue with Google**.
 2. Confirms the language, prefilled with the one chosen on Welcome, checks the 18-or-older and terms box, and enters their WhatsApp number.
 3. The app creates their group and first list (BR-06). The group name can be changed in Group.
-4. Guided screen: "Add the first person", "Add where things should be sent" (both can be skipped), and "Add your first item".
+4. Lands on Lists. The empty states guide the first item, person, and delivery address ([section 2.7](#27-empty-states-loading-and-errors)).
 
 **B. Add an item**
 1. Types the name in the quick field and presses Enter, or taps **+ Add** for the full form.
@@ -59,6 +59,8 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 ## 2. Interface design
 
 ### 2.1 Design principles
+
+Colors, typography, components, and the screen mockups are in the [design system](../DESIGN.md). This section and the PRD take precedence over the mockups.
 
 1. **Mobile first and built for little digital experience:** one main action per screen, 16 to 18 px text, buttons at least 48 px tall.
 2. **Ask for the minimum:** a name is enough to create an item.

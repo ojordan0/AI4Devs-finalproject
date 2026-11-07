@@ -10,6 +10,7 @@ Guidance for AI coding agents working in this repository.
 | --- | --- |
 | Any change to behavior | [docs/01-PRD.md](docs/01-PRD.md): business rules (§12), requirements (§13), acceptance criteria (§17), traceability (§19) |
 | Screens, text, or messages | [docs/02-UX-DESIGN.md](docs/02-UX-DESIGN.md) |
+| Visual design, styling, or a screen's layout | [DESIGN.md](DESIGN.md): tokens, components, and how to use the Stitch screens in `design/stitch/` |
 | Code structure, dependencies, layering | [docs/03-ARCHITECTURE.md](docs/03-ARCHITECTURE.md) |
 | Schema, migrations, seed data | [docs/04-DATA-MODEL.md](docs/04-DATA-MODEL.md) |
 | API endpoints and errors | [docs/05-API.md](docs/05-API.md) |
