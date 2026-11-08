@@ -3,5 +3,33 @@
     "playwright@anthropic-plugin-directory": true,
     "claude-md-management@anthropic-plugin-directory": true,
     "skill-creator@anthropic-plugin-directory": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-branches.py"],
+            "timeout": 15,
+            "onFailure": "block"
+          }
+        ]
+      },
+      {
+        "matcher": "mcp__.*[Gg]it[Hh]ub.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-branches.py"],
+            "timeout": 15,
+            "onFailure": "block"
+          }
+        ]
+      }
+    ]
   }
 }
