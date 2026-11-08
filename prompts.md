@@ -57,6 +57,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | --- | --- | --- | --- | --- | --- |
 | Part 5 | — | OpenSpec setup: configuration, the verify workflow, and the pull request into `main` | Claude Code | Claude Opus 5.5 | [part-5-openspec-setup.md](docs/ai-conversations/part-5-openspec-setup.md) |
 | Part 6 | — | UI design setup: review of the Stitch screens, the design system, and the GitHub CLI | Claude Code | Claude Opus 5.5 | [part-6-ui-design-setup.md](docs/ai-conversations/part-6-ui-design-setup.md) |
+| Part 7 | — | Branch protection and review: the product brief, the branch-protection hook, the reviewer subagent, and pull request #46 | Claude Code | Claude Opus 5.5 | [part-7-branch-protection-and-review.md](docs/ai-conversations/part-7-branch-protection-and-review.md) |
 
 ## Tools and phases
 
@@ -91,8 +92,9 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Agent rules | [`CLAUDE.md`](CLAUDE.md) | Which document to read for each kind of task, the documents as the source of truth, layering, text only from translation files, only listed dependencies, and recording prompts here. |
 | Spec first | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) and [`CLAUDE.md`](CLAUDE.md), applied to every OpenSpec artifact by [`openspec/config.yaml`](openspec/config.yaml) | Each work ticket becomes one OpenSpec change, reviewed before implementation; requirements cite PRD IDs, and scenarios are named after acceptance criteria. |
 | Definition of done | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) | What every ticket needs before it is merged. |
+| Branches, commits, and pull requests | [`CLAUDE.md`](CLAUDE.md), enforced by [`.claude/hooks/protect-branches.py`](.claude/hooks/protect-branches.py) | One branch and pull request per ticket, a commit per request, the pull request and review steps, and course deliveries. The hook blocks commits on protected branches, pushes to `main`, force pushes, and GitHub writes that bypass a pull request (part 7). |
 
-**Skills** used in Claude. No custom skills have been created yet.
+**Skills and subagents** used in Claude:
 
 | Skill | Source | Parts | Usage |
 | --- | --- | --- | --- |
@@ -101,6 +103,9 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | file-reading | Built into claude.ai, by Anthropic | 4 | Chooses how to read an uploaded file by its type. Used to list and open the documentation archive. |
 | engineering:testing-strategy | Engineering plugin, by Anthropic | 4 | Designs test strategies and plans: the testing pyramid, coverage targets, and example test cases. Used to review the testing approach, find its gaps (sign-in in tests, test data isolation, outside services and time, local commands, coverage targets), and write the testing strategy in [Security and testing §2](docs/07-SECURITY-AND-TESTING.md#2-testing-strategy). |
 | engineering:documentation | Engineering plugin, by Anthropic | 4 | Technical writing guidance: write for the reader, put the most useful information first, and link instead of duplicating. Applied while restructuring the architecture document and updating the others. |
+| impeccable | Project skill in `.claude/skills/impeccable`, from Impeccable | 7 | Interface design: critique, audit, polish, and new screens from the project's product and design context. Its `init` command wrote [`PRODUCT.md`](PRODUCT.md). |
+| commit | Project skill in `.claude/skills/commit` | 7 | Creates one descriptive commit per finished request, as `CLAUDE.md` asks. |
+| adversarial-reviewer | Project subagent in `.claude/agents` | 7 | Reviews a finished pull request in a fresh context, with read-only tools, against its ticket and OpenSpec change, and tries to break it. Pull request #46 was its first use. |
 
 ## How the context was structured
 
@@ -133,6 +138,7 @@ Examples of the AI's output that the product owner corrected or redirected:
 - **Readability.** Asked to split the data model diagram, which rendered too small to read, and to introduce and organize the data model and API sections of the readme.
 - **Product description.** Rewrote the product summary, and chose one brand, ComproParaTi, over a separate English name.
 - **Interface design.** Kept one responsive layout that reuses the mobile screens on desktop, instead of the desktop mockup Claude suggested, and renamed the People screen folders to `07-person-list` and `07-person-detail`.
+- **Workflow tooling.** Kept the Impeccable engine binary and the Python cache out of git instead of using Git LFS. Extended the branch-protection hook to the GitHub MCP tools. Removed Bash from the reviewer subagent so it can only read. Replaced the adversarial-review skill with the subagent instead of keeping two reviewers. Required the type prefix from `CLAUDE.md` in ticket branch names.
 
 ---
 
@@ -359,6 +365,10 @@ Examples of the AI's output that the product owner corrected or redirected:
 > by Anthropic · in Engineering · updated Sep 22
 > Design test strategies and test plans.
 
+**Prompt 2** (Part 7, turn 24 · — · Claude Opus 5.5)
+
+> you mentioned to run lint after the  ticket is done, and the review commands ran. Is that done manually? Can it be automated? If so how?
+
 ---
 
 ## 3. Data model
@@ -522,3 +532,41 @@ Examples of the AI's output that the product owner corrected or redirected:
 **Prompt 1** (Part 5, turn 11 · — · Claude Opus 5.5)
 
 > push the changes to the repo, create a PR to merge this branch to main, and then it can be deleoted. Then, let's end this session so you can write the export and update the prompts.md
+
+**Prompt 2** (Part 7, turn 11 · — · Claude Opus 5.5)
+
+> Create a Claude Code hook that enforces the branch rules in CLAUDE.md, so they don't depend on Claude remembering them.
+>
+> **What it must block** (PreToolUse hook on the Bash tool):
+> 1. `git commit` when the current branch is protected. Protected branches: `main`, `feature/entrega-1-OJE`, `feature/entrega-2-OJE`, `final-project-OJE`.
+> 2. `git push` that targets `main` directly (e.g. `git push`, `git push origin main`, `git push origin HEAD:main` while on main). Changes reach `main` only through merged PRs.
+> 3. Any force push (`--force`, `-f`, `--force-with-lease`, `+refspec`) to any branch.
+>
+> **What it must allow:**
+> - Commits and pushes on ticket branches (`t-NN-*`).
+> - The delivery push: `git push origin main:<delivery-branch>` for the three delivery branches, without force. CLAUDE.md governs when that happens; the hook only makes sure it's a fast-forward push.
+>
+> **Requirements:**
+> - First, check the Claude Code documentation for the current hook configuration format, the JSON the hook receives on stdin, and how a hook blocks a tool call and returns a reason to Claude. Follow that, not assumptions.
+> - Put the configuration in the project's `.claude/settings.json` (shared, committed) and the script in `.claude/hooks/`. Keep the list of protected branches in one place at the top of the script.
+> - Handle realistic command shapes: chained commands (`git add . && git commit -m ...`), `git -C <path> commit`, leading `cd <dir> &&`, and commit messages that merely contain the word "main" or "push" (those must not trigger a block).
+> - When blocking, give a clear reason that tells Claude what to do instead (e.g. "You're on main; create a ticket branch first, see CLAUDE.md").
+> - Use only tools that are already available in this environment; check before depending on `jq` or similar.
+> - If the hook itself fails unexpectedly (e.g. can't determine the branch), it should block with an explanation rather than silently allow.
+>
+> **Testing:** before finishing, test the script directly by piping sample hook input JSON into it, covering each block and allow case above, including the edge cases. Show me a table of test case → expected → actual.
+>
+> **Git:** this isn't tied to a ticket. Follow the CLAUDE.md rules otherwise: branch off an updated `main` as `chore/branch-protection-hook`, commit with `/commit`, and wait for me before opening the PR.
+>
+> Finally, list any cases the hook can't reliably catch.
+
+**Prompt 3** (Part 7, turn 20 · — · Claude Opus 5.5)
+
+> Now I have a subagent reviewer, and also a skill reviewer. They seem redundant to me. The subagent looks like the right choice for a reviewer. A subagent runs in its own fresh context. It sees only the PR and the code, which is what we want for the final review.
+>
+> Compare both, based on what they do and where the review runs.
+> Evaluate these aproaches and tell me which one is better in this case to avoid redundancy:
+>
+> 1- Make the skill the checklist the subagent uses. Keep what to check in the skill and have the subagent load it through the skills field in its frontmatter (skills: \<skill-name>). The agent file then shrinks to role, rules and output format. This is worth it if we’d also run that checklist by hand, outside the PR flow.
+>
+> 2- Give it a different job. For example, a quick self-check you run with /\<skill-name> before committing, to catch obvious problems early. It complements the final adversarial review rather than duplicating it. If you go this way, give it a description that makes clear when to use it, so Claude doesn’t pick it instead of the subagent at PR time.
