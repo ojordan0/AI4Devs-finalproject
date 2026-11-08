@@ -6,8 +6,9 @@ T-02 has no acceptance criteria with an ID, so no task or test carries an `AC-` 
 
 - [ ] 1.1 Update `docs/04-DATA-MODEL.md` §2: state which single-row rules are database checks and which stay in the services (design decision 2), and give the column details for `job_runs` and `rate_limits` (design decision 5). Update the header's version and date. Verify by reading the result against the check table in design.md, and that no rule's text is copied from the PRD.
 - [ ] 1.2 Update `docs/04-DATA-MODEL.md` §3: narrow the opening sentence to every item, membership, and invitation status and every permission case; add Pedro, a former buyer in the García Group whose membership has ended and who still has a purchased item; and add a cancelled invitation. Verify that each `seed-data` scenario can be traced to a line in §3.
-- [ ] 1.3 Update T-02 in `docs/08-WORK-TICKETS.md`: list every check from §2 in the check constraints bullet, and update the header. Verify that the ticket and §2 name the same checks, and that issue #28 needs no edit because it links to the ticket for its scope.
-- [ ] 1.4 Verify the documents with `npm run check:links`, and confirm that the Mermaid diagrams in `docs/04-DATA-MODEL.md` still match the unchanged tables.
+- [ ] 1.3 Update T-02 in `docs/08-WORK-TICKETS.md`: list every check from §2 in the check constraints bullet, add the migration check to its scope, and update the header. Verify that the ticket and §2 name the same checks, and that issue #28 needs no edit because it links to the ticket for its scope.
+- [ ] 1.4 Add the migration check to `docs/06-INFRASTRUCTURE.md` §3 step 2, saying that it runs with the tests, and update the header. Verify by reading the result against design decision 13 and the `pull-request-checks` spec.
+- [ ] 1.5 Verify the documents with `npm run check:links`, and confirm that the Mermaid diagrams in `docs/04-DATA-MODEL.md` still match the unchanged tables.
 
 ## 2. Schema, migration, and constraint tests
 
@@ -22,6 +23,7 @@ T-02 has no acceptance criteria with an ID, so no task or test carries an `AC-` 
 - [ ] 2.9 Test the requirement "Unique values", including several users with no email and the default address cases. Verify that each rejection gives the unique-violation code and names the expected constraint.
 - [ ] 2.10 Test the requirement "Required values, enumerations, and text limits" with a table of cases covering every not-null column, enumeration, length-limited column, and foreign key in §2. Verify that each rejection gives the expected error code.
 - [ ] 2.11 Test the requirements "Deleting a group", "Deleting a recipient, address, or shipment", and "Users stay in the database". Verify that the group test includes shipped items in a shipment, and that a second group and the users are untouched.
+- [ ] 2.12 Add the migration check to the `test` job in `.github/workflows/ci.yml` (design decision 13). Verify locally by running its commands: they pass on the finished schema, and fail after temporarily adding a column and after temporarily renaming one, with neither change generating a migration. Then remove those changes and any files they generated, and confirm that `git status` shows nothing left over.
 
 ## 3. Seed data
 
@@ -46,5 +48,6 @@ T-02 has no acceptance criteria with an ID, so no task or test carries an `AC-` 
 ## Workflow follow-up
 
 - Open the pull request when the developer asks, with `Closes #28`, and verify that the `test` and `e2e` checks pass against the Postgres service containers.
+- On that pull request, push a temporary schema change with no migration, confirm that the `test` check fails at the migration step, and revert it, as T-01 did for its checks.
 - Run the adversarial review on the pull request, as CLAUDE.md describes.
 - Archive this change with the merge, as the definition of done requires.

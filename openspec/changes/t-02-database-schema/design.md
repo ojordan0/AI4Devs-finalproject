@@ -14,6 +14,7 @@ Constraints checked while planning, on November 8, 2026:
 | `src/server/db/migrations/` is already ignored by Prettier | `.prettierignore` | Generated migrations don't affect `npm run lint` |
 | `+1 202 555 01xx` numbers pass `libphonenumber-js` | Running `isValidPhoneNumber` | Seed WhatsApp numbers are fictional and still valid, so later validation accepts them |
 | `scripts/setup.mjs` already imports `tests/support/test-database.ts` to refuse a remote database | Reading the script | The seed script can use the same guard |
+| Without a terminal, `drizzle-kit generate` meets a renamed column by printing an error, writing no file, and exiting 0 | Running it on a scratch schema with no change, an added column, and a rename | The migration check can't rely on the exit code or on new files (decision 13) |
 
 ## Goals / Non-Goals
 
@@ -25,7 +26,6 @@ Constraints checked while planning, on November 8, 2026:
 **Non-Goals:**
 
 - Indexes beyond those in [Data model §2](../../../docs/04-DATA-MODEL.md#2-entities). The data volume is small; a ticket that measures a slow query can add one.
-- A CI check that the schema and the migrations agree. The ticket doesn't ask for it, and the local check is `drizzle-kit generate` reporting no changes.
 - Seeding `link_status` values other than `none`. The link lookup is milestone 2, and its tests use their own data.
 
 ## Decisions
@@ -141,6 +141,24 @@ Seed text isn't interface text, so it stays in the seed file rather than the tra
 - `tests/support/factories.ts` holds small factories for valid rows, as [Security and testing §2.3](../../../docs/07-SECURITY-AND-TESTING.md#23-test-data-and-isolation) calls for.
 - `tests/integration/seed-data.test.ts` covers the seed's contents, consistency, and second load, comparing every table's rows before and after.
 
+### 13. Migration check: a step in the `test` job that looks for the "no changes" message
+
+The `test` job in `.github/workflows/ci.yml` gets this step after `npm ci`:
+
+```yaml
+- name: Check that migrations match the schema
+  run: |
+    output="$(npx drizzle-kit generate </dev/null 2>&1)"
+    echo "$output"
+    grep -q "No schema changes" <<< "$output"
+```
+
+**It looks for the message, not for new files.** Checking `git status` for a new migration was rejected: on a rename, `generate` needs a terminal to ask whether the column was renamed or replaced, so without one it prints an error, writes nothing, and exits 0, and that check would pass. Looking for the message passes only on an explicit "no changes", and it failed on both an added column and a rename when tried on a scratch schema. If a drizzle-kit upgrade changes the wording, the check fails on every pull request rather than passing wrongly, and the fix is one line.
+
+**It's a step, not a job.** A new job would be another required check in the ruleset on `main`, which changes only at the owner's request, and it would add another job to maintain for one command. The `test` job already has `DATABASE_URL`, which `drizzle.config.ts` requires even though `generate` doesn't connect. The cost is that a failure shows as `test` failing, and the log names the step. The `pull-request-checks` spec records this exception to one named check per item.
+
+**What it can't see:** migration SQL edited by hand, because `generate` compares the schema with the latest snapshot, not the SQL; and changes made directly to a database. Applying all migrations to an empty database on every CI run covers SQL that doesn't run.
+
 ## Risks / Trade-offs
 
 - **A value passes a service but fails a check, giving a server error instead of a validation message.** → Services normalize to E.164, uppercase country codes, and http or https links before storing. The link check ignores case, and services will also be covered by their own tests from T-03 on.
@@ -148,7 +166,7 @@ Seed text isn't interface text, so it stays in the seed file rather than the tra
 - **Fixed invitation codes in the seed would be known secrets.** → The seed refuses a non-local database, and production is never seeded.
 - **A partly seeded database could mix old and new data if the seed changes later.** → Inserts skip existing rows, so a changed seed row doesn't update. A developer can recreate the volume, and tests always start from an emptied database.
 - **A development change can stop a later load.** For example, deleting "Grandma's house" and making another address the default means the seed's re-inserted default conflicts with it, and `npm run setup` stops at its seed step. → The error names the constraint, and recreating the volume fixes it. A clear failure is better than silently missing data, and this takes an unusual edit to a seeded group.
-- **The schema and migrations could drift apart.** → Task 2.5 confirms they agree. Without a CI check, a later ticket that forgets to generate a migration fails only when its integration test hits the missing column.
+- **The migration check depends on a tool's message.** → A changed message makes the check fail loudly, and a Dependabot pull request for drizzle-kit would show it before the merge (decision 13).
 - **`TRUNCATE` is destructive.** → The address is always derived by `testDatabaseUrl`, which forces the test database name and refuses other hosts.
 
 ## Migration Plan

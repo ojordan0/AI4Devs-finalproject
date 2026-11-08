@@ -17,6 +17,7 @@ The database has no tables, so no ticket that stores data can start: T-03 depend
 - **Seed data:** the data in [Data model §3](../../../docs/04-DATA-MODEL.md#3-seed-data), safe to load again, and refused on any database that isn't local.
 - **Clean test data:** each integration test file and each browser test run starts from a freshly seeded test database, as [Security and testing §2.3](../../../docs/07-SECURITY-AND-TESTING.md#23-test-data-and-isolation) requires. Until now there was nothing to reset.
 - **Integration tests** proving that each constraint rejects invalid data and that the seed loads into an empty database.
+- **Migration check in CI:** every pull request fails when the schema has a change with no generated migration. Without it, a changed check or a new index that no test exercises would never reach a database, with no error. The ticket doesn't ask for this; it was added during review, and the ticket and [Infrastructure §3](../../../docs/06-INFRASTRUCTURE.md#3-deployment-process) will list it.
 - **Documents updated first**, because reviewing this ticket found two places where they can't be followed as written:
   - **Which rules are database checks.** The ticket's list names three checks, while its scope says "every constraint" and [Data model §2](../../../docs/04-DATA-MODEL.md#2-entities) also lists formats and the required note. §2 will state which rules are database checks and which stay in the services, and the ticket's list will match. The ship date stays in the services, because a check can't use the clock they receive as input.
   - **Seed coverage.** [Data model §3](../../../docs/04-DATA-MODEL.md#3-seed-data) and the ticket claim every status and permission case, but the list has no ended membership (BR-11) and no cancelled invitation. §3 will add a former buyer who still has a purchased item, and a cancelled invitation.
@@ -31,6 +32,7 @@ The database has no tables, so no ticket that stores data can start: T-03 depend
 ### Modified Capabilities
 
 - `developer-environment`: the database commands now create real tables and load real data, and tests start from freshly seeded data.
+- `pull-request-checks`: pull requests also check that migrations match the schema.
 
 ## Non-goals
 
@@ -46,7 +48,7 @@ The database has no tables, so no ticket that stores data can start: T-03 depend
 ## Impact
 
 - **New files:** the first migration in `src/server/db/migrations/`, `scripts/seed-data.ts`, `scripts/reset-test-database.ts`, `tests/support/reset-database.ts`, `tests/support/factories.ts`, and integration tests.
-- **Changed code:** `src/server/db/schema.ts`, `scripts/seed.ts`, `tests/support/integration-env.ts`, and `playwright.config.ts`.
-- **Changed documents:** `docs/04-DATA-MODEL.md`, `docs/08-WORK-TICKETS.md`, and `prompts.md`.
+- **Changed code:** `src/server/db/schema.ts`, `scripts/seed.ts`, `tests/support/integration-env.ts`, `playwright.config.ts`, and `.github/workflows/ci.yml`.
+- **Changed documents:** `docs/04-DATA-MODEL.md`, `docs/06-INFRASTRUCTURE.md`, `docs/08-WORK-TICKETS.md`, and `prompts.md`.
 - **Developer machines:** the next `npm run setup` or `npm run db:migrate` adds the tables to the existing empty database.
 - **No new dependencies**, and no effect on the API or interface. Neither exists yet.
