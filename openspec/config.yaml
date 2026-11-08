@@ -33,7 +33,7 @@ rules:
     - Cite PRD IDs in each requirement instead of copying rule text.
     - Cover every acceptance criterion with a scenario, citing the docs/ file.
     - Name each scenario after the acceptance criterion it verifies, starting with its ID, for example "AC-59 ...".
-    - When the ticket has no acceptance criterion IDs, name each scenario after the ticket and the condition it verifies, taken from its "Done when" or acceptance criteria text, for example "T-01 Fresh clone runs the setup", and state how it is verified (automated test, CI run, or documented manual check).
+    - When the ticket has no acceptance criterion IDs, name and verify each scenario as described in docs/07-SECURITY-AND-TESTING.md §2.6.
     - Interface text, emails, and WhatsApp messages are referenced by meaning, never written out; the wording lives in the translation files and docs/02-UX-DESIGN.md.
   design:
     - Follow docs/03-ARCHITECTURE.md for structure and layering, docs/04-DATA-MODEL.md for the schema, and docs/05-API.md for endpoints and errors.
@@ -41,7 +41,7 @@ rules:
   tasks:
     - Ensure tasks are atomic and testable independently.
     - Include one task per acceptance criterion for its automated test, named with its ID (docs/07-SECURITY-AND-TESTING.md §2). In a ticket without acceptance criterion IDs, include one task per scenario instead.
-    - Include tasks for items 2 to 5 of the definition of done in docs/08-WORK-TICKETS.md §1 that apply to the ticket, such as updating the owning document or the generated OpenAPI document. Items 1, 6, and 7 (proposal review, session record, and pull request) are steps of the ticket workflow in CLAUDE.md, not tasks.
+    - Include tasks for items 3 to 5 of the definition of done in docs/08-WORK-TICKETS.md §1 that apply to the ticket, such as updating the owning document or the generated OpenAPI document. The tasks above cover item 2. Items 1, 6, and 7 (proposal review, session record, and pull request) are steps of the ticket workflow in CLAUDE.md, not tasks.
     - Name the exact tables, endpoints and components each task touches.
     - Reuse existing screen components and replace mock data with real data.
     - Cover the loading, empty and error states for each screen touched.
@@ -50,4 +50,4 @@ operations:
   apply:
     guidance:
       - Do not change styling or layout
-      - Stop and tell me if the issue needs a UI change
+      - Unless the ticket's scope includes the UI, stop and tell the user if the issue needs a UI change

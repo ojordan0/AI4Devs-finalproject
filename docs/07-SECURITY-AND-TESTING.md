@@ -1,6 +1,6 @@
 # Security and testing
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 8, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 8, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -98,6 +98,7 @@ CI runs the same commands, with a Postgres service container instead of Docker C
 ### 2.6 Coverage targets
 
 - **Acceptance criteria.** Every acceptance criterion ([PRD §17](01-PRD.md#17-acceptance-criteria)) has at least one automated test whose name starts with its ID, for example `AC-59 two buyers reserve at the same time`. Milestone 1 is complete when every criterion tagged M1 has a passing test; the report in T-17 lists each criterion and its test.
+- **Tickets without acceptance criterion IDs.** Each condition in the ticket's "Done when" or acceptance criteria text is verified by an automated test, a CI run, or a documented manual check, and its OpenSpec scenario states which. The scenario and any test are named after the ticket and the condition, for example `T-01 Fresh clone runs the setup`.
 - **Code.** At least 80% line coverage for the domain services (`src/server/services`), measured with `@vitest/coverage-v8` over the unit and integration tests. CI fails below the target. Other code has no coverage target: pages are covered by the browser tests, and framework and configuration code is not tested directly.
 
 ### 2.7 Example test cases
