@@ -100,9 +100,12 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 - npm scripts: `setup`, `dev`, `lint`, `db:migrate`, `db:seed`, and the test commands in [Security and testing §2.5](07-SECURITY-AND-TESTING.md#25-running-tests-locally-and-in-ci).
 - GitHub Actions workflow running the checks in [Infrastructure §3](06-INFRASTRUCTURE.md#3-deployment-process), step 2, including the documentation link check.
 - Branch protection on `main`: checks must pass and a review is required.
+- Claude Code hooks for the checks, configured in `.claude/settings.json` with their scripts in `.claude/hooks/`, next to the branch-protection hook:
+  - before `gh pr create`, run `npm run lint`, the type check (`tsc --noEmit`), and `npm test`, and block the pull request with the errors when any of them fails;
+  - after Claude edits or writes a file, run ESLint on that file and show Claude the errors.
 - The application is added around the documentation already in the repository: `readme.md`, `CLAUDE.md`, `prompts.md`, `docs/`, and `scripts/`.
 
-**Done when:** a fresh clone runs `npm run setup`, `npm run dev`, `npm test`, and `npm run test:e2e` without errors, and a pull request shows all checks.
+**Done when:** a fresh clone runs `npm run setup`, `npm run dev`, `npm test`, and `npm run test:e2e` without errors, a pull request shows all checks, and Claude Code can't open a pull request while linting, type checks, or tests fail.
 
 ### T-02 Database schema, migrations, and seed data
 
