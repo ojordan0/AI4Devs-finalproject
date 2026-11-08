@@ -1,6 +1,6 @@
 # UX design
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 7, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 8, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -12,7 +12,7 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 1. Chooses a language and taps **Continue with Google**.
 2. Confirms the language, prefilled with the one chosen on Welcome, checks the 18-or-older and terms box, and enters their WhatsApp number.
 3. The app creates their group and first list (BR-06). The group name can be changed in Group.
-4. Lands on Lists. The empty states guide the first item, person, and delivery address ([section 2.7](#27-empty-states-loading-and-errors)).
+4. Lands on Lists, on their first list, and can add an item right away. People and delivery addresses are optional and can be added later; People and Group each have an empty state that prompts for them ([section 2.7](#27-empty-states-loading-and-errors)).
 
 **B. Add an item**
 1. Types the name in the quick field and presses Enter, or taps **+ Add** for the full form.
@@ -22,7 +22,7 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 **C. Invite**
 1. In Group, a member taps "Invite a member" or "Invite a buyer".
 2. WhatsApp opens with a message and the link. They can also copy the link.
-3. The invitee opens the link, taps **Continue with Google**, completes step 2 of flow A, and accepts. They join that group, and no group of their own is created.
+3. The invitee opens the link, taps **Continue with Google**, completes step 2 of flow A, and accepts. They join that group, and no group of their own is created. A member lands on Lists; a buyer lands on To buy.
 4. If the link was used, expired, or cancelled (BR-08): "This invitation is no longer valid. Ask for a new one."
 5. If the user already belongs to the group with that access: "You're already in this group." (BR-09)
 

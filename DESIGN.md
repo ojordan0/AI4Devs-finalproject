@@ -104,7 +104,7 @@ spacing:
 
 # Design system: Warm Utilitarian Care
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.0 · **Date:** November 7, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.0 · **Date:** November 8, 2026
 
 Part of the project documentation ([readme](readme.md)). This document owns the visual design: tokens, components, and layout. Behavior, screens, and interface text are defined in [UX design](docs/02-UX-DESIGN.md) and the [PRD](docs/01-PRD.md); where they differ from this document or from the Stitch screens, they take precedence.
 
@@ -122,7 +122,7 @@ The visual style is **Warm Modern Utilitarianism**:
 - **Calm Resilience**: Undo patterns and one-tap bridges to WhatsApp protect users from costly mistakes.
 
 ### Content Constraints
-- Show only what the PRD defines. The product has no prices, payments, stock levels, delivery-time estimates, package tracking, priority or urgency markers, group wall, or in-app chat ([PRD §5](docs/01-PRD.md#5-scope)).
+- Show only what the PRD defines; [PRD §5](docs/01-PRD.md#5-scope) and [§18](docs/01-PRD.md#18-future-features) list what is out of scope. Do not add prices, payments, stock levels, delivery-time estimates, package tracking, a group wall, or in-app chat. There is no urgency field; urgency goes in notes (FR-13).
 - Never promise a notification the product does not send. Members get a daily summary email (BR-31); buyers are told about changes on WhatsApp by a person (FR-35).
 - A person (recipient) has only a name, detail rows, and notes (FR-09). Do not add photos, ages, or relationships.
 - Never show rule or requirement IDs (such as `BR-15`) in the interface.
@@ -183,14 +183,7 @@ The layout is **mobile first**, built for 360px to 390px viewports. Desktop uses
 
 ## Navigation
 
-Navigation follows [UX §2.2](docs/02-UX-DESIGN.md#22-navigation), with no mode switching.
-
-- **Header**: on the left, the group selector (`Familia García ▾`), shown only when the user belongs to more than one group. On the right, **Actualizar** (↻), which reloads the current screen, and the user's avatar, which opens the Profile screen. Profile is never a tab.
-- **Tabs**: each tab appears if the user qualifies in at least one of their groups, so a user who is a member in one group and a buyer in another sees all of them.
-  - **Listas**, **Personas**, **Grupo**: member of at least one group.
-  - **Por comprar**: buyer in at least one group.
-  - **Mis compras**: buyers always; members once they reserve an item.
-- **No groups**: a user with no group access sees the empty state in [UX §2.7](docs/02-UX-DESIGN.md#27-empty-states-loading-and-errors) instead of tabs.
+Which tabs appear, and when, is defined in [UX §2.2](docs/02-UX-DESIGN.md#22-navigation). The header has the group selector on the left and **Actualizar** (↻) and the user's avatar on the right. Tabs pair an icon with text.
 
 ## Elevation & Depth
 
@@ -266,7 +259,7 @@ The folders in [design/stitch/](design/stitch/) are screens exported from Google
 | # | Screen ([UX §2.3](docs/02-UX-DESIGN.md#23-screens)) | Folder | Differences to ignore |
 |---|---|---|---|
 | 1 | Welcome | `01-welcome` | The script's text still includes a terms sentence and a help line; neither is shown. |
-| 2 | One last step | `02-one-last-step` | "Verificada" badge, back arrow, and the promise of WhatsApp notices. The unchecked checkbox must look empty. Show "Al continuar, crearemos tu primer grupo…" only to users who did not arrive through an invitation (BR-06). |
+| 2 | One last step | `02-one-last-step` | "Verificada" badge, back arrow, the promise of WhatsApp notices, and the "Al continuar, crearemos tu primer grupo…" notice. The unchecked checkbox must look empty. |
 | 3 | Invitation | `03-invitation` | None. The tabs show the states: active, signed out, already a member, and no longer valid. |
 | 4 | Lists | `04-lists` | The header button reads "Avisar al comprador". |
 | 5 | Add or edit item | `05-item-form` | Price, stock, and "Datos autocompletados" in the link preview (BR-21 shows image, title, and store only); the banner at the top; the notification box; the WhatsApp link. Labels and the Save button follow UX §2.4. |

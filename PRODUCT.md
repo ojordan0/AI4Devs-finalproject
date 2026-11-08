@@ -2,9 +2,9 @@
 
 <!-- impeccable:product-schema 1 -->
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.0 · **Date:** November 7, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.0 · **Date:** November 8, 2026
 
-Part of the project documentation ([readme](readme.md)). This document is the product brief for design work: who the product serves, what sets it apart, and the principles that settle design trade-offs. It owns the role priority, the positioning, and the product principles below. Every other fact is owned by the document it links to; where they differ, the [PRD](docs/01-PRD.md) and the [UX design](docs/02-UX-DESIGN.md) take precedence. Visual design is in [DESIGN.md](DESIGN.md).
+Part of the project documentation ([readme](readme.md)). This document is the product brief for design work: who the product serves, what sets it apart, and the principles that settle design trade-offs. It owns the role priority, what the positioning means for design, and the product principles below. Every other fact is owned by the document it links to; where they differ, the [PRD](docs/01-PRD.md) and the [UX design](docs/02-UX-DESIGN.md) take precedence. Visual design is in [DESIGN.md](DESIGN.md).
 
 ## Platform
 
@@ -26,7 +26,7 @@ Families request products their relatives abroad can buy and send, and today tho
 
 ## Positioning
 
-A family favor, not a store: the app keeps the shared list, each person's details, and where every item stands; conversations and money stay on WhatsApp and between the people involved.
+A family favor, not a store ([PRD §16](docs/01-PRD.md#16-product-decisions)). For design, this means the app keeps the shared list, each person's details, and where every item stands; conversations and money stay on WhatsApp and between the people involved.
 
 ## Operating Context
 
