@@ -1,7 +1,8 @@
 export const TEST_DATABASE_NAME = "comproparati_test";
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
-// The Postgres driver lets these override the host in the address.
+// The Postgres driver lets `host` override the address's host. It ignores the other
+// two, but libpq tools such as psql read them, so they are refused as well.
 const HOST_PARAMETERS = ["host", "hostaddr", "service"];
 
 /**

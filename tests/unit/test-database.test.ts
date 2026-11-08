@@ -29,7 +29,7 @@ describe("testDatabaseUrl", () => {
   });
 
   it.each(["host=db.neon.tech", "hostaddr=203.0.113.1", "service=production"])(
-    "refuses a local address that the %s parameter sends elsewhere",
+    "refuses a local address with the %s parameter",
     (parameter) => {
       expect(() =>
         testDatabaseUrl(`postgres://user@localhost/comproparati?${parameter}`),

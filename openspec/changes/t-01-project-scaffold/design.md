@@ -75,7 +75,7 @@ Environment files are read with Node's `process.loadEnvFile()`, because `dotenv`
 - **Vitest** has two projects. `unit` covers `tests/unit` and has no database. `integration` covers `tests/integration`, runs one file at a time, and has a global setup that derives the URL, applies migrations, and fails with a clear message if Postgres is down.
 - **Example tests:** a unit test of the URL derivation and its host check, an integration test that runs a query and confirms it reached `comproparati_test`, and a browser test that opens the placeholder page and runs axe with the WCAG 2.1 AA tags. Each proves its wiring end to end. `--passWithNoTests` was rejected because it would hide a misconfigured project.
 - **Lint strictness:** `next`'s ESLint configuration reports accessibility and image rules as warnings, and ESLint exits 0 on warnings. `npm run lint` and the lint hook pass `--max-warnings 0`, so breaking any rule fails.
-- **Test database guard:** the Postgres driver lets the `host`, `hostaddr`, and `service` connection parameters override the address's host, so the guard refuses them as well as a remote host.
+- **Test database guard:** the Postgres driver lets the `host` connection parameter override the address's host, so the guard refuses it as well as a remote host. It also refuses `hostaddr` and `service`, which the driver ignores but libpq tools such as `psql` read.
 - **Coverage** includes only `src/server/services/**`, with a line threshold of 80.
 - **Playwright** has two projects: Chromium on a phone-size device and WebKit on an iPhone. Its `webServer` runs migrations, the seed, `next build`, and `next start` against the test database. Retries are 1 in CI and 0 locally.
 
