@@ -194,8 +194,11 @@ def matching_paren(text, i):
     raise Unsure("unbalanced $( ) in the command")
 
 
-def read_double_quoted(text, i):
-    """Read a double-quoted string starting after its opening quote."""
+def read_double_quoted(text, i, substitutions=None):
+    """Read a double-quoted string starting after its opening quote.
+
+    The text of each command substitution in it is appended to substitutions.
+    """
     part, n = "", len(text)
     while i < n:
         c = text[i]
@@ -207,6 +210,16 @@ def read_double_quoted(text, i):
             i += 2
         elif text.startswith("$(", i):
             end = matching_paren(text, i + 1)
+            if substitutions is not None:
+                substitutions.append(text[i + 2:end])
+            part += text[i:end + 1]
+            i = end + 1
+        elif c == "`":
+            end = text.find("`", i + 1)
+            if end < 0:
+                raise Unsure("unterminated backquote in the command")
+            if substitutions is not None:
+                substitutions.append(text[i + 1:end])
             part += text[i:end + 1]
             i = end + 1
         else:
@@ -215,9 +228,15 @@ def read_double_quoted(text, i):
     raise Unsure("unterminated double quote in the command")
 
 
-def tokenize(text):
-    """Split shell text into ('w', word), ('op', operator) and ('redir', operator)."""
+def tokenize(text, substitutions=None):
+    """Split shell text into ('w', word), ('op', operator) and ('redir', operator).
+
+    The text of each command substitution, $(...) or `...`, is appended to
+    substitutions so it can be checked as a command of its own.
+    """
     tokens, word, i, n = [], None, 0, len(text)
+    if substitutions is None:
+        substitutions = []
 
     def flush():
         nonlocal word
@@ -243,16 +262,18 @@ def tokenize(text):
             word = (word or "") + text[i + 1:end]
             i = end + 1
         elif c == '"':
-            part, i = read_double_quoted(text, i + 1)
+            part, i = read_double_quoted(text, i + 1, substitutions)
             word = (word or "") + part
         elif c == "`":
             end = text.find("`", i + 1)
             if end < 0:
                 raise Unsure("unterminated backquote in the command")
+            substitutions.append(text[i + 1:end])
             word = (word or "") + text[i:end + 1]
             i = end + 1
         elif text.startswith("$(", i):
             end = matching_paren(text, i + 1)
+            substitutions.append(text[i + 2:end])
             word = (word or "") + text[i:end + 1]
             i = end + 1
         elif c == "#" and word is None:
@@ -440,7 +461,23 @@ WRAPPERS = {
     "sudo": {"-u", "-g", "-h", "-p", "-C", "-D", "-r", "-t", "-U"},
     "timeout": {"-s", "--signal", "-k", "--kill-after"},
     "xargs": {"-I", "-L", "-n", "-P", "-s", "-d", "-E", "-a"},
+    "arch": {"-arch"}, "xcrun": {"--sdk", "--toolchain"}, "setsid": set(),
+    "ionice": {"-c", "-n", "-p", "--class", "--classdata"}, "doas": {"-u", "-C"},
+    "chronic": set(), "unbuffer": set(),
 }
+# Programs that only read or print text: a git or gh among their arguments is
+# just a word (echo git push, grep "git commit"), never a call.
+TEXT_PROGRAMS = {
+    "echo", "printf", "grep", "egrep", "fgrep", "rg", "ag", "ack", "cat", "less",
+    "more", "head", "tail", "man", "which", "type", "whereis", "whatis", "apropos",
+    "wc", "sort", "uniq", "tr", "cut", "sed", "awk", "diff", "ls", "file", "stat",
+    "test", "[", "true", "false", "basename", "dirname", "realpath", "readlink",
+    "open", "code", "pbcopy", "tee", "touch", "mkdir", "rm", "cp", "mv", "chmod",
+    "for", "case", "function",
+}
+# With a program given as a variable ($GIT push), these words mean it may be git.
+VARIABLE_PROGRAM_VERBS = {"push", "commit", "merge", "cherry-pick", "revert",
+                          "rebase", "am", "api", "sync"}
 # Environment variables that point git at another repository.
 GIT_ENV_OPTIONS = {"GIT_DIR": "--git-dir", "GIT_WORK_TREE": "--work-tree"}
 
@@ -456,8 +493,15 @@ class Checker:
     def check(self, text, depth=0):
         if depth > 5:
             raise Unsure("commands nested too deeply")
+        substitutions = []
+        tokens = tokenize(strip_heredocs(text), substitutions)
+        for inner in substitutions:
+            # A command substitution runs in a subshell of its own.
+            saved = (self.cwd, dict(self.exported))
+            self.check(inner, depth + 1)
+            self.cwd, self.exported = saved
         subshells = []
-        for item in simple_commands(tokenize(strip_heredocs(text))):
+        for item in simple_commands(tokens):
             if item == "(":
                 subshells.append((self.cwd, dict(self.exported)))
             elif item == ")":
@@ -511,6 +555,31 @@ class Checker:
             self.check_git(args, depth, self.git_env_options(assignments))
         elif program == "gh":
             check_gh(args)
+        elif program.startswith("$"):
+            if VARIABLE_PROGRAM_VERBS.intersection(args):
+                raise Unsure("the program is a variable, so the hook can't tell "
+                             "whether it is git")
+        elif program not in TEXT_PROGRAMS:
+            self.check_runner(args, depth)
+
+    def check_runner(self, args, depth):
+        """A program that may run git for you: find -exec, ssh, watch, su -c, ...
+
+        A later git or gh word is checked as a call, and so is a quoted command
+        that starts with one (su -c "git push").
+        """
+        for index, word in enumerate(args):
+            program = os.path.basename(word).lower()
+            if program == "git":
+                self.check_git(args[index + 1:], depth)
+                return
+            if program == "gh":
+                check_gh(args[index + 1:])
+                return
+            first = word.split(None, 1)[0].lower() if word.strip() else ""
+            if " " in word.strip() and os.path.basename(first) in ("git", "gh"):
+                self.check(word, depth + 1)
+                return
 
     def git_env_options(self, assignments):
         """GIT_DIR and GIT_WORK_TREE, from export or a prefix, as git options."""
@@ -802,15 +871,28 @@ GH_GRAPHQL_WRITE_RE = re.compile(
 )
 
 
+GH_GLOBAL_OPTIONS_WITH_VALUE = ("-R", "--repo", "--hostname")
+
+
 def check_gh(args):
     """Block gh commands that change branches on GitHub without git."""
-    positional = [a for a in args if not a.startswith("-")]
-    if positional[:2] == ["pr", "merge"]:
+    positional, i = [], 0
+    while i < len(args):
+        arg = args[i]
+        if arg in GH_GLOBAL_OPTIONS_WITH_VALUE:
+            i += 2  # the value (gh pr -R owner/repo merge) is not a command word
+            continue
+        if not arg.startswith("-"):
+            positional.append(arg)
+            if len(positional) == 2:
+                break
+        i += 1
+    if positional == ["pr", "merge"]:
         raise Block(MSG_MERGE)
-    if positional[:2] == ["repo", "sync"]:
+    if positional == ["repo", "sync"]:
         raise Block(MSG_REPO_SYNC)
-    if args and args[0] == "api":
-        check_gh_api(args[1:])
+    if positional[:1] == ["api"]:
+        check_gh_api(args[args.index("api") + 1:])
 
 
 def check_gh_api(args):

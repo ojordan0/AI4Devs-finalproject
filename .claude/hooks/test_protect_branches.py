@@ -130,6 +130,20 @@ CASES = [
     ("R17", "wrapper with option values (sudo -u)", "sudo -u ojordan git push --force", "ticket", "force"),
     ("R18", "env -C changes the directory", 'env -C {main} git commit -m "x"', "ticket", "unsure"),
     ("R19", "MCP write to heads/main", mcp("push_files", branch="heads/Main", message="x", files=[]), "ticket", "github-write"),
+    # Re-review of PR #46: each finding reproduced
+    ("Q01", "find -exec git push", "find . -exec git push origin main \\;", "ticket", "push-main"),
+    ("Q02", "arch -arm64 git push", "arch -arm64 git push origin main", "ticket", "push-main"),
+    ("Q03", "ssh host git push", "ssh host git push origin main", "ticket", "push-main"),
+    ("Q04", "watch git push", "watch git push origin main", "ticket", "push-main"),
+    ("Q05", "xcrun git commit on main", 'xcrun git commit -m "x"', "main", "commit-main"),
+    ("Q06", "su -c with a quoted git command", "su ojordan -c 'git push --force'", "ticket", "force"),
+    ("Q07", "git push inside $( )", "echo $(git push origin main)", "ticket", "push-main"),
+    ("Q08", "git push inside backquotes", "echo `git push --force`", "ticket", "force"),
+    ("Q09", "git push inside an assignment's $( )", "x=$(git push origin main)", "ticket", "push-main"),
+    ("Q10", "git commit inside $( ) in double quotes, on main", 'echo "$(git commit -m x)"', "main", "commit-main"),
+    ("Q11", "program given as a variable", "$GIT push origin main", "ticket", "unsure"),
+    ("Q12", "gh pr -R owner/repo merge", "gh pr -R o/r merge 5", "ticket", "merge"),
+    ("Q13", "gh --repo owner/repo pr merge", "gh --repo o/r pr merge 5", "ticket", "merge"),
     # GitHub without git: MCP tools and the gh CLI
     ("G01", "MCP push_files to main", mcp("push_files", branch="main", message="x", files=[]), "ticket", "github-write"),
     ("G02", "MCP create_or_update_file on a delivery branch", mcp("create_or_update_file", branch="feature/entrega-1-OJE", path="a.md", content="x", message="x"), "ticket", "github-write"),
@@ -190,6 +204,17 @@ CASES = [
     ("S07", "push to heads/<ticket branch>", "git push origin HEAD:heads/t-07-groups-api", "ticket", "allow"),
     ("S08", "command -v git", "command -v git", "main", "allow"),
     ("S09", "GIT_DIR prefix pointing at the ticket worktree's repo, on a ticket", 'GIT_DIR={ticketgit} git commit -m "x"', "main", "allow"),
+    ("P01", "man git push on main", "man git push", "main", "allow"),
+    ("P02", "brew info git", "brew info git", "main", "allow"),
+    ("P03", "cat a file under .git", "cat .git/HEAD", "main", "allow"),
+    ("P04", "read-only git inside $( ) on main", 'echo "$(git rev-parse --abbrev-ref HEAD)"', "main", "allow"),
+    ("P05", "a variable program that isn't pushing", "$EDITOR .gitignore", "main", "allow"),
+    ("P06", "which git && git --version", "which git && git --version", "main", "allow"),
+    ("P07", "$(date) in a commit message on a ticket branch", 'git commit -m "Built $(date)"', "ticket", "allow"),
+    ("P08", "find without -exec git", "find . -name '*.git' -type d", "main", "allow"),
+    ("P09", "escaped backquotes in a commit message", 'git commit -m "Document \\`git push origin main\\`"', "ticket", "allow"),
+    ("P10", "ssh running git status", "ssh host git status", "main", "allow"),
+    ("P11", "gh pr view with -R", "gh pr view 46 -R o/r", "main", "allow"),
 ]
 
 
