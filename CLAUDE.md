@@ -54,7 +54,7 @@ Work is organized by tickets (see `/docs/08-WORK-TICKETS.md`). One ticket = one 
   4. Commit the approved proposal on its own with `/commit`, then run `/opsx:apply`. If the plan changes later, update the change with `/opsx:update` instead of letting the code drift from the specs.
 - **Commits are per request:** when you finish each request, use the `/commit` skill. If the branch already has an open PR, push after committing.
 - **Finishing a ticket.** The user decides when the ticket is done (e.g. "open the PR"); don't open one on your own. Then, in this order:
-  1. Check that every task in the change's `tasks.md` is done, and that `npm run lint`, `npm run typecheck`, and `npm test` pass.
+  1. Check that every task in the change's `tasks.md` is done, and that `npm run lint`, `npx tsc --noEmit`, and `npm test` pass.
   2. `git push -u origin HEAD`, then `gh pr create --base main`, titled `T-NN <ticket title>`, with a full description of the changes, a link to the OpenSpec change, and `Closes #<issue>` with the ticket's issue from the [ticket overview](docs/08-WORK-TICKETS.md#3-ticket-overview).
   3. Run the `adversarial-reviewer` subagent on the PR and post its findings as a PR comment. While the PR has no CI check runs, run `npm test` first, include its output in the subagent's prompt, and post that output in the same comment, below the findings. If `npm test` can't run yet, say so in the comment.
   4. Fix what's warranted, commit, push. Re-run the review at most once. Then reply with the PR URL plus one line on any unresolved review findings. Don't repeat the PR summary in chat: the session will be lost; the PR won't.
