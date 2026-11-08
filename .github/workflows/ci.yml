@@ -66,7 +66,7 @@ jobs:
       # renamed column by printing an error, writing no file, and exiting 0.
       - name: Check that migrations match the schema
         run: |
-          output="$(npx drizzle-kit generate </dev/null 2>&1)"
+          output="$(npx drizzle-kit generate </dev/null 2>&1)" || { echo "$output"; exit 1; }
           echo "$output"
           grep -q "No schema changes" <<< "$output"
       - run: npm run test:coverage

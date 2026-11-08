@@ -5,14 +5,27 @@ import { Client } from "pg";
 
 import { loadSeedData } from "../../scripts/seed-data";
 import * as schema from "../../src/server/db/schema";
-import { testDatabaseUrl } from "./test-database";
+import { TEST_DATABASE_NAME, testDatabaseUrl } from "./test-database";
 
 const TABLES = Object.values(schema)
   .filter((value) => is(value, PgTable))
   .map((table) => getTableName(table));
 
-/** Empties every table. Migration records live in the `drizzle` schema and aren't touched. */
+/**
+ * Empties every table, and refuses any database but the test one. Migration records live
+ * in the `drizzle` schema and aren't touched.
+ */
 export async function emptyDatabase(client: Client) {
+  const { rows } = await client.query<{ name: string }>(
+    "SELECT current_database() AS name",
+  );
+  const database = rows[0]?.name;
+  if (database !== TEST_DATABASE_NAME) {
+    throw new Error(
+      `Only ${TEST_DATABASE_NAME} can be emptied, and this is connected to ${database}.`,
+    );
+  }
+
   const tables = TABLES.map((table) => `"${table}"`).join(", ");
   await client.query(`TRUNCATE ${tables} CASCADE`);
 }

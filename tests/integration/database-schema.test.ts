@@ -802,6 +802,45 @@ describe("Required values, enumerations, and text limits", () => {
   });
 });
 
+describe("Defaults", () => {
+  it("applies the defaults in the data model", async () => {
+    const user = await createUser(db);
+    expect(user).toMatchObject({ emailVerified: false, receiveEmails: true });
+
+    const group = await createGroup(db, { ownerId: user.id });
+    const membership = await createMembership(db, {
+      groupId: group.id,
+      userId: user.id,
+    });
+    expect(membership.status).toBe("active");
+
+    const invitation = await createInvitation(db, {
+      groupId: group.id,
+      createdBy: user.id,
+    });
+    expect(invitation.status).toBe("pending");
+
+    const address = await createDeliveryAddress(db, { groupId: group.id });
+    expect(address.isDefault).toBe(false);
+
+    const list = await createList(db, { groupId: group.id });
+    const item = await createItem(db, { listId: list.id, addedBy: user.id });
+    expect(item).toMatchObject({
+      status: "pending",
+      linkStatus: "none",
+      quantity: 1,
+      version: 1,
+      updatedAfterReservation: false,
+    });
+
+    const history = await createStatusHistory(db, {
+      itemId: item.id,
+      authorId: user.id,
+    });
+    expect(history.isUndo).toBe(false);
+  });
+});
+
 describe("Deleting a group", () => {
   it("deletes everything in a group with items in every status", async () => {
     const owner = await createUser(db);

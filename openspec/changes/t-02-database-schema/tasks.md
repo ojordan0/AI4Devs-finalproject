@@ -25,6 +25,9 @@ T-02 has no acceptance criteria with an ID, so no task or test carries an `AC-` 
 - [x] 2.11 Test the requirements "Deleting a group", "Deleting a recipient, address, or shipment", and "Users stay in the database". Verify that the group test includes shipped items in a shipment, and that a second group and the users are untouched.
 - [x] 2.12 Add the migration check to the `test` job in `.github/workflows/ci.yml` (design decision 13). Verify locally by running its commands: they pass on the finished schema, and fail after temporarily adding a column and after temporarily renaming one, with neither change generating a migration. Then remove those changes and any files they generated, and confirm that `git status` shows nothing left over.
 
+- [x] 2.13 Test the defaults in Data model §2 with minimal rows (adversarial review, finding 2). Verify that the test asserts each defaulted column, and that changing one default in the test database makes it fail.
+- [x] 2.14 Make the migration check print the tool's output when the tool itself fails (adversarial review, finding 3). Verify locally that a failing command still prints its output and exits 1.
+
 ## 3. Seed data
 
 - [x] 3.1 Add `scripts/seed-data.ts` with the fixed IDs and `loadSeedData(db)`, inserting the data in §3 in one transaction with `ON CONFLICT (id) DO NOTHING` (design decision 8), and with the details in design decisions 9 and 10. Verify with `npx tsc --noEmit`, and that the WhatsApp numbers pass `libphonenumber-js`.
@@ -37,7 +40,9 @@ T-02 has no acceptance criteria with an ID, so no task or test carries an `AC-` 
 
 - [x] 4.1 Add `tests/support/reset-database.ts` (design decision 11) and call it from a `beforeAll` in `tests/support/integration-env.ts`. Add a test that the next file starts from exactly the seed data, using two test files. Verify with `npm run test:integration`, and that the `drizzle` schema's migration records survive.
 - [x] 4.2 Add `scripts/reset-test-database.ts` and use it in the server command in `playwright.config.ts`. Verify that `npm run test:e2e` passes, and that a row added to the test database beforehand is gone after the run.
-- [x] 4.3 Verify the scenario "Development data is never emptied": add a row to the development database, run `npm test` and `npm run test:e2e`, and confirm that the row is still there.
+- [x] 4.3 Verify by hand the scenario "Development data is never emptied": add a row to the development database, run `npm test` and `npm run test:e2e`, and confirm that the row is still there.
+
+- [x] 4.4 Add `tests/integration/reset-database.test.ts`, proving that the reset reaches the test database whatever `DATABASE_URL` holds and that emptying refuses any other database (adversarial review, finding 1). Verify that it fails when `resetDatabase` connects through `DATABASE_URL` without the guard.
 
 ## 5. Whole ticket
 

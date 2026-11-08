@@ -129,7 +129,7 @@ Seed text isn't interface text, so it stays in the seed file rather than the tra
 
 ### 11. Emptying the test database
 
-`tests/support/reset-database.ts` runs `TRUNCATE` over every table in the schema and then `loadSeedData`, using its own connection. It always derives its address with `testDatabaseUrl`, whatever `DATABASE_URL` holds, so it can't reach the development database or a remote one. The `drizzle` schema, which records applied migrations, isn't touched.
+`tests/support/reset-database.ts` runs `TRUNCATE` over every table in the schema and then `loadSeedData`, using its own connection. It always derives its address with `testDatabaseUrl`, whatever `DATABASE_URL` holds, so it can't reach the development database or a remote one, and the function that empties the tables also refuses any database but the test one. The `drizzle` schema, which records applied migrations, isn't touched.
 
 - **Integration tests:** `tests/support/integration-env.ts`, which already runs for each test file, adds a `beforeAll` calling the reset.
 - **Browser tests:** `playwright.config.ts` replaces `npm run db:seed` in its server command with `npx tsx scripts/reset-test-database.ts`, a one-line command calling the same function. A Playwright global setup was rejected, because the reset has to come after migrations, and the command line makes that order explicit.
@@ -148,7 +148,7 @@ The `test` job in `.github/workflows/ci.yml` gets this step after `npm ci`:
 ```yaml
 - name: Check that migrations match the schema
   run: |
-    output="$(npx drizzle-kit generate </dev/null 2>&1)"
+    output="$(npx drizzle-kit generate </dev/null 2>&1)" || { echo "$output"; exit 1; }
     echo "$output"
     grep -q "No schema changes" <<< "$output"
 ```
@@ -167,7 +167,7 @@ The `test` job in `.github/workflows/ci.yml` gets this step after `npm ci`:
 - **A partly seeded database could mix old and new data if the seed changes later.** → Inserts skip existing rows, so a changed seed row doesn't update. A developer can recreate the volume, and tests always start from an emptied database.
 - **A development change can stop a later load.** For example, deleting "Grandma's house" and making another address the default means the seed's re-inserted default conflicts with it, and `npm run setup` stops at its seed step. → The error names the constraint, and recreating the volume fixes it. A clear failure is better than silently missing data, and this takes an unusual edit to a seeded group.
 - **The migration check depends on a tool's message.** → A changed message makes the check fail loudly, and a Dependabot pull request for drizzle-kit would show it before the merge (decision 13).
-- **`TRUNCATE` is destructive.** → The address is always derived by `testDatabaseUrl`, which forces the test database name and refuses other hosts.
+- **`TRUNCATE` is destructive.** → The address is always derived by `testDatabaseUrl`, which forces the test database name and refuses other hosts, and emptying checks the connected database first. Both are tested.
 
 ## Migration Plan
 
