@@ -13,6 +13,7 @@ Constraints checked while planning, on November 8, 2026:
 | TypeScript 7.0.2 stops ESLint from starting: `typescript-eslint does not support TS 7.0` | Scratch install and run | TypeScript 6.0.3, the newest version in the supported range |
 | `eslint-plugin-jsx-a11y`, `eslint-plugin-react`, and `eslint-plugin-import` allow ESLint up to 9 | `npm view` | ESLint 9.39.5, which installs with no peer conflicts |
 | Vitest exits 0 with a threshold set and no files in the coverage scope | Scratch run | The 80% target can be set now, before any service exists |
+| npm 11 holds back install scripts that aren't approved. `esbuild`, `@swc/core`, and `@parcel/watcher` are affected, and everything works without them | Installing and running the tools | None are approved; `npm ci` prints a warning listing them |
 | The current Node.js LTS is 26; the development machine runs 22 | nodejs.org release index, `node -v` | `.nvmrc` pins 26, and the developer upgrades |
 | `protect-branches.py` blocks `gh api` writes to `/branches/` | Reading the hook | The owner applies branch protection; Claude Code can't |
 | `ojordan0` is the only collaborator | GitHub API | No approval is required; see decision 7 |
@@ -43,6 +44,8 @@ Constraints checked while planning, on November 8, 2026:
 - `src/server/db/` holds the Drizzle client, an empty schema file, and the migrations folder.
 - `@/*` maps to `src/*`. Vitest resolves the alias through its own configuration, so no extra package is needed.
 
+`next dev` writes its own agent instructions into `AGENTS.md`, which is a link to `CLAUDE.md`, when it detects an AI coding agent. `next.config.ts` sets `agentRules: false`, Next's documented switch, so the project's rules stay hand-written and running the app never changes a tracked file.
+
 Tailwind, shadcn/ui, and next-intl are installed but not configured, because T-05 owns that. The `shadcn` command is not installed as a dependency, and T-05 runs it. If its output needs a package outside §1.6, T-05 updates that section first.
 
 ### 3. Setup is a Node script with no dependencies
@@ -71,12 +74,13 @@ Environment files are read with Node's `process.loadEnvFile()`, because `dotenv`
 
 - **Vitest** has two projects. `unit` covers `tests/unit` and has no database. `integration` covers `tests/integration`, runs one file at a time, and has a global setup that derives the URL, applies migrations, and fails with a clear message if Postgres is down.
 - **Example tests:** a unit test of the URL derivation and its host check, an integration test that runs a query and confirms it reached `comproparati_test`, and a browser test that opens the placeholder page and runs axe with the WCAG 2.1 AA tags. Each proves its wiring end to end. `--passWithNoTests` was rejected because it would hide a misconfigured project.
+- **Lint strictness:** `next`'s ESLint configuration reports accessibility and image rules as warnings, and ESLint exits 0 on warnings. `npm run lint` and the lint hook pass `--max-warnings 0`, so breaking any rule fails.
 - **Coverage** includes only `src/server/services/**`, with a line threshold of 80.
 - **Playwright** has two projects: Chromium on a phone-size device and WebKit on an iPhone. Its `webServer` runs migrations, the seed, `next build`, and `next start` against the test database. Retries are 1 in CI and 0 locally.
 
 ### 6. Empty migrations must succeed
 
-`drizzle-kit migrate` expects a migrations journal, which doesn't exist until the first migration does. The repository includes an empty `meta/_journal.json` so that `db:migrate` succeeds until T-02. `scripts/seed.ts` connects and exits. If the current drizzle-kit rejects an empty journal, `db:migrate` falls back to a small script that skips when there's no migration; the implementation confirms which is needed before writing it.
+`drizzle-kit migrate` expects a migrations journal, which doesn't exist until the first migration does. The repository includes an empty `meta/_journal.json`, which the current drizzle-kit accepts, so `db:migrate` succeeds until T-02. `scripts/seed.ts` connects and exits.
 
 ### 7. Branch protection
 
@@ -106,7 +110,7 @@ There are no path filters, because a filtered required check stays pending and b
 
 ### 9. Link check is a project script
 
-`scripts/check-doc-links.ts` runs through `tsx`, needs no network, and reads the Markdown files at the repository root and in `docs/`. It checks relative links and their anchors, using GitHub's heading rules, and skips code blocks and external URLs. `docs/ai-conversations/` is excluded because it holds verbatim history. It runs locally as `npm run check:links`, which `docs/07-SECURITY-AND-TESTING.md` §2.5 lists.
+`scripts/check-doc-links.ts` runs through `tsx`, with its logic in `scripts/doc-links.ts` so the unit test can import it. It needs no network, and reads the Markdown files at the repository root and in `docs/`. It checks relative links and their anchors, using GitHub's heading rules, and skips code blocks and external URLs. `docs/ai-conversations/` is excluded because it holds verbatim history. It runs locally as `npm run check:links`, which `docs/07-SECURITY-AND-TESTING.md` §2.5 lists.
 
 Alternatives rejected: a third-party link checker would add a tool outside §1.6, and checking external URLs would make a required check depend on outside websites. A unit test with small fixtures covers the heading rules, since a wrong rule would either fail good links or pass bad ones.
 

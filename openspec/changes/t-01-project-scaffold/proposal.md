@@ -49,7 +49,7 @@ None. `openspec/specs/` is empty.
 ## Impact
 
 - **New at the repository root:** `src/`, `tests/`, `.github/`, `package.json`, `package-lock.json`, `tsconfig.json`, `next.config.ts`, `drizzle.config.ts`, `docker-compose.yml`, `.env.example`, `.nvmrc`, and the ESLint, Prettier, Vitest, and Playwright configuration.
-- **New scripts:** `scripts/setup.mjs`, `scripts/seed.ts`, and `scripts/check-doc-links.ts`.
+- **New scripts:** `scripts/setup.mjs`, `scripts/seed.ts`, `scripts/check-doc-links.ts`, and `scripts/doc-links.ts`.
 - **Changed tooling:** `.claude/settings.json`, new hook scripts and tests in `.claude/hooks/`, and `.gitignore`.
 - **Changed documents:** `docs/03-ARCHITECTURE.md`, `docs/06-INFRASTRUCTURE.md`, `docs/07-SECURITY-AND-TESTING.md`, `docs/08-WORK-TICKETS.md`, `readme.md`, `CLAUDE.md`, and `prompts.md`.
 - **GitHub settings:** branch protection on `main`, which the repository owner applies, because the branch-protection hook blocks Claude Code from changing it.
