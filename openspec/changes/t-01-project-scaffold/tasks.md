@@ -55,14 +55,14 @@ T-01 has no acceptance criteria, so no task or test carries an `AC-` ID. Each ta
 
 ## 9. Documents that confirm the build
 
-- [ ] 9.1 Update `readme.md` §1.4 with the confirmed prerequisites and commands, including Node.js 26 and setup creating `.env`. Update `CLAUDE.md` "Commands" so they're no longer planned. Verify by following the readme in task 10.1.
+- [x] 9.1 Update `readme.md` §1.4 with the confirmed prerequisites and commands, including Node.js 26 and setup creating `.env`. Update `CLAUDE.md` "Commands" so they're no longer planned. Verify by following the readme in task 10.1.
 - [x] 9.2 Update the layout in `docs/03-ARCHITECTURE.md` §2 with `.github/`, `.claude/`, and the new scripts. Update the header. Verify that every link, anchor, and ID resolves, and that the Mermaid diagrams still parse, as `CLAUDE.md` requires.
 
 ## 10. End-to-end verification
 
-- [ ] 10.1 In a new fresh clone of this branch, with no earlier volume or `.env`, run `npm run setup`, `npm run dev` (the page loads), `npm test`, and `npm run test:e2e`, in the order the readme gives. Verify that each finishes without errors, and record the output for the pull request.
-- [ ] 10.2 Before opening the pull request, have Claude Code run `gh pr create` with a temporary failure in each of the three checks, and confirm that the hook blocks with the errors, then remove the failures. Run it with the three checks passing only when the owner asks for the pull request. Verify from the hook's output.
-- [ ] 10.3 Edit a source file to break a rule, and confirm that the lint hook shows the error, then undo the edit. Verify from the hook's output.
+- [x] 10.1 In a new fresh clone of this branch, with no earlier volume or `.env`, run `npm run setup`, `npm run dev` (the page loads), `npm test`, and `npm run test:e2e`, in the order the readme gives. Verify that each finishes without errors, and record the output for the pull request.
+- [x] 10.2 Before opening the pull request, have Claude Code run `gh pr create` with a temporary failure in each of the three checks, and confirm that the hook blocks with the errors, then remove the failures. Run it with the three checks passing only when the owner asks for the pull request. Verify from the hook's output.
+- [x] 10.3 Edit a source file to break a rule, and confirm that the lint hook shows the error, then undo the edit. Verify from the hook's output.
 - [ ] 10.4 When the owner asks for the pull request, open it following `CLAUDE.md`, with `Closes #27`. Verify that all six checks appear and pass.
 - [ ] 10.5 Push a temporary commit that fails linting, type checks, and tests. Verify that those three checks fail on the pull request, then revert the commit with a new commit and verify that they pass again.
 - [ ] 10.6 The owner applies branch protection, since `protect-branches.py` blocks Claude Code from doing it (design decision 7), with this command:
