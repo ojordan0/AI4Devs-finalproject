@@ -41,9 +41,9 @@ T-02 has no acceptance criteria with an ID, so no task or test carries an `AC-` 
 
 ## 5. Whole ticket
 
-- [ ] 5.1 Demonstrate the "Done when" statement: on a fresh clone with a new, empty Postgres volume, `npm run setup` creates every table and the seed data, and a second `npm run setup` keeps them. Use a separate Compose project for the new volume, so the development database isn't deleted; it only stops while the clone uses its port. Verify by querying the row counts.
+- [x] 5.1 Demonstrate the "Done when" statement: on a fresh clone with a new, empty Postgres volume, `npm run setup` creates every table and the seed data, and a second `npm run setup` keeps them. Use a separate Compose project for the new volume, so the development database isn't deleted; it only stops while the clone uses its port. Verify by querying the row counts.
 - [x] 5.2 Run `npm run lint`, `npx tsc --noEmit`, `npm test`, `npm run test:coverage`, `npm run test:e2e`, and `npm run check:links`. Verify that all pass, and that no package was added outside [Architecture §1.6](../../../docs/03-ARCHITECTURE.md#16-dependencies).
-- [ ] 5.3 Record the session as CLAUDE.md describes: the export in `docs/ai-conversations/`, the row in `prompts.md`, and the representative prompts. Verify with `npm run check:links`.
+- [x] 5.3 Record the session as CLAUDE.md describes: the export in `docs/ai-conversations/`, the row in `prompts.md`, and the representative prompts. Verify with `npm run check:links`.
 
 ## Workflow follow-up
 
