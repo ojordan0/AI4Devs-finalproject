@@ -28,7 +28,7 @@ rules:
     - Start with the ticket ID and title, and link the ticket's GitHub issue from the ticket overview (docs/08-WORK-TICKETS.md §3).
     - List the stories, functional requirements, business rules, and acceptance criteria the ticket covers, by ID only.
     - Keep to the ticket's scope. Anything outside it goes under a Non-goals heading.
-    - Under Impact, list every table, endpoint and component touched, by name. Mark each one as new or existing. Take each name from docs/, design/screens.md or the code. If a name isn't defined there, stop and ask instead of inventing one.
+    - Under Impact, list every table, endpoint and component touched, by name. Mark each one as new or existing. Take each name from docs/ or the code. If a name isn't defined there, stop and ask instead of inventing one.
   specs:
     - Cite PRD IDs in each requirement instead of copying rule text.
     - Cover every acceptance criterion with a scenario, citing the docs/ file.
