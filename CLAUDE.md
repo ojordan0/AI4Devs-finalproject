@@ -61,6 +61,6 @@ Only when the user explicitly asks for a delivery:
 - First check that local `main` is up to date with `origin/main` and that no ticket PR meant for this delivery is still open. Report anything pending and wait for confirmation.
 - Push with `git push origin main:<delivery-branch>`. Never force-push; if the push is rejected as non-fast-forward, stop and tell the user.
 
-## Commands (planned)
+## Commands
 
-`npm run setup` · `npm run dev` · `npm test` · `npm run test:e2e` · `npm run test:coverage` · `npm run lint` · `npm run db:migrate` · `npm run db:seed` (all test commands: [docs/07-SECURITY-AND-TESTING.md §2.5](docs/07-SECURITY-AND-TESTING.md#25-running-tests-locally-and-in-ci))
+`npm run setup` · `npm run dev` · `npm test` · `npm run test:e2e` · `npm run test:coverage` · `npm run lint` · `npx tsc --noEmit` · `npm run check:links` · `npm run db:migrate` · `npm run db:seed` (all test commands: [docs/07-SECURITY-AND-TESTING.md §2.5](docs/07-SECURITY-AND-TESTING.md#25-running-tests-locally-and-in-ci))

@@ -1,6 +1,6 @@
 # Security and testing
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.5 · **Date:** October 18, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 8, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -64,7 +64,7 @@ The whole test suite runs the same way on a developer's machine and in CI. It ne
 
 ### 2.3 Test data and isolation
 
-- **Separate test database.** Integration tests use `comproparati_test`, a second database in the same local Postgres, migrated before each run. Development data is never touched.
+- **Separate test database.** Integration and browser tests use `comproparati_test`, a second database in the same local Postgres, migrated before each run. Its address is derived from `DATABASE_URL`, and tests refuse any host other than the local machine. Development data is never touched.
 - **A clean start per test file.** Before each integration test file, the tables are emptied and the seed data ([Data model §3](04-DATA-MODEL.md#3-seed-data)) is loaded again. Integration test files run one at a time, so they never share the database. Transactions that are rolled back are not used for isolation, because the concurrency tests need two connections.
 - **Small factories.** Tests that need more data than the seed create it with small factory functions, so each test shows the data it depends on.
 - **Browser tests** start from a freshly seeded database. Each scenario signs up its own users and creates its own group, so scenarios don't depend on each other.
@@ -91,6 +91,7 @@ The whole test suite runs the same way on a developer's machine and in CI. It ne
 | `npm run test:integration` | Integration tests only | Local Postgres running |
 | `npm run test:e2e` | Builds the app, starts it on localhost with the local adapters and seed data, and runs the browser and accessibility tests | Local Postgres running |
 | `npm run test:coverage` | Unit and integration tests with the coverage report | Local Postgres running |
+| `npm run check:links` | Checks links and anchors between the repository's documents, without using the network | Nothing |
 
 CI runs the same commands, with a Postgres service container instead of Docker Compose ([Infrastructure §3](06-INFRASTRUCTURE.md#3-deployment-process)). A test that fails intermittently is fixed, or disabled with a linked GitHub issue, the same day. Playwright retries a failed test once in CI only, and the report lists every retried test.
 

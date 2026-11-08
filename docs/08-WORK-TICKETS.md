@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 7, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 8, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -98,8 +98,9 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 - ESLint and Prettier; Vitest with the coverage report, and Playwright with Chromium and WebKit, each with one passing example test ([Security and testing §2](07-SECURITY-AND-TESTING.md#2-testing-strategy)).
 - `docker-compose.yml` with Postgres; `.env.example` with every variable in [Infrastructure §7](06-INFRASTRUCTURE.md#7-configuration).
 - npm scripts: `setup`, `dev`, `lint`, `db:migrate`, `db:seed`, and the test commands in [Security and testing §2.5](07-SECURITY-AND-TESTING.md#25-running-tests-locally-and-in-ci).
-- GitHub Actions workflow running the checks in [Infrastructure §3](06-INFRASTRUCTURE.md#3-deployment-process), step 2, including the documentation link check.
-- Branch protection on `main`: checks must pass and a review is required.
+- GitHub Actions workflow running the checks in [Infrastructure §3](06-INFRASTRUCTURE.md#3-deployment-process), step 2, including the documentation link check and the dependency audit. T-03 adds the OpenAPI check.
+- Dependabot pull requests for npm packages and GitHub Actions ([Security and testing §1](07-SECURITY-AND-TESTING.md#1-security)).
+- Branch protection on `main`, as described in [Infrastructure §3](06-INFRASTRUCTURE.md#3-deployment-process), step 3: a pull request and passing checks are required, with no approvals and no bypass for administrators.
 - Claude Code hooks for the checks, configured in `.claude/settings.json` with their scripts in `.claude/hooks/`, next to the branch-protection hook:
   - before `gh pr create`, run `npm run lint`, the type check (`tsc --noEmit`), and `npm test`, and block the pull request with the errors when any of them fails;
   - after Claude edits or writes a file, run ESLint on that file and show Claude the errors.

@@ -59,6 +59,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Part 6 | — | UI design setup: review of the Stitch screens, the design system, and the GitHub CLI | Claude Code | Claude Opus 5.5 | [part-6-ui-design-setup.md](docs/ai-conversations/part-6-ui-design-setup.md) |
 | Part 7 | — | Branch protection and review: the product brief, the branch-protection hook, the reviewer subagent, and pull request #46 | Claude Code | Claude Opus 5.5 | [part-7-branch-protection-and-review.md](docs/ai-conversations/part-7-branch-protection-and-review.md) |
 | Part 8 | — | Design review fixes: resolving the adversarial review of pull request #47, and where new and invited users land | Claude Code | Claude Opus 5.5 | [part-8-design-review-fixes.md](docs/ai-conversations/part-8-design-review-fixes.md) |
+| Part 9 | T-01 | Project scaffold: the application, local setup, CI, quality hooks, and pull request #48 | Claude Code | Claude Opus 5.5 | [part-9-project-scaffold.md](docs/ai-conversations/part-9-project-scaffold.md) |
 
 ## Tools and phases
 
@@ -94,6 +95,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Spec first | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) and [`CLAUDE.md`](CLAUDE.md), applied to every OpenSpec artifact by [`openspec/config.yaml`](openspec/config.yaml) | Each work ticket becomes one OpenSpec change, reviewed before implementation; requirements cite PRD IDs, and scenarios are named after acceptance criteria. |
 | Definition of done | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) | What every ticket needs before it is merged. |
 | Branches, commits, and pull requests | [`CLAUDE.md`](CLAUDE.md), enforced by [`.claude/hooks/protect-branches.py`](.claude/hooks/protect-branches.py) | One branch and pull request per ticket, a commit per request, the pull request and review steps, and course deliveries. The hook blocks commits on protected branches, pushes to `main`, force pushes, and GitHub writes that bypass a pull request (part 7). |
+| Quality checks | [`.claude/hooks/check-before-pr.py`](.claude/hooks/check-before-pr.py) and [`.claude/hooks/lint-edited-file.py`](.claude/hooks/lint-edited-file.py), configured in [`.claude/settings.json`](.claude/settings.json) | Claude Code can't open a pull request while linting, type checks, or tests fail, and sees ESLint errors after each edit (T-01). |
 
 **Skills and subagents** used in Claude:
 

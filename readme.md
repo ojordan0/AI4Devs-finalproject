@@ -84,12 +84,14 @@ The product is built around one cycle: **request → reserve → purchase → sh
 
 ### 1.4. Installation instructions
 
-Planned local setup (the exact commands are confirmed during the build):
+Local setup:
 
-1. Install Node.js and Docker.
-2. Clone the repository and copy `.env.example` to `.env`.
-3. Run `npm run setup`. It installs dependencies, starts a local Postgres in Docker, applies the migrations, and loads the seed data.
-4. Run `npm run dev` and open the app. A development-only sign-in lets you enter as a seed user without Google credentials.
+1. Install Node.js 26, the version in [`.nvmrc`](.nvmrc), and Docker. Start Docker.
+2. Clone the repository.
+3. Run `npm run setup`. It creates `.env` from `.env.example`, installs dependencies, starts a local Postgres in Docker, creates the test database, applies the migrations, loads the seed data, and installs the browsers for the browser tests. It can be run again safely.
+4. Run `npm run dev` and open <http://localhost:3000>.
+
+Run the tests with `npm test` (unit and integration) and `npm run test:e2e` (browser and accessibility). T-04 adds a development-only sign-in, to enter as a seed user without Google credentials.
 
 **Full documentation:** [Infrastructure §2 Environments](docs/06-INFRASTRUCTURE.md#2-environments), [§7 Configuration](docs/06-INFRASTRUCTURE.md#7-configuration), and [Data model §3 Seed data](docs/04-DATA-MODEL.md#3-seed-data)
 
