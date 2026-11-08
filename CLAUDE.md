@@ -35,6 +35,30 @@ Use the traceability table (PRD §19) to find every story, rule, endpoint, and e
   2. Add a row for the session to the Build table in [prompts.md, Sessions](prompts.md#sessions): part, tickets (or "—" for work outside a ticket), name, tool, model, and a link to the export.
   3. Add the session's most representative prompts to [prompts.md](prompts.md) under the matching section, at most 3 per section as the course template asks, labeled like `(Part 5, turn 3 · T-01 · Claude Opus 5.5)`, and copied as written.
 
+## Branches, commits and PRs
+
+Work is organized by tickets (see `/docs/08-WORK-TICKETS.md`). One ticket = one branch = one PR, merged into `main`.
+
+- **Protected branches:** `main`, `feature/entrega-1-OJE`, `feature/entrega-2-OJE` and `final-project-OJE`. Never commit directly to any of them, and never check them out to work on them.
+- **Branches are per ticket, not per request.** Before touching code, check the current branch:
+  - On a protected branch: switch to `main`, update it (`git pull --ff-only`), then create the ticket branch with `git checkout -b <type>/t-<NN>-<slug>`, where `<type>` is `feat`, `fix`, `chore`, `docs` or `refactor` (e.g. `feat/t-07-groups-api`).
+  - On a ticket branch: stay on it if the request belongs to that ticket. If it belongs to a different ticket, or the branch's PR is already merged or closed, go back to `main` and create the right ticket branch from there (never branch off another ticket branch).
+  - If the request doesn't clearly map to a ticket, ask which one before starting.
+- **Commits are per request:** when you finish each request, use the `/commit` skill. If the branch already has an open PR, push after committing.
+- **The PR is per ticket.** The user decides when the ticket is done (e.g. "open the PR"); don't open one on your own. Then:
+  1. `git push -u origin HEAD`.
+  2. `gh pr create --base main`, with the ticket ID in the title and a full description of the changes in the body.
+  3. Run the `adversarial-reviewer` subagent on the PR and post its findings as a PR comment. While the PR has no CI check runs, run `npm test` first, include its output in the subagent's prompt, and post that output in the same comment, below the findings. If `npm test` can't run yet, say so in the comment.
+  4. Fix what's warranted, commit, push. Re-run the review at most once.
+- **Final reply:** don't repeat the PR summary in chat. The session will be lost; the PR won't. Reply with the PR URL plus one line on any unresolved review findings.
+
+## Course deliveries
+
+Only when the user explicitly asks for a delivery:
+- Delivery branches: D1 → `feature/entrega-1-OJE`, D2 → `feature/entrega-2-OJE`, D3 → `final-project-OJE`.
+- First check that local `main` is up to date with `origin/main` and that no ticket PR meant for this delivery is still open. Report anything pending and wait for confirmation.
+- Push with `git push origin main:<delivery-branch>`. Never force-push; if the push is rejected as non-fast-forward, stop and tell the user.
+
 ## Commands (planned)
 
 `npm run setup` · `npm run dev` · `npm test` · `npm run test:e2e` · `npm run test:coverage` · `npm run lint` · `npm run db:migrate` · `npm run db:seed` (all test commands: [docs/07-SECURITY-AND-TESTING.md §2.5](docs/07-SECURITY-AND-TESTING.md#25-running-tests-locally-and-in-ci))

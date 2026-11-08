@@ -20,7 +20,7 @@ context: |
 
 rules:
   proposal:
-    - Name the change like the ticket's branch, for example t-07-groups-api (docs/08-WORK-TICKETS.md §1).
+    - Name the change like the ticket's branch without the type prefix, for example t-07-groups-api for branch feat/t-07-groups-api (docs/08-WORK-TICKETS.md §1).
     - Start with the ticket ID and title, and link the ticket's GitHub issue from the ticket overview (docs/08-WORK-TICKETS.md §3).
     - List the stories, functional requirements, business rules, and acceptance criteria the ticket covers, by ID only.
     - Keep to the ticket's scope. Anything outside it goes under a Non-goals heading.
