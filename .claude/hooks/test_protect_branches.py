@@ -28,6 +28,7 @@ KINDS = [
     ("could update every matching", "all"),
     ("--prune` can delete", "prune"),
     ("couldn't check this command safely", "unsure"),
+    ("would add commits to the protected branch", "local-commits"),
     ("merging a pull request changes main", "merge"),
     ("would write to the protected branch", "github-write"),
     ("can't see which branch", "github-unknown"),
@@ -109,6 +110,26 @@ CASES = [
     ("B39", "commit outside a git repository", 'git commit -m "x"', "notrepo", "unsure"),
     ("B40", "unterminated quote", 'git commit -m "unterminated', "ticket", "unsure"),
     ("B41", "invalid hook input JSON", None, "ticket", "unsure"),
+    # Review of PR #46: each finding reproduced
+    ("R01", "destination heads/main (suffix of refs/heads/main)", "git push origin HEAD:heads/main", "ticket", "push-main"),
+    ("R02", "delete heads/<delivery branch>", "git push origin :heads/feature/entrega-1-OJE", "ticket", "delete"),
+    ("R03", "--delete heads/main", "git push origin --delete heads/main", "ticket", "delete"),
+    ("R04", "destination in another letter case", "git push origin HEAD:MAIN", "ticket", "push-main"),
+    ("R05", "delivery branch in another case, full ref", "git push origin HEAD:refs/heads/Final-Project-OJE", "ticket", "push-delivery"),
+    ("R06", "GIT_DIR prefix pointing at the main worktree", 'GIT_DIR={main}/.git git commit -m "x"', "ticket", "commit-main"),
+    ("R07", "GIT_DIR through env", 'env GIT_DIR={main}/.git git commit -m "x"', "ticket", "commit-main"),
+    ("R08", "GIT_DIR through export", 'export GIT_DIR={main}/.git && git commit -m "x"', "ticket", "commit-main"),
+    ("R09", "GIT_DIR from an unresolvable variable", 'GIT_DIR="$NO_SUCH_VAR_XYZ" git commit -m "x"', "ticket", "unsure"),
+    ("R10", "git merge on main", "git merge t-07-groups-api", "main", "local-commits"),
+    ("R11", "git cherry-pick on a delivery branch", "git cherry-pick abc123", "delivery2", "local-commits"),
+    ("R12", "git revert on main", "git revert HEAD", "main", "local-commits"),
+    ("R13", "git rebase on main", "git rebase -i HEAD~3", "main", "local-commits"),
+    ("R14", "git am on main", "git am fix.patch", "main", "local-commits"),
+    ("R15", "cd inside a subshell doesn't carry over", '(cd {ticket}); git commit -m "x"', "main", "commit-main"),
+    ("R16", "gh api graphql --input file", "gh api graphql --input mutation.json", "ticket", "unsure"),
+    ("R17", "wrapper with option values (sudo -u)", "sudo -u ojordan git push --force", "ticket", "force"),
+    ("R18", "env -C changes the directory", 'env -C {main} git commit -m "x"', "ticket", "unsure"),
+    ("R19", "MCP write to heads/main", mcp("push_files", branch="heads/Main", message="x", files=[]), "ticket", "github-write"),
     # GitHub without git: MCP tools and the gh CLI
     ("G01", "MCP push_files to main", mcp("push_files", branch="main", message="x", files=[]), "ticket", "github-write"),
     ("G02", "MCP create_or_update_file on a delivery branch", mcp("create_or_update_file", branch="feature/entrega-1-OJE", path="a.md", content="x", message="x"), "ticket", "github-write"),
@@ -160,6 +181,15 @@ CASES = [
     ("H09", "gh api comment mentioning merge and main", "gh api repos/o/r/issues/46/comments -f body='merge main later'", "main", "allow"),
     ("H10", "gh api graphql query (read)", "gh api graphql -f query='query { repository(owner: \"o\", name: \"r\") { name } }'", "main", "allow"),
     ("H11", "commit message mentioning gh pr merge", 'git commit -m "Run gh pr merge after review"', "ticket", "allow"),
+    ("S01", "unquoted echo of a git command on main", "echo git commit -m x", "main", "allow"),
+    ("S02", "grep with git push as file names, on main", "grep -rn foo git push", "main", "allow"),
+    ("S03", "git merge --ff-only on main", "git merge --ff-only origin/main", "main", "allow"),
+    ("S04", "git merge --abort on main", "git merge --abort", "main", "allow"),
+    ("S05", "git rebase onto main from a ticket branch", "git rebase main", "ticket", "allow"),
+    ("S06", "cd into main inside a subshell, commit outside", '(cd {main}) && git commit -m "x"', "ticket", "allow"),
+    ("S07", "push to heads/<ticket branch>", "git push origin HEAD:heads/t-07-groups-api", "ticket", "allow"),
+    ("S08", "command -v git", "command -v git", "main", "allow"),
+    ("S09", "GIT_DIR prefix pointing at the ticket worktree's repo, on a ticket", 'GIT_DIR={ticketgit} git commit -m "x"', "main", "allow"),
 ]
 
 
@@ -189,6 +219,7 @@ def build_fixture(root, env):
                         ("final", "final-project-OJE"), ("tracking", "t-08-tracks-main")):
         dirs[key] = os.path.join(root, key)
         git(repo, "worktree", "add", "-q", dirs[key], branch)
+    dirs["ticketgit"] = os.path.join(repo, ".git", "worktrees", "ticket")
     dirs["detached"] = os.path.join(root, "detached")
     git(repo, "worktree", "add", "-q", "--detach", dirs["detached"], "main")
     dirs["notrepo"] = os.path.join(root, "notrepo")

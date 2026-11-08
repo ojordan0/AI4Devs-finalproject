@@ -4,7 +4,8 @@
 Enforces the branch rules in CLAUDE.md ("Branches, commits and PRs" and
 "Course deliveries") so they don't depend on Claude remembering them. It blocks:
 
-  - git commit while the current branch is protected;
+  - git commit while the current branch is protected, and the other commands
+    that add commits to it (merge, cherry-pick, revert, rebase, am);
   - git push that would update main (main changes only through merged PRs);
   - git push that would update a delivery branch from anything other than main;
   - force pushes of any kind, and pushes that delete a protected branch;
@@ -52,6 +53,12 @@ MSG_COMMIT_DELIVERY = (
     "'{branch}', which only ever receives main through "
     "`git push origin main:{branch}` (" + DELIVERY_RULES + "). Don't commit or work "
     "on it: switch to main, update it with `git pull --ff-only`, and create a "
+    "ticket branch (" + BRANCH_RULES + ")."
+)
+MSG_LOCAL_COMMITS = (
+    "Blocked by the branch-protection hook: `git {command}` here would add commits to "
+    "the protected branch '{branch}'. To update it from the remote, use "
+    "`git pull --ff-only` (or `git merge --ff-only`); all other work happens on a "
     "ticket branch (" + BRANCH_RULES + ")."
 )
 MSG_PUSH_MAIN = (
@@ -273,7 +280,10 @@ def tokenize(text):
 
 
 def simple_commands(tokens):
-    """Group tokens into simple commands (lists of words), without redirections."""
+    """Group tokens into simple commands (lists of words), without redirections.
+
+    The subshell parentheses are yielded too, as the strings "(" and ")".
+    """
     words, skip_next = [], False
     for kind, value in tokens:
         if kind == "redir":
@@ -282,6 +292,8 @@ def simple_commands(tokens):
             if words:
                 yield words
             words, skip_next = [], False
+            if value in ("(", ")"):
+                yield value
         elif skip_next:
             skip_next = False
         else:
@@ -395,6 +407,21 @@ def short_branch(ref):
     return ref
 
 
+def protected_name(ref):
+    """The protected branch a branch name or push destination refers to, or None.
+
+    Git resolves a push destination that is a suffix of a remote ref, so
+    'heads/main' updates 'refs/heads/main'; and some remotes and file systems
+    ignore letter case. Both are normalized before comparing.
+    """
+    name = ref.strip()
+    for prefix in ("refs/", "heads/"):
+        if name.lower().startswith(prefix):
+            name = name[len(prefix):]
+    lowered = name.lower()
+    return next((branch for branch in PROTECTED if branch.lower() == lowered), None)
+
+
 # --- Checking -----------------------------------------------------------------
 
 SHELL_KEYWORDS = {"!", "{", "}", "if", "then", "else", "elif", "fi", "do", "done",
@@ -404,9 +431,24 @@ ASSIGNMENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=")
 GIT_OPTIONS_WITH_VALUE = ("-c", "--git-dir", "--work-tree", "--namespace", "--config-env")
 
 
+# Programs that run the program named in their arguments, with the options that
+# take a value (so the value isn't mistaken for the program).
+WRAPPERS = {
+    "builtin": set(), "command": set(), "exec": {"-a"}, "nohup": set(), "time": set(),
+    "caffeinate": {"-t", "-w"}, "env": {"-u", "--unset", "-S", "--split-string"},
+    "nice": {"-n", "--adjustment"}, "stdbuf": {"-i", "-o", "-e"},
+    "sudo": {"-u", "-g", "-h", "-p", "-C", "-D", "-r", "-t", "-U"},
+    "timeout": {"-s", "--signal", "-k", "--kill-after"},
+    "xargs": {"-I", "-L", "-n", "-P", "-s", "-d", "-E", "-a"},
+}
+# Environment variables that point git at another repository.
+GIT_ENV_OPTIONS = {"GIT_DIR": "--git-dir", "GIT_WORK_TREE": "--work-tree"}
+
+
 class Checker:
     def __init__(self, cwd):
         self.cwd = cwd
+        self.exported = {}  # GIT_DIR / GIT_WORK_TREE set with export (None: unresolvable)
         self.switched = {}  # Repo.key -> branch, DETACHED or UNKNOWN after a checkout
 
     # Shell level
@@ -414,36 +456,74 @@ class Checker:
     def check(self, text, depth=0):
         if depth > 5:
             raise Unsure("commands nested too deeply")
-        for words in simple_commands(tokenize(strip_heredocs(text))):
-            self.check_simple(words, depth)
+        subshells = []
+        for item in simple_commands(tokenize(strip_heredocs(text))):
+            if item == "(":
+                subshells.append((self.cwd, dict(self.exported)))
+            elif item == ")":
+                # A subshell's cd and export end with it. A checkout inside it
+                # still counts: it changes the repository, not the shell.
+                if subshells:
+                    self.cwd, self.exported = subshells.pop()
+            else:
+                self.check_simple(item, depth)
 
     def check_simple(self, words, depth):
-        while words and (words[0] in SHELL_KEYWORDS or ASSIGNMENT_RE.match(words[0])):
+        while words and words[0] in SHELL_KEYWORDS:
             words = words[1:]
-        if not words:
+        # Find the program: skip variable assignments and wrappers such as env,
+        # sudo, or timeout. Only the program itself is checked, so text that
+        # merely mentions git (echo git push) is not.
+        assignments, program, args = {}, None, words
+        while args:
+            if ASSIGNMENT_RE.match(args[0]):
+                name, value = args[0].split("=", 1)
+                assignments[name] = value
+                args = args[1:]
+                continue
+            name = os.path.basename(args[0]).lower()
+            if name not in WRAPPERS:
+                program, args = name, args[1:]
+                break
+            args = skip_wrapper_options(name, args[1:])
+        if program is None:
             return
-        command = os.path.basename(words[0]).lower()
-        if command in ("cd", "pushd"):
-            args = [w for w in words[1:] if w not in ("-P", "-L", "-e", "-@", "--")]
-            self.cwd = self.resolve(self.cwd, args[0] if args else "~")
-        elif command == "popd":
+        if program in ("cd", "pushd"):
+            targets = [a for a in args if a not in ("-P", "-L", "-e", "-@", "--")]
+            self.cwd = self.resolve(self.cwd, targets[0] if targets else "~")
+        elif program == "popd":
             self.cwd = None
-        elif command == "eval":
-            self.check(" ".join(words[1:]), depth + 1)
-        elif command in SHELLS:
-            script = shell_script(words[1:])
+        elif program == "export":
+            for arg in args:
+                name, _, value = arg.partition("=")
+                if name in GIT_ENV_OPTIONS and value:
+                    self.exported[name] = self.resolve(self.cwd, value)
+        elif program == "unset":
+            for name in args:
+                self.exported.pop(name, None)
+        elif program == "eval":
+            self.check(" ".join(args), depth + 1)
+        elif program in SHELLS:
+            script = shell_script(args)
             if script is not None:
                 self.check(script, depth + 1)
-        else:
-            # git or gh itself, or behind a wrapper such as env, timeout, or xargs.
-            for index, word in enumerate(words):
-                program = os.path.basename(word).lower()
-                if program == "git":
-                    self.check_git(words[index + 1:], depth)
-                    return
-                if program == "gh":
-                    check_gh(words[index + 1:])
-                    return
+        elif program == "git":
+            self.check_git(args, depth, self.git_env_options(assignments))
+        elif program == "gh":
+            check_gh(args)
+
+    def git_env_options(self, assignments):
+        """GIT_DIR and GIT_WORK_TREE, from export or a prefix, as git options."""
+        values = dict(self.exported)
+        for name in GIT_ENV_OPTIONS:
+            if name in assignments:
+                values[name] = self.resolve(self.cwd, assignments[name])
+        options = []
+        for name, value in values.items():
+            if value is None:
+                raise Unsure("%s points to a path the hook can't resolve" % name)
+            options += [GIT_ENV_OPTIONS[name], value]
+        return options
 
     @staticmethod
     def resolve(cwd, path):
@@ -461,8 +541,8 @@ class Checker:
 
     # Git level
 
-    def check_git(self, args, depth):
-        cwd, options, i = self.cwd, [], 0
+    def check_git(self, args, depth, options=None):
+        cwd, options, i = self.cwd, list(options or []), 0
         while i < len(args):
             arg = args[i]
             if arg == "-C":
@@ -502,6 +582,12 @@ class Checker:
             return
         if sub == "commit":
             self.check_commit(repo)
+        elif sub in ("merge", "cherry-pick", "revert", "rebase", "am"):
+            if any(arg in ("--abort", "--quit") for arg in args):
+                return  # backing out adds nothing
+            if sub == "merge" and "--ff-only" in args:
+                return  # how a protected branch is updated from the remote
+            self.check_commit(repo, command=sub)
         elif sub == "push":
             self.check_push(repo, args)
         elif sub in ("checkout", "switch"):
@@ -519,12 +605,16 @@ class Checker:
                          "command switches to")
         return branch
 
-    def check_commit(self, repo):
+    def check_commit(self, repo, command="commit"):
         branch = self.current_branch(repo)
-        if branch == MAIN:
-            raise Block(MSG_COMMIT_MAIN.format(branch=branch))
-        if branch in DELIVERY_BRANCHES:
-            raise Block(MSG_COMMIT_DELIVERY.format(branch=branch))
+        name = None if branch is DETACHED else protected_name(branch)
+        if name is None:
+            return
+        if command != "commit":
+            raise Block(MSG_LOCAL_COMMITS.format(command=command, branch=name))
+        if name == MAIN:
+            raise Block(MSG_COMMIT_MAIN.format(branch=name))
+        raise Block(MSG_COMMIT_DELIVERY.format(branch=name))
 
     def track_switch(self, repo, sub, args):
         """Record where a checkout or switch earlier in the command leaves HEAD."""
@@ -685,14 +775,15 @@ class Checker:
     def check_destination(self, source, destination, deleting):
         if destination in ("HEAD", "@"):
             raise Unsure("a push to HEAD on the remote")
-        name = short_branch(destination)
+        name = protected_name(destination)
+        if name is None:
+            return
+        if deleting:
+            raise Block(MSG_DELETE.format(branch=name))
         if name == MAIN:
-            raise Block(MSG_DELETE.format(branch=name) if deleting else MSG_PUSH_MAIN)
-        if name in DELIVERY_BRANCHES:
-            if deleting:
-                raise Block(MSG_DELETE.format(branch=name))
-            if source not in DELIVERY_SOURCES:
-                raise Block(MSG_PUSH_DELIVERY.format(branch=name))
+            raise Block(MSG_PUSH_MAIN)
+        if source not in DELIVERY_SOURCES:
+            raise Block(MSG_PUSH_DELIVERY.format(branch=name))
 
 
 # --- GitHub: the gh CLI and the GitHub MCP tools --------------------------------
@@ -723,7 +814,7 @@ def check_gh(args):
 
 
 def check_gh_api(args):
-    method, endpoint, has_body, fields, i = None, None, False, [], 0
+    method, endpoint, has_body, from_file, fields, i = None, None, False, False, [], 0
     while i < len(args):
         arg = args[i]
         value = args[i + 1] if i + 1 < len(args) else ""
@@ -743,17 +834,20 @@ def check_gh_api(args):
             has_body = True
             fields.append(arg.split("=", 1)[1])
         elif arg in GH_OPTIONS_WITH_VALUE:
-            has_body = has_body or arg == "--input"
+            if arg == "--input":
+                has_body = from_file = True
             i += 2
             continue
+        elif arg.startswith("--input="):
+            has_body = from_file = True
         elif not arg.startswith("-") and endpoint is None:
             endpoint = arg
         i += 1
     if endpoint is None:
         return
     if endpoint == "graphql":
-        if any(f.startswith("query=@") for f in fields):
-            raise Unsure("a gh api graphql query read from a file")
+        if from_file or any(f.startswith("query=@") for f in fields):
+            raise Unsure("a gh api graphql request read from a file")
         if GH_GRAPHQL_WRITE_RE.search(" ".join(fields)):
             raise Block(MSG_GH_API)
         return
@@ -778,9 +872,25 @@ def check_github_tool(operation, tool_input):
     if not isinstance(branch, str) or not branch.strip():
         raise Unsure("the GitHub tool call has no branch, so it would use the "
                      "repository's default branch")
-    name = short_branch(branch.strip())
-    if name in PROTECTED:
+    name = protected_name(branch)
+    if name:
         raise Block(MSG_GITHUB_WRITE.format(branch=name))
+
+
+def skip_wrapper_options(name, args):
+    """Drop a wrapper's options (and timeout's duration) to reach the program."""
+    takes_value = WRAPPERS[name]
+    while args and args[0].startswith("-") and args[0] != "-":
+        option, args = args[0], args[1:]
+        if option == "--":
+            break
+        if name == "env" and option.split("=", 1)[0] in ("-C", "--chdir"):
+            raise Unsure("env -C runs the command in another directory")
+        if option in takes_value and args:
+            args = args[1:]
+    if name == "timeout" and args:
+        args = args[1:]  # the duration
+    return args
 
 
 def shell_script(args):
