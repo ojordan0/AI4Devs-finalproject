@@ -25,11 +25,11 @@ T-02 has no acceptance criteria with an ID, so no task or test carries an `AC-` 
 
 ## 3. Seed data
 
-- [ ] 3.1 Add `scripts/seed-data.ts` with the fixed IDs and `loadSeedData(db)`, inserting the data in §3 in one transaction with `ON CONFLICT DO NOTHING`, and with the details in design decisions 9 and 10. Verify with `npx tsc --noEmit`, and that the WhatsApp numbers pass `libphonenumber-js`.
+- [ ] 3.1 Add `scripts/seed-data.ts` with the fixed IDs and `loadSeedData(db)`, inserting the data in §3 in one transaction with `ON CONFLICT (id) DO NOTHING` (design decision 8), and with the details in design decisions 9 and 10. Verify with `npx tsc --noEmit`, and that the WhatsApp numbers pass `libphonenumber-js`.
 - [ ] 3.2 Rewrite `scripts/seed.ts` as the command in design decision 7, with the guard against a remote database. Verify that `npm run db:seed` loads the data locally, that a second run succeeds, and that a remote `DATABASE_URL`, given in the host or through a `host` parameter, stops it before connecting.
 - [ ] 3.3 Test the requirement "Seed contents" in `tests/integration/seed-data.test.ts`, starting from emptied tables. Verify that the test named for loading into an empty database passes, and that each scenario has a test.
 - [ ] 3.4 Test the requirement "Seed data is consistent". Verify that the timeline test walks each item's rows against the transitions in BR-22 and ends in the item's status.
-- [ ] 3.5 Test the requirement "Seed is safe to load again", comparing every table's rows before and after a second load, and keeping an added group and an edited item. Verify that a deliberate change to one seed row makes the comparison fail, then remove the change.
+- [ ] 3.5 Test the requirement "Seed is safe to load again", comparing every table's rows before and after a second load, keeping an added group and an edited item, and stopping with no seed rows added when a developer's user already has a seed email. Verify that a deliberate change to one seed row makes the comparison fail, then remove the change.
 
 ## 4. Clean test data
 

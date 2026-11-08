@@ -94,9 +94,11 @@ The delete actions are those in Data model §2: `cascade` for rows owned by a gr
 
 The guard is `testDatabaseUrl`, called the same way as in `scripts/setup.mjs`, and only for its check: the seed still connects to `DATABASE_URL`. [Infrastructure §2](../../../docs/06-INFRASTRUCTURE.md#2-environments) lists seed data only for the local environment, and these rows include fixed invitation codes.
 
-### 8. Loading twice: fixed IDs and `ON CONFLICT DO NOTHING`
+### 8. Loading twice: fixed IDs and `ON CONFLICT (id) DO NOTHING`
 
-Every row has a fixed ID, and every insert skips rows that already exist. The existing `developer-environment` spec says setup can run again without losing development data, so the seed never updates or deletes.
+Every row has a fixed ID, and every insert skips a row whose ID already exists. The existing `developer-environment` spec says setup can run again without losing development data, so the seed never updates or deletes.
+
+The conflict names the primary key, so only a true re-load is skipped. A plain `ON CONFLICT DO NOTHING` was rejected, because it also skips every other unique conflict: a developer's own user with a seed email would make the seed skip that person silently, and the load would then fail on an unrelated foreign key, or pass with a row missing. With the primary key named, the load stops at the conflict with an error naming the constraint, and the transaction leaves nothing half loaded.
 
 Updating rows back to their seed values was rejected, because it would overwrite a developer's edits. Deleting and reloading was rejected for the same reason.
 
@@ -145,6 +147,7 @@ Seed text isn't interface text, so it stays in the seed file rather than the tra
 - **Group deletion order could change the outcome.** → The one-way shipment check holds in any order, and a test deletes a group with shipped items.
 - **Fixed invitation codes in the seed would be known secrets.** → The seed refuses a non-local database, and production is never seeded.
 - **A partly seeded database could mix old and new data if the seed changes later.** → Inserts skip existing rows, so a changed seed row doesn't update. A developer can recreate the volume, and tests always start from an emptied database.
+- **A development change can stop a later load.** For example, deleting "Grandma's house" and making another address the default means the seed's re-inserted default conflicts with it, and `npm run setup` stops at its seed step. → The error names the constraint, and recreating the volume fixes it. A clear failure is better than silently missing data, and this takes an unusual edit to a seeded group.
 - **The schema and migrations could drift apart.** → Task 2.5 confirms they agree. Without a CI check, a later ticket that forgets to generate a migration fails only when its integration test hits the missing column.
 - **`TRUNCATE` is destructive.** → The address is always derived by `testDatabaseUrl`, which forces the test database name and refuses other hosts.
 

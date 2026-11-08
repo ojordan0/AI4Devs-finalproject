@@ -81,6 +81,13 @@ Loading the seed into a database that already has it SHALL add nothing and chang
 - **WHEN** the seed is loaded again
 - **THEN** the added group and the edit are still there
 
+#### Scenario: Conflict with other data stops the load
+
+- **GIVEN** an empty database, apart from a developer's own user with the email of a seed person
+- **WHEN** the seed is loaded
+- **THEN** it stops with an error naming the conflict
+- **AND** no seed row was added
+
 ### Requirement: Seed stays local
 
 `npm run db:seed` SHALL refuse any database that isn't on the local machine, because Infrastructure §2 keeps seed data to the local environment.
