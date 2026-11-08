@@ -3,3 +3,14 @@ issue-map.json
 .claude/settings.local.json
 .claude/skills/impeccable/scripts/bin/
 scripts/__pycache__/
+.claude/hooks/__pycache__/
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+.env
+.env.*
+!.env.example
+coverage/
+playwright-report/
+test-results/

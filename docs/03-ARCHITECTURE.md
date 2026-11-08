@@ -1,6 +1,6 @@
 # Architecture
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 7, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 8, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -200,7 +200,13 @@ Every package the project installs. Milestone 1 packages are installed with the 
 
 Type definitions (`@types/*`) are added for packages that don't include their own.
 
-**Versions.** T-01 installs the current stable release of each package, and `package-lock.json` pins the exact versions. Zod must be version 4, which zod-to-openapi requires. Dependency updates and audits follow [Security and testing §1](07-SECURITY-AND-TESTING.md#1-security).
+**Versions.** T-01 installs the current stable release of each package, and `package-lock.json` pins the exact versions, with these exceptions:
+
+- Zod must be version 4, which zod-to-openapi requires.
+- TypeScript stays on version 6, because `typescript-eslint`, which `eslint-config-next` uses, doesn't support version 7.
+- ESLint stays on version 9, because `eslint-plugin-jsx-a11y`, `eslint-plugin-react`, and `eslint-plugin-import`, which `eslint-config-next` uses, don't support version 10.
+
+Move TypeScript and ESLint to their current stable releases, and remove their exceptions here, once `eslint-config-next` supports them. Dependency updates and audits follow [Security and testing §1](07-SECURITY-AND-TESTING.md#1-security).
 
 ---
 
@@ -231,8 +237,11 @@ Planned layout of the repository:
 ├── tests/
 │   ├── unit/                     Business rules
 │   ├── integration/              API endpoints against a real database
-│   └── e2e/                      Browser tests of the main flows
-├── scripts/                      Setup, seed, OpenAPI generation, and GitHub issue setup scripts
+│   ├── e2e/                      Browser tests of the main flows
+│   └── support/                  Test database address and test setup
+├── scripts/                      Setup, seed, documentation link check, OpenAPI generation, and GitHub issue setup scripts
+├── .github/                      CI workflow and Dependabot configuration
+├── .claude/                      Claude Code settings, hooks, agents, and skills
 ├── docs/                         This documentation, the setup checklist, and the generated openapi.yaml
 ├── design/stitch/                Stitch screen mockups, one folder per screen
 ├── openspec/                     OpenSpec specs and changes, one change per work ticket
@@ -240,7 +249,10 @@ Planned layout of the repository:
 ├── DESIGN.md                     Design system: tokens, components, and how to use the mockups
 ├── docker-compose.yml            Local Postgres
 ├── drizzle.config.ts
+├── vitest.config.mts
+├── playwright.config.ts
 ├── vercel.json                   Cron schedule
+├── .nvmrc                        Node.js version
 └── package.json                  setup, dev, test, lint, db:migrate, and db:seed scripts
 ```
 

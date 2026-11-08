@@ -94,6 +94,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Spec first | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) and [`CLAUDE.md`](CLAUDE.md), applied to every OpenSpec artifact by [`openspec/config.yaml`](openspec/config.yaml) | Each work ticket becomes one OpenSpec change, reviewed before implementation; requirements cite PRD IDs, and scenarios are named after acceptance criteria. |
 | Definition of done | [Work tickets §1](docs/08-WORK-TICKETS.md#1-how-tickets-work) | What every ticket needs before it is merged. |
 | Branches, commits, and pull requests | [`CLAUDE.md`](CLAUDE.md), enforced by [`.claude/hooks/protect-branches.py`](.claude/hooks/protect-branches.py) | One branch and pull request per ticket, a commit per request, the pull request and review steps, and course deliveries. The hook blocks commits on protected branches, pushes to `main`, force pushes, and GitHub writes that bypass a pull request (part 7). |
+| Quality checks | [`.claude/hooks/check-before-pr.py`](.claude/hooks/check-before-pr.py) and [`.claude/hooks/lint-edited-file.py`](.claude/hooks/lint-edited-file.py), configured in [`.claude/settings.json`](.claude/settings.json) | Claude Code can't open a pull request while linting, type checks, or tests fail, and sees ESLint errors after each edit (T-01). |
 
 **Skills and subagents** used in Claude:
 
