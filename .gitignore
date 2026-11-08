@@ -1,3 +1,5 @@
 .DS_Store
 issue-map.json
 .claude/settings.local.json
+.claude/skills/impeccable/scripts/bin/
+scripts/__pycache__/

@@ -1,6 +1,6 @@
 # Architecture
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.5 · **Date:** October 18, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 7, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -234,7 +234,10 @@ Planned layout of the repository:
 │   └── e2e/                      Browser tests of the main flows
 ├── scripts/                      Setup, seed, OpenAPI generation, and GitHub issue setup scripts
 ├── docs/                         This documentation, the setup checklist, and the generated openapi.yaml
+├── design/stitch/                Stitch screen mockups, one folder per screen
 ├── openspec/                     OpenSpec specs and changes, one change per work ticket
+├── PRODUCT.md                    Product brief for design work: role priority, positioning, principles
+├── DESIGN.md                     Design system: tokens, components, and how to use the mockups
 ├── docker-compose.yml            Local Postgres
 ├── drizzle.config.ts
 ├── vercel.json                   Cron schedule
