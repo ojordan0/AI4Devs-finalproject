@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 8, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.8 · **Date:** November 8, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -117,10 +117,11 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 **Scope:**
 
 - Drizzle schema for every table, enumeration, constraint, and index in [Data model §2](04-DATA-MODEL.md#2-entities). Milestone 2 tables (`job_runs`) are included now, so later increments add no structural migrations.
-- Check constraints: quantity range, buyer present only when the status requires it, shipment present only when shipped.
+- Check constraints, as [Data model §2](04-DATA-MODEL.md#2-entities) lists them: quantity range, a buyer exactly when the status isn't pending, shipment present only when shipped, a note when unavailable, link scheme, phone number format, and country format.
 - Partial unique index: at most one default delivery address per group.
 - First migration generated with drizzle-kit and applied by `npm run db:migrate`.
 - Seed script loading the data in [Data model §3](04-DATA-MODEL.md#3-seed-data), safe to run again.
+- A check in the CI workflow that the migrations match the schema ([Infrastructure §3](06-INFRASTRUCTURE.md#3-deployment-process), step 2).
 
 **Acceptance criteria:** integration tests prove that each constraint rejects invalid data, and that the seed loads into an empty database.
 

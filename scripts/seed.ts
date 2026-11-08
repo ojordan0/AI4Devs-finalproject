@@ -1,9 +1,23 @@
 import { existsSync } from "node:fs";
 
+import { drizzle } from "drizzle-orm/node-postgres";
 import { Client } from "pg";
 
-// Loads the data in docs/04-DATA-MODEL.md, section 3 (T-02). There is no data to
-// load yet, so this only confirms that the database can be reached.
+import * as schema from "../src/server/db/schema";
+import { testDatabaseUrl } from "../tests/support/test-database";
+import { loadSeedData } from "./seed-data";
+
+// Seed data is for the local environment only (docs/06-INFRASTRUCTURE.md, section 2).
+function refuseRemoteDatabase(connectionString: string) {
+  try {
+    testDatabaseUrl(connectionString);
+  } catch (error) {
+    throw new Error("The seed only loads into a local database.", {
+      cause: error,
+    });
+  }
+}
+
 async function main() {
   if (existsSync(".env")) {
     process.loadEnvFile();
@@ -15,10 +29,15 @@ async function main() {
       "DATABASE_URL is not set. Run `npm run setup` to create .env.",
     );
   }
+  refuseRemoteDatabase(connectionString);
 
   const client = new Client({ connectionString });
   await client.connect();
-  await client.end();
+  try {
+    await loadSeedData(drizzle(client, { schema }));
+  } finally {
+    await client.end();
+  }
 }
 
 main().catch((error: unknown) => {

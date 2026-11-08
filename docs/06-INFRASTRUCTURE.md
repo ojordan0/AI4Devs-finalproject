@@ -1,6 +1,6 @@
 # Infrastructure and deployment
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 8, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 8, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -33,7 +33,7 @@ There is no preview environment for the MVP ([Architecture §3](03-ARCHITECTURE.
 ## 3. Deployment process
 
 1. A developer opens a pull request.
-2. GitHub Actions installs dependencies and runs linting, type checks, unit tests, integration tests against a Postgres service container with the coverage target ([Security and testing §2.6](07-SECURITY-AND-TESTING.md#26-coverage-targets)), browser tests in Chromium and WebKit against a production build with the local adapters, a check that the generated OpenAPI document is up to date, a link check across the documentation, and a dependency audit that fails on a high or critical vulnerability ([Security and testing §1](07-SECURITY-AND-TESTING.md#1-security)).
+2. GitHub Actions installs dependencies and runs linting, type checks, unit tests, integration tests against a Postgres service container with the coverage target ([Security and testing §2.6](07-SECURITY-AND-TESTING.md#26-coverage-targets)), a check that the migrations match the schema, which runs with the tests and reports as part of their result, browser tests in Chromium and WebKit against a production build with the local adapters, a check that the generated OpenAPI document is up to date, a link check across the documentation, and a dependency audit that fails on a high or critical vulnerability ([Security and testing §1](07-SECURITY-AND-TESTING.md#1-security)).
 3. Branch protection on `main` requires a pull request and all checks to pass, with no bypass for administrators, and doesn't allow force pushes or deletion. It requires no approvals, because the repository has one collaborator and GitHub doesn't count an author's approval. Review is a required step of the pull request process instead ([`CLAUDE.md`](../CLAUDE.md#branches-commits-and-prs)).
 4. Vercel builds `main`. The build applies database migrations to production and then builds the app. Migrations must be backward compatible, because the previous version keeps serving until the new one is live.
 5. After the deployment, a quick check confirms that the home page and sign-in load.
