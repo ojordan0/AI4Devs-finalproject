@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.5 · **Date:** October 18, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 7, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -13,8 +13,8 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 - **Epic and stories:** each ticket belongs to one epic and implements one or more user stories ([PRD §14](01-PRD.md#14-epics-and-user-stories)). The first story listed is the ticket's main story. Tickets with no story are foundation work in E-08.
 - **Delivery** is the course deadline the ticket must meet: D2 or D3 ([PRD §8.1](01-PRD.md#81-milestone-1-core-cycle-end-to-end)).
 - **Size:** S (up to half a day), M (one to two days), L (three to five days).
-- **Spec first:** each ticket is built as one OpenSpec change, named like its branch. The change is generated from the ticket and the documents it references; its proposal links the ticket's issue, its requirements cite the PRD IDs instead of copying rule text, and each scenario is named after the acceptance criterion it verifies, for example `AC-59`. The change is reviewed before implementation and archived when the pull request is merged. If the documents leave a question open, they are updated first.
-- **Branching:** one branch and one pull request per ticket, named after the ticket ID, for example `t-07-groups-api`, and merged into `main`.
+- **Spec first:** each ticket is built as one OpenSpec change, named like its branch without the type prefix (branch `feat/t-07-groups-api`, change `t-07-groups-api`). The change is generated from the ticket and the documents it references; its proposal links the ticket's issue, its requirements cite the PRD IDs instead of copying rule text, and each scenario is named after the acceptance criterion it verifies, for example `AC-59`. The change is reviewed before implementation and archived when the pull request is merged. If the documents leave a question open, they are updated first.
+- **Branching:** one branch and one pull request per ticket, merged into `main`. The branch is named `<type>/t-<NN>-<slug>`, after the ticket ID, where `<type>` is `feat`, `fix`, `chore`, `docs`, or `refactor`; for example `feat/t-07-groups-api`.
 - **Course deliveries:** at each deadline, the state of `main` is pushed to the delivery branch: `feature/entrega-1-OJE` for D1, `feature/entrega-2-OJE` for D2, and `final-project-OJE` for D3.
 
 **Definition of done** for every ticket:
