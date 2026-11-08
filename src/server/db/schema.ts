@@ -214,7 +214,6 @@ export const lists = pgTable("lists", {
     .references(() => groups.id, { onDelete: "cascade" }),
   name: varchar("name", { length: 100 }).notNull(),
   archivedAt: timestamptz("archived_at"),
-  probe: text("probe"),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 });
