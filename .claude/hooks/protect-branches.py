@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Claude Code PreToolUse hook for the Bash tool.
+"""Claude Code PreToolUse hook for the Bash tool and the GitHub MCP tools.
 
 Enforces the branch rules in CLAUDE.md ("Branches, commits and PRs" and
 "Course deliveries") so they don't depend on Claude remembering them. It blocks:
@@ -7,7 +7,11 @@ Enforces the branch rules in CLAUDE.md ("Branches, commits and PRs" and
   - git commit while the current branch is protected;
   - git push that would update main (main changes only through merged PRs);
   - git push that would update a delivery branch from anything other than main;
-  - force pushes of any kind, and pushes that delete a protected branch.
+  - force pushes of any kind, and pushes that delete a protected branch;
+  - GitHub writes that bypass git: MCP tools that commit to, create, or delete
+    a protected branch, merging pull requests (MCP tool or `gh pr merge`), MCP
+    pull request branch updates, `gh repo sync`, and `gh api` calls that write
+    refs, contents, or merges.
 
 Everything else is allowed. Exit 0 allows the command; exit 2 blocks it, and
 Claude Code passes the message on stderr to Claude. When the hook can't tell
@@ -82,6 +86,34 @@ MSG_ALL = (
 MSG_PRUNE = (
     "Blocked by the branch-protection hook: `git push --prune` can delete remote "
     "branches, including protected ones. Push the branch by name without --prune."
+)
+MSG_MERGE = (
+    "Blocked by the branch-protection hook: merging a pull request changes main, "
+    "and that is the user's call (" + BRANCH_RULES + "). Tell the user the PR is "
+    "ready to merge and give its URL."
+)
+MSG_GITHUB_WRITE = (
+    "Blocked by the branch-protection hook: this GitHub call would write to the "
+    "protected branch '{branch}' on GitHub. Changes reach main only through merged "
+    "pull requests, and delivery branches only receive main (" + BRANCH_RULES + "; "
+    + DELIVERY_RULES + "). Commit on a ticket branch locally and push that branch."
+)
+MSG_GITHUB_UNKNOWN_BRANCH = (
+    "Blocked by the branch-protection hook: {what}, and the hook can't see which "
+    "branch that writes to without calling GitHub. Do it with local git on the "
+    "ticket branch (for example `git merge origin/main`, then `git push`), or ask "
+    "the user to do it in GitHub."
+)
+MSG_GH_API = (
+    "Blocked by the branch-protection hook: this `gh api` call writes git data on "
+    "GitHub (refs, file contents, merges, or branch settings), which bypasses the "
+    "branch rules (" + BRANCH_RULES + "). Make the change with local git on a ticket "
+    "branch and push that branch, or ask the user to do it."
+)
+MSG_REPO_SYNC = (
+    "Blocked by the branch-protection hook: `gh repo sync` can overwrite a branch, "
+    "including main, without a pull request. Update branches with local git "
+    "(`git pull --ff-only` on main), or ask the user to sync."
 )
 MSG_UNSURE = (
     "Blocked by the branch-protection hook: it couldn't check this command safely "
@@ -403,10 +435,14 @@ class Checker:
             if script is not None:
                 self.check(script, depth + 1)
         else:
-            # git itself, or git behind a wrapper such as env, timeout, or xargs.
+            # git or gh itself, or behind a wrapper such as env, timeout, or xargs.
             for index, word in enumerate(words):
-                if os.path.basename(word).lower() == "git":
+                program = os.path.basename(word).lower()
+                if program == "git":
                     self.check_git(words[index + 1:], depth)
+                    return
+                if program == "gh":
+                    check_gh(words[index + 1:])
                     return
 
     @staticmethod
@@ -659,6 +695,94 @@ class Checker:
                 raise Block(MSG_PUSH_DELIVERY.format(branch=name))
 
 
+# --- GitHub: the gh CLI and the GitHub MCP tools --------------------------------
+
+GH_OPTIONS_WITH_VALUE = ("-H", "--header", "-q", "--jq", "-t", "--template",
+                         "--hostname", "--cache", "-p", "--preview", "--input")
+GH_FIELD_OPTIONS = ("-f", "-F", "--field", "--raw-field")
+# REST endpoints whose writes change refs, file contents, merges, or branch settings.
+GH_API_WRITE_RE = re.compile(
+    r"(^|/)(git/refs|contents|merges)(/|$)|/pulls/[^/]+/(merge|update-branch)$|/branches/"
+)
+# GraphQL mutations that do the same.
+GH_GRAPHQL_WRITE_RE = re.compile(
+    r"\b(createCommitOnBranch|mergePullRequest|mergeBranch|updateRefs?|createRef|"
+    r"deleteRef|enablePullRequestAutoMerge|updatePullRequestBranch)\b"
+)
+
+
+def check_gh(args):
+    """Block gh commands that change branches on GitHub without git."""
+    positional = [a for a in args if not a.startswith("-")]
+    if positional[:2] == ["pr", "merge"]:
+        raise Block(MSG_MERGE)
+    if positional[:2] == ["repo", "sync"]:
+        raise Block(MSG_REPO_SYNC)
+    if args and args[0] == "api":
+        check_gh_api(args[1:])
+
+
+def check_gh_api(args):
+    method, endpoint, has_body, fields, i = None, None, False, [], 0
+    while i < len(args):
+        arg = args[i]
+        value = args[i + 1] if i + 1 < len(args) else ""
+        if arg in ("-X", "--method"):
+            method, i = value, i + 2
+            continue
+        if arg.startswith("--method="):
+            method = arg.split("=", 1)[1]
+        elif arg.startswith("-X") and len(arg) > 2:
+            method = arg[2:]
+        elif arg in GH_FIELD_OPTIONS:
+            has_body = True
+            fields.append(value)
+            i += 2
+            continue
+        elif arg.startswith(("--field=", "--raw-field=")):
+            has_body = True
+            fields.append(arg.split("=", 1)[1])
+        elif arg in GH_OPTIONS_WITH_VALUE:
+            has_body = has_body or arg == "--input"
+            i += 2
+            continue
+        elif not arg.startswith("-") and endpoint is None:
+            endpoint = arg
+        i += 1
+    if endpoint is None:
+        return
+    if endpoint == "graphql":
+        if any(f.startswith("query=@") for f in fields):
+            raise Unsure("a gh api graphql query read from a file")
+        if GH_GRAPHQL_WRITE_RE.search(" ".join(fields)):
+            raise Block(MSG_GH_API)
+        return
+    method = (method or ("POST" if has_body else "GET")).upper()
+    if method != "GET" and GH_API_WRITE_RE.search(endpoint.split("?", 1)[0]):
+        raise Block(MSG_GH_API)
+
+
+GITHUB_WRITE_PREFIXES = ("create_", "push_", "delete_", "update_", "merge_")
+
+
+def check_github_tool(operation, tool_input):
+    """Check a GitHub MCP tool call; operation is the part after the last '__'."""
+    if operation == "merge_pull_request":
+        raise Block(MSG_MERGE)
+    if operation == "update_pull_request_branch":
+        raise Block(MSG_GITHUB_UNKNOWN_BRANCH.format(
+            what="updating a pull request's branch merges its base into its head branch"))
+    if not operation.startswith(GITHUB_WRITE_PREFIXES) or "branch" not in tool_input:
+        return  # reads, and writes that don't touch a branch (issues, PR metadata)
+    branch = tool_input.get("branch")
+    if not isinstance(branch, str) or not branch.strip():
+        raise Unsure("the GitHub tool call has no branch, so it would use the "
+                     "repository's default branch")
+    name = short_branch(branch.strip())
+    if name in PROTECTED:
+        raise Block(MSG_GITHUB_WRITE.format(branch=name))
+
+
 def shell_script(args):
     """The script passed to sh -c / bash -lc, or None when a script file is run."""
     for index, arg in enumerate(args):
@@ -672,12 +796,18 @@ def shell_script(args):
 def main():
     try:
         data = json.load(sys.stdin)
-        if data.get("tool_name") != "Bash":
+        tool = str(data.get("tool_name") or "")
+        tool_input = data.get("tool_input") or {}
+        if tool.lower().startswith("mcp__") and "github" in tool.lower():
+            check_github_tool(tool.split("__")[-1], tool_input)
             return 0
-        command = (data.get("tool_input") or {}).get("command")
+        if tool != "Bash":
+            return 0
+        command = tool_input.get("command")
         if not isinstance(command, str):
             raise Unsure("the hook input has no command")
-        if "git" not in command.lower():
+        lowered = command.lower()
+        if "git" not in lowered and "gh" not in lowered:
             return 0
         cwd = data.get("cwd") or os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd()
         Checker(cwd).check(command)

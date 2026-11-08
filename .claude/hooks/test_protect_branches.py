@@ -3,7 +3,8 @@
 
 Builds throwaway repositories (a bare remote, and worktrees on main, a ticket
 branch, delivery branches, and a detached HEAD), pipes PreToolUse hook input
-into the hook for each case, and prints a table of expected and actual results.
+into the hook for each case (Bash commands and GitHub MCP tool calls), and
+prints a table of expected and actual results. Nothing calls GitHub.
 
 Run: python3 .claude/hooks/test_protect_branches.py   (exit 1 if a case fails)
 """
@@ -27,7 +28,19 @@ KINDS = [
     ("could update every matching", "all"),
     ("--prune` can delete", "prune"),
     ("couldn't check this command safely", "unsure"),
+    ("merging a pull request changes main", "merge"),
+    ("would write to the protected branch", "github-write"),
+    ("can't see which branch", "github-unknown"),
+    ("this `gh api` call writes", "gh-api"),
+    ("`gh repo sync` can overwrite", "repo-sync"),
 ]
+
+REPO = {"owner": "ojordan0", "repo": "AI4Devs-finalproject"}
+
+
+def mcp(operation, **tool_input):
+    """A GitHub MCP tool call instead of a Bash command."""
+    return {"tool": "mcp__github__" + operation, "input": dict(REPO, **tool_input)}
 
 HEREDOC_ON_MAIN = """git commit -F - <<'EOF'
 Add the hook
@@ -96,6 +109,21 @@ CASES = [
     ("B39", "commit outside a git repository", 'git commit -m "x"', "notrepo", "unsure"),
     ("B40", "unterminated quote", 'git commit -m "unterminated', "ticket", "unsure"),
     ("B41", "invalid hook input JSON", None, "ticket", "unsure"),
+    # GitHub without git: MCP tools and the gh CLI
+    ("G01", "MCP push_files to main", mcp("push_files", branch="main", message="x", files=[]), "ticket", "github-write"),
+    ("G02", "MCP create_or_update_file on a delivery branch", mcp("create_or_update_file", branch="feature/entrega-1-OJE", path="a.md", content="x", message="x"), "ticket", "github-write"),
+    ("G03", "MCP delete_file on refs/heads/main", mcp("delete_file", branch="refs/heads/main", path="a.md", message="x"), "ticket", "github-write"),
+    ("G04", "MCP create_branch named like a delivery branch", mcp("create_branch", branch="final-project-OJE"), "ticket", "github-write"),
+    ("G05", "MCP merge_pull_request", mcp("merge_pull_request", pullNumber=46, merge_method="squash"), "ticket", "merge"),
+    ("G06", "MCP update_pull_request_branch", mcp("update_pull_request_branch", pullNumber=46), "ticket", "github-unknown"),
+    ("G07", "MCP push_files with an empty branch", mcp("push_files", branch="", message="x", files=[]), "ticket", "unsure"),
+    ("G08", "gh pr merge", "gh pr merge 46 --squash", "ticket", "merge"),
+    ("G09", "gh repo sync", "gh repo sync", "ticket", "repo-sync"),
+    ("G10", "gh api PUT contents on main", "gh api -X PUT repos/o/r/contents/README.md -f message=x -f branch=main", "ticket", "gh-api"),
+    ("G11", "gh api PATCH refs/heads/main", "gh api repos/o/r/git/refs/heads/main -X PATCH -f sha=abc -F force=true", "ticket", "gh-api"),
+    ("G12", "gh api merges (POST implied by -f)", "gh api repos/o/r/merges -f base=main -f head=t-07-groups-api", "ticket", "gh-api"),
+    ("G13", "gh api graphql mergePullRequest", "gh api graphql -f query='mutation { mergePullRequest(input: {pullRequestId: \"x\"}) { clientMutationId } }'", "ticket", "gh-api"),
+    ("G14", "gh pr merge behind cd &&", "cd {ticket} && gh pr merge --auto --squash", "main", "merge"),
     # Allowed
     ("A01", "commit on a ticket branch", 'git commit -m "Add hook"', "ticket", "allow"),
     ("A02", "message mentioning main and push", 'git add . && git commit -m "Merge main into push docs"', "ticket", "allow"),
@@ -121,6 +149,17 @@ CASES = [
     ("A22", "quoted forbidden command in echo", 'echo "git push --force origin main"', "ticket", "allow"),
     ("A23", "command without git", "ls -la", "main", "allow"),
     ("A24", "a tool other than Bash", "EDIT_TOOL", "main", "allow"),
+    ("H01", "MCP push_files to a ticket branch", mcp("push_files", branch="t-07-groups-api", message="x", files=[]), "main", "allow"),
+    ("H02", "MCP create_branch from main", mcp("create_branch", branch="chore/new-thing", from_branch="main"), "main", "allow"),
+    ("H03", "MCP create_pull_request into main", mcp("create_pull_request", base="main", head="t-07-groups-api", title="T-07"), "main", "allow"),
+    ("H04", "MCP update_pull_request (title, base main)", mcp("update_pull_request", pullNumber=46, base="main", title="x"), "main", "allow"),
+    ("H05", "MCP issue_write (no branch)", mcp("issue_write", method="create", title="Push main"), "main", "allow"),
+    ("H06", "MCP get_file_contents on main (read)", mcp("get_file_contents", path="readme.md", ref="main"), "main", "allow"),
+    ("H07", "gh pr view", "gh pr view 46 --json state", "main", "allow"),
+    ("H08", "gh api GET contents on main", "gh api 'repos/o/r/contents/readme.md?ref=main'", "main", "allow"),
+    ("H09", "gh api comment mentioning merge and main", "gh api repos/o/r/issues/46/comments -f body='merge main later'", "main", "allow"),
+    ("H10", "gh api graphql query (read)", "gh api graphql -f query='query { repository(owner: \"o\", name: \"r\") { name } }'", "main", "allow"),
+    ("H11", "commit message mentioning gh pr merge", 'git commit -m "Run gh pr merge after review"', "ticket", "allow"),
 ]
 
 
@@ -189,12 +228,19 @@ def main():
             cwd = dirs[where]
             if command is None:
                 payload, shown = "{not json", "(invalid JSON on stdin)"
+            elif isinstance(command, dict):
+                payload = json.dumps({"hook_event_name": "PreToolUse", "cwd": cwd,
+                                      "tool_name": command["tool"],
+                                      "tool_input": command["input"]})
+                arguments = {k: v for k, v in command["input"].items() if k not in REPO}
+                shown = "%s %s" % (command["tool"], json.dumps(arguments))
             elif command == "EDIT_TOOL":
                 payload = json.dumps({"hook_event_name": "PreToolUse", "tool_name": "Edit",
                                       "tool_input": {"file_path": "x"}, "cwd": cwd})
                 shown = "(Edit tool call)"
             else:
-                command = command.format(**dirs)
+                for key, path in dirs.items():
+                    command = command.replace("{%s}" % key, path)
                 payload = json.dumps({
                     "session_id": "test", "cwd": cwd, "hook_event_name": "PreToolUse",
                     "tool_name": "Bash", "tool_input": {"command": command},

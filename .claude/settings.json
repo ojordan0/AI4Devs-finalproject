@@ -17,6 +17,18 @@
             "onFailure": "block"
           }
         ]
+      },
+      {
+        "matcher": "mcp__.*[Gg]it[Hh]ub.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3",
+            "args": ["${CLAUDE_PROJECT_DIR}/.claude/hooks/protect-branches.py"],
+            "timeout": 15,
+            "onFailure": "block"
+          }
+        ]
       }
     ]
   }
