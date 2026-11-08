@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.8 · **Date:** November 8, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.9 · **Date:** November 8, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -13,7 +13,6 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 - **Epic and stories:** each ticket belongs to one epic and implements one or more user stories ([PRD §14](01-PRD.md#14-epics-and-user-stories)). The first story listed is the ticket's main story. Tickets with no story are foundation work in E-08.
 - **Delivery** is the course deadline the ticket must meet: D2 or D3 ([PRD §8.1](01-PRD.md#81-milestone-1-core-cycle-end-to-end)).
 - **Size:** S (up to half a day), M (one to two days), L (three to five days).
-
 - **Spec first:** each ticket is built as one OpenSpec change, named like its branch without the type prefix (branch `feat/t-07-groups-api`, change `t-07-groups-api`). The change is generated from the ticket and the documents it references; its proposal links the ticket's issue, its requirements cite the PRD IDs instead of copying rule text, and each scenario is named after the acceptance criterion it verifies, for example `AC-59`. A ticket without acceptance criterion IDs names each scenario after the ticket and the condition it verifies, taken from its "Done when" or acceptance criteria text, for example `T-01 Fresh clone runs the setup`. The change is reviewed before implementation, and archived in the ticket's pull request as its last commit before the merge. If the documents leave a question open, they are updated first.
 - **Branching:** one branch and one pull request per ticket, merged into `main`. The branch is named `<type>/t-<NN>-<slug>`, after the ticket ID, where `<type>` is `feat`, `fix`, `chore`, `docs`, or `refactor`; for example `feat/t-07-groups-api`. Each ticket's branch name is in the [ticket overview](#3-ticket-overview).
 - **Work outside a ticket** happens only when agreed with the project owner, on a branch named `<type>/<slug>`, through a pull request, and without an OpenSpec change.
@@ -66,7 +65,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 | ID | Issue | Title | Epic | Stories | Type | Increment | Delivery | Size | Depends on | Branch |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-01 | [#27](https://github.com/ojordan0/AI4Devs-finalproject/issues/27) | Repository, project scaffold, and CI | E-08 | None | DevOps | 1 | D2 | M | None | `chore/t-01-scaffold-ci` |
+| T-01 | [#27](https://github.com/ojordan0/AI4Devs-finalproject/issues/27) | Repository, project scaffold, and CI | E-08 | None | DevOps | 1 | D2 | M | None | `chore/t-01-project-scaffold` |
 | T-02 | [#28](https://github.com/ojordan0/AI4Devs-finalproject/issues/28) | Database schema, migrations, and seed data | E-08 | None | Database | 1 | D2 | L | T-01 | `feat/t-02-database-schema` |
 | T-03 | [#29](https://github.com/ojordan0/AI4Devs-finalproject/issues/29) | API foundation and baseline security | E-08 | US-26 | Backend | 1 | D2 | M | T-02 | `feat/t-03-api-foundation` |
 | T-04 | [#30](https://github.com/ojordan0/AI4Devs-finalproject/issues/30) | Sign-in, onboarding, and basic profile | E-01 | US-01, US-02 | Full stack | 1 | D2 | L | T-03 | `feat/t-04-sign-in-onboarding` |

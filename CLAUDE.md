@@ -19,7 +19,6 @@ Guidance for AI coding agents working in this repository.
 | Security or tests | [docs/07-SECURITY-AND-TESTING.md](docs/07-SECURITY-AND-TESTING.md) |
 | Picking up work | [docs/08-WORK-TICKETS.md](docs/08-WORK-TICKETS.md): scope, dependencies, acceptance criteria, and branch name per ticket, and how tickets are tracked in GitHub Issues; then the OpenSpec configuration and existing specs in `openspec/` |
 
-
 Use the traceability table (PRD §19) to find every story, rule, endpoint, and entity related to a requirement.
 
 ## Rules
@@ -71,4 +70,4 @@ Only when the user explicitly asks for a delivery:
 
 ## Commands
 
-`npm run setup` · `npm run dev` · `npm test` · `npm run test:e2e` · `npm run test:coverage` · `npm run lint` · `npx tsc --noEmit` · `npm run check:links` · `npm run typecheck` · `npm run docs:check` · `npm run db:migrate` · `npm run db:seed` (all test commands: [docs/07-SECURITY-AND-TESTING.md §2.5](docs/07-SECURITY-AND-TESTING.md#25-running-tests-locally-and-in-ci))
+`npm run setup` · `npm run dev` · `npm test` · `npm run test:e2e` · `npm run test:coverage` · `npm run lint` · `npx tsc --noEmit` · `npm run check:links` · `npm run db:migrate` · `npm run db:seed` (all test commands: [docs/07-SECURITY-AND-TESTING.md §2.5](docs/07-SECURITY-AND-TESTING.md#25-running-tests-locally-and-in-ci))

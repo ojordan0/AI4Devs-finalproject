@@ -44,7 +44,7 @@ rules:
     - Include tasks for items 2 to 5 of the definition of done in docs/08-WORK-TICKETS.md §1 that apply to the ticket, such as updating the owning document or the generated OpenAPI document. Items 1, 6, and 7 (proposal review, session record, and pull request) are steps of the ticket workflow in CLAUDE.md, not tasks.
     - Name the exact tables, endpoints and components each task touches.
     - Reuse existing screen components and replace mock data with real data.
-    - Cover the loading, empty and error states for each screen touched
+    - Cover the loading, empty and error states for each screen touched.
 
 operations:
   apply:
