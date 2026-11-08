@@ -52,6 +52,6 @@ None. `openspec/specs/` is empty.
 - **New scripts:** `scripts/setup.mjs`, `scripts/seed.ts`, `scripts/check-doc-links.ts`, and `scripts/doc-links.ts`.
 - **Changed tooling:** `.claude/settings.json`, new hook scripts and tests in `.claude/hooks/`, and `.gitignore`.
 - **Changed documents:** `docs/03-ARCHITECTURE.md`, `docs/06-INFRASTRUCTURE.md`, `docs/07-SECURITY-AND-TESTING.md`, `docs/08-WORK-TICKETS.md`, `readme.md`, `CLAUDE.md`, and `prompts.md`.
-- **GitHub settings:** branch protection on `main`, which the repository owner applies, because the branch-protection hook blocks Claude Code from changing it.
+- **GitHub settings:** a repository ruleset protecting `main`, changed only at the owner's request.
 - **Developer machines:** Node.js must be the current LTS release (26). Machines on an older version need to upgrade.
 - **No effect** on the product's behavior, the API, or the data model. None exists yet.

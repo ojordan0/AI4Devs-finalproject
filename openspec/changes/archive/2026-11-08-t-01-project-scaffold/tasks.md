@@ -64,39 +64,14 @@ T-01 has no acceptance criteria, so no task or test carries an `AC-` ID. Each ta
 - [x] 10.2 Before opening the pull request, have Claude Code run `gh pr create` with a temporary failure in each of the three checks, and confirm that the hook blocks with the errors, then remove the failures. Run it with the three checks passing only when the owner asks for the pull request. Verify from the hook's output.
 - [x] 10.3 Edit a source file to break a rule, and confirm that the lint hook shows the error, then undo the edit. Verify from the hook's output.
 - [x] 10.4 When the owner asks for the pull request, open it following `CLAUDE.md`, with `Closes #27`. Verify that all six checks appear and pass.
-- [ ] 10.5 Push a temporary commit that fails linting, type checks, and tests. Verify that those three checks fail on the pull request, then revert the commit with a new commit and verify that they pass again.
-- [ ] 10.6 The owner applies branch protection, since `protect-branches.py` blocks Claude Code from doing it (design decision 7), with this command:
-
-  ```bash
-  gh api -X PUT repos/ojordan0/AI4Devs-finalproject/branches/main/protection --input - <<'JSON'
-  {
-    "required_status_checks": {
-      "strict": true,
-      "checks": [
-        { "context": "lint" },
-        { "context": "typecheck" },
-        { "context": "test" },
-        { "context": "e2e" },
-        { "context": "doc-links" },
-        { "context": "audit" }
-      ]
-    },
-    "enforce_admins": true,
-    "required_pull_request_reviews": { "required_approving_review_count": 0 },
-    "restrictions": null,
-    "allow_force_pushes": false,
-    "allow_deletions": false
-  }
-  JSON
-  ```
-
-  Verify by reading the rule back with `gh api repos/ojordan0/AI4Devs-finalproject/branches/main/protection`, and, with a failing check on the pull request, by `gh pr view --json mergeStateStatus` reporting `BLOCKED`.
-- [ ] 10.7 Run the `adversarial-reviewer` subagent on the pull request, post its findings as a comment, fix what's warranted, and re-run the review at most once, as `CLAUDE.md` describes. Verify that the comment is on the pull request.
-- [ ] 10.8 Export the session to `docs/ai-conversations/part-<N>-project-scaffold.md`, continuing the numbering, and add its row and representative prompts to `prompts.md`. Verify with `npm run check:links`.
+- [x] 10.5 Push a temporary commit that fails linting, type checks, and tests. Verify that those three checks fail on the pull request (`e2e` also fails, because the type error stops the build), then revert the commit with a new commit and verify that they pass again.
+- [x] 10.6 Protect `main` with the repository ruleset `require-pull-request`: limited to the default branch, requiring a pull request with no approvals and the six checks, up to date with `main`, with no bypass actors. The owner created the ruleset and asked Claude Code to apply these settings (design decision 7). Verify by reading the ruleset back with `gh api repos/ojordan0/AI4Devs-finalproject/rulesets/26807721`, and, with a failing check on the pull request, by `gh pr view --json mergeStateStatus` reporting `BLOCKED`.
+- [x] 10.7 Run the `adversarial-reviewer` subagent on the pull request, post its findings as a comment, fix what's warranted, and re-run the review at most once, as `CLAUDE.md` describes. Verify that the comment is on the pull request.
+- [x] 10.8 Export the session to `docs/ai-conversations/part-<N>-project-scaffold.md`, continuing the numbering, and add its row and representative prompts to `prompts.md`. Verify with `npm run check:links`.
 
 ## Workflow follow-up
 
 - Archive this change as part of the merge, as [Work tickets §1](../../../docs/08-WORK-TICKETS.md#1-how-tickets-work) requires, and verify that `openspec/specs/` has the three new capabilities.
 - The owner merges the pull request, because `protect-branches.py` blocks Claude Code from merging. A merge with all checks passing confirms the "can be merged without an approval" scenario.
 - After the merge, confirm that Dependabot reads its configuration under the repository's Insights, Dependency graph, Dependabot tab. It only reads the file on the default branch.
-- Later tickets add to the required checks when they add a job: T-03 adds the OpenAPI check, and the owner adds it to the protection rule.
+- Later tickets add to the required checks when they add a job: T-03 adds the OpenAPI check, and it's added to the `require-pull-request` ruleset.

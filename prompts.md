@@ -59,6 +59,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Part 6 | — | UI design setup: review of the Stitch screens, the design system, and the GitHub CLI | Claude Code | Claude Opus 5.5 | [part-6-ui-design-setup.md](docs/ai-conversations/part-6-ui-design-setup.md) |
 | Part 7 | — | Branch protection and review: the product brief, the branch-protection hook, the reviewer subagent, and pull request #46 | Claude Code | Claude Opus 5.5 | [part-7-branch-protection-and-review.md](docs/ai-conversations/part-7-branch-protection-and-review.md) |
 | Part 8 | — | Design review fixes: resolving the adversarial review of pull request #47, and where new and invited users land | Claude Code | Claude Opus 5.5 | [part-8-design-review-fixes.md](docs/ai-conversations/part-8-design-review-fixes.md) |
+| Part 9 | T-01 | Project scaffold: the application, local setup, CI, quality hooks, and pull request #48 | Claude Code | Claude Opus 5.5 | [part-9-project-scaffold.md](docs/ai-conversations/part-9-project-scaffold.md) |
 
 ## Tools and phases
 

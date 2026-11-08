@@ -15,7 +15,7 @@ Constraints checked while planning, on November 8, 2026:
 | Vitest exits 0 with a threshold set and no files in the coverage scope | Scratch run | The 80% target can be set now, before any service exists |
 | npm 11 holds back install scripts that aren't approved. `esbuild`, `@swc/core`, and `@parcel/watcher` are affected, and everything works without them | Installing and running the tools | None are approved; `npm ci` prints a warning listing them |
 | The current Node.js LTS is 26; the development machine runs 22 | nodejs.org release index, `node -v` | `.nvmrc` pins 26, and the developer upgrades |
-| `protect-branches.py` blocks `gh api` writes to `/branches/` | Reading the hook | The owner applies branch protection; Claude Code can't |
+| `protect-branches.py` blocks `gh api` writes to `/branches/` | Reading the hook | Claude Code can't change a classic protection rule; rulesets changes happen only at the owner's request |
 | `ojordan0` is the only collaborator | GitHub API | No approval is required; see decision 7 |
 
 ## Goals / Non-Goals
@@ -97,7 +97,9 @@ The rule on `main` uses these settings:
 
 Requiring one approval with administrators exempt was rejected, because every merge would need the bypass, which leaves no check enforced. Delivery branches aren't covered: they receive pushes from `main`, as `CLAUDE.md` describes.
 
-GitHub only lets a check be required after it has run once, so protection is applied while T-01's pull request is open and its checks have reported. The owner runs the command, because `protect-branches.py` blocks it for Claude Code. That block is correct, and this ticket doesn't weaken it.
+These settings live in the repository ruleset `require-pull-request`, limited to the default branch with no bypass actors. A second ruleset, `block-deletion-&-force-pushes`, covers deletion. Rulesets replace the classic branch protection rule this design first planned, because the owner had already created them.
+
+The ruleset must not target all branches: a ticket branch couldn't receive commits, and a delivery branch couldn't receive `main`.
 
 Keeping up with `main` adds a small cost: the existing hook blocks `update_pull_request_branch`, so an out-of-date pull request is updated by merging `main` into the ticket branch locally, or with GitHub's button.
 
@@ -158,10 +160,10 @@ Later in the ticket, `readme.md` §1.4 and `CLAUDE.md` "Commands" change from pl
 Nothing is deployed, and no data exists. The order inside the ticket matters only for branch protection:
 
 1. Merge nothing until T-01's pull request shows all checks passing.
-2. The owner applies branch protection, using the command in [tasks.md](tasks.md).
-3. The pull request is merged under the new rule, which shows it works.
+2. Limit the `require-pull-request` ruleset to `main`, and add the six required checks.
+3. The owner merges the pull request under the new rule, which shows it works.
 
-Rollback: revert the merge commit, and remove the branch protection rule in GitHub's settings.
+Rollback: revert the merge commit through a pull request. The ruleset stays, and T-01's jobs would need removing from it if the workflow is reverted.
 
 ## Open Questions
 
