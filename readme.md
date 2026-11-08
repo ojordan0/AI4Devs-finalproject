@@ -8,6 +8,7 @@ A web application where families keep shared lists of the products they need, an
 | --- | --- |
 | [01-PRD.md](docs/01-PRD.md) | Product overview, business rules, requirements, user stories, acceptance criteria, traceability |
 | [02-UX-DESIGN.md](docs/02-UX-DESIGN.md) | User flows, screens, wireframes, messages, Spanish strings |
+| [PRODUCT.md](PRODUCT.md) | Product brief for design work: users and role priority, positioning, product principles |
 | [DESIGN.md](DESIGN.md) | Design system: colors, typography, components, and the Stitch screen mockups |
 | [03-ARCHITECTURE.md](docs/03-ARCHITECTURE.md) | C4 diagrams, components, technology stack, project structure, technical decisions |
 | [04-DATA-MODEL.md](docs/04-DATA-MODEL.md) | Entity diagram, entities, seed data |
