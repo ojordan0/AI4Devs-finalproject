@@ -48,7 +48,7 @@ Work is organized by tickets (see `/docs/08-WORK-TICKETS.md`). One ticket = one 
 - **The PR is per ticket.** The user decides when the ticket is done (e.g. "open the PR"); don't open one on your own. Then:
   1. `git push -u origin HEAD`.
   2. `gh pr create --base main`, with the ticket ID in the title and a full description of the changes in the body.
-  3. Run the `adversarial-reviewer` subagent on the PR and post its findings as a PR comment.
+  3. Run the `adversarial-reviewer` subagent on the PR and post its findings as a PR comment. While the PR has no CI check runs, run `npm test` first, include its output in the subagent's prompt, and post that output in the same comment, below the findings. If `npm test` can't run yet, say so in the comment.
   4. Fix what's warranted, commit, push. Re-run the review at most once.
 - **Final reply:** don't repeat the PR summary in chat. The session will be lost; the PR won't. Reply with the PR URL plus one line on any unresolved review findings.
 
