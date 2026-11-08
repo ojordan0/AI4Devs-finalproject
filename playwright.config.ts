@@ -24,7 +24,7 @@ export default defineConfig({
     { name: "webkit", use: { ...devices["iPhone 15"] } },
   ],
   webServer: {
-    command: `npm run db:migrate && npm run db:seed && npm run build && npm run start -- --port ${PORT}`,
+    command: `npm run db:migrate && npx tsx scripts/reset-test-database.ts && npm run build && npm run start -- --port ${PORT}`,
     url: baseURL,
     reuseExistingServer: false,
     timeout: 240_000,

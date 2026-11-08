@@ -60,6 +60,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Part 7 | — | Branch protection and review: the product brief, the branch-protection hook, the reviewer subagent, and pull request #46 | Claude Code | Claude Opus 5.5 | [part-7-branch-protection-and-review.md](docs/ai-conversations/part-7-branch-protection-and-review.md) |
 | Part 8 | — | Design review fixes: resolving the adversarial review of pull request #47, and where new and invited users land | Claude Code | Claude Opus 5.5 | [part-8-design-review-fixes.md](docs/ai-conversations/part-8-design-review-fixes.md) |
 | Part 9 | T-01 | Project scaffold: the application, local setup, CI, quality hooks, and pull request #48 | Claude Code | Claude Opus 5.5 | [part-9-project-scaffold.md](docs/ai-conversations/part-9-project-scaffold.md) |
+| Part 10 | T-02 | Database schema: the tables and their rules, the first migration, seed data, constraint tests, the CI migration check, and pull request #49 | Claude Code | Claude Opus 5.5 | [part-10-database-schema.md](docs/ai-conversations/part-10-database-schema.md) |
 
 ## Tools and phases
 
@@ -142,6 +143,7 @@ Examples of the AI's output that the product owner corrected or redirected:
 - **Product description.** Rewrote the product summary, and chose one brand, ComproParaTi, over a separate English name.
 - **Interface design.** Kept one responsive layout that reuses the mobile screens on desktop, instead of the desktop mockup Claude suggested, and renamed the People screen folders to `07-person-list` and `07-person-detail`.
 - **Workflow tooling.** Kept the Impeccable engine binary and the Python cache out of git instead of using Git LFS. Extended the branch-protection hook to the GitHub MCP tools. Removed Bash from the reviewer subagent so it can only read. Replaced the adversarial-review skill with the subagent instead of keeping two reviewers. Required the type prefix from `CLAUDE.md` in ticket branch names.
+- **Seed data and migrations.** Chose to add a former buyer and a cancelled invitation so the seed covers what the data model claims. Questioned the downside of a seed that never overwrites, which led to limiting its conflict handling to the primary key. Asked what a schema drift check would involve and added it to the ticket, and testing that plan showed that the first version of the check would have passed on a renamed column.
 
 ---
 
@@ -371,6 +373,13 @@ Examples of the AI's output that the product owner corrected or redirected:
 **Prompt 2** (Part 7, turn 24 · — · Claude Opus 5.5)
 
 > you mentioned to run lint after the  ticket is done, and the review commands ran. Is that done manually? Can it be automated? If so how?
+
+**Prompt 3** (Part 10, turn 4 · T-02 · Claude Opus 5.5)
+
+> You mentioned: 
+> No CI check for schema drift: nothing automatically confirms the schema and migrations still match, since the ticket doesn't ask for it. If you want one, it's a small addition.
+>
+> Explain this addition
 
 ---
 
