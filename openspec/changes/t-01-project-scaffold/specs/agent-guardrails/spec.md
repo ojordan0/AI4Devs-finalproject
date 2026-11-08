@@ -45,9 +45,9 @@ Before Claude Code opens a pull request, a hook SHALL run `npm run lint`, `tsc -
 - **WHEN** Claude Code runs a command that doesn't open a pull request, such as `gh pr view`, or text that only mentions `gh pr create`
 - **THEN** no check runs and the command proceeds
 
-### Requirement: Every way of opening a pull request is covered
+### Requirement: The usual ways of opening a pull request are covered
 
-The hook SHALL recognize a pull request being opened however Claude Code issues it, because the guarantee is that Claude Code can't open one while checks fail. When it can't tell what a command would do, it SHALL block and say why.
+The hook SHALL recognize a pull request being opened through `gh` or a GitHub MCP tool, including when the command is chained or wrapped. When it can't tell what such a command would do, it SHALL block and say why. Other programs that call GitHub, such as `curl` or a script file, aren't recognized; CI and branch protection stop those from merging.
 
 #### Scenario: Wrapped or chained commands are recognized
 
@@ -111,5 +111,5 @@ The hooks SHALL be configured in `.claude/settings.json`, with their scripts in 
 
 #### Scenario: Hook tests pass
 
-- **WHEN** the hook test scripts run
+- **WHEN** the hook test scripts run locally; CI doesn't run them
 - **THEN** every scenario in this capability that a script can reproduce passes, and the existing branch-protection tests still pass, with no call to GitHub

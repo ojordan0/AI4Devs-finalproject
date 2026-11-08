@@ -93,6 +93,14 @@ export function documentLinks(
   return links;
 }
 
+function decoded(text: string): string | undefined {
+  try {
+    return decodeURIComponent(text);
+  } catch {
+    return undefined;
+  }
+}
+
 /** Checks one document's links and anchors. Never uses the network. */
 export function checkDocument(
   root: string,
@@ -108,7 +116,13 @@ export function checkDocument(
     }
 
     const [rawPath, rawAnchor] = target.split("#", 2);
-    const path = decodeURIComponent(rawPath.split("?", 1)[0]);
+    const path = decoded(rawPath.split("?", 1)[0]);
+    const anchor = rawAnchor ? decoded(rawAnchor) : "";
+    if (path === undefined || anchor === undefined) {
+      broken.push({ file, line, target, reason: "invalid encoding" });
+      continue;
+    }
+
     const targetPath =
       path === ""
         ? documentPath
@@ -121,11 +135,12 @@ export function checkDocument(
       continue;
     }
 
-    if (rawAnchor && extname(targetPath) === ".md") {
-      const anchor = decodeURIComponent(rawAnchor);
-      if (!documentAnchors(readFileSync(targetPath, "utf8")).has(anchor)) {
-        broken.push({ file, line, target, reason: "heading not found" });
-      }
+    if (
+      anchor &&
+      extname(targetPath) === ".md" &&
+      !documentAnchors(readFileSync(targetPath, "utf8")).has(anchor)
+    ) {
+      broken.push({ file, line, target, reason: "heading not found" });
     }
   }
 

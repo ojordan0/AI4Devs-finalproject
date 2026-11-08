@@ -28,6 +28,21 @@ describe("testDatabaseUrl", () => {
     ).toThrow("only run against a local database");
   });
 
+  it.each(["host=db.neon.tech", "hostaddr=203.0.113.1", "service=production"])(
+    "refuses a local address that the %s parameter sends elsewhere",
+    (parameter) => {
+      expect(() =>
+        testDatabaseUrl(`postgres://user@localhost/comproparati?${parameter}`),
+      ).toThrow("only run against a local database");
+    },
+  );
+
+  it("keeps parameters that don't change the host", () => {
+    expect(
+      testDatabaseUrl("postgres://user@localhost/comproparati?sslmode=disable"),
+    ).toBe(`postgres://user@localhost/${TEST_DATABASE_NAME}?sslmode=disable`);
+  });
+
   it("refuses a missing address", () => {
     expect(() => testDatabaseUrl(undefined)).toThrow("DATABASE_URL is not set");
   });

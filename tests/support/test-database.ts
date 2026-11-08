@@ -1,11 +1,13 @@
 export const TEST_DATABASE_NAME = "comproparati_test";
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "[::1]"]);
+// The Postgres driver lets these override the host in the address.
+const HOST_PARAMETERS = ["host", "hostaddr", "service"];
 
 /**
  * The address of the test database, derived from DATABASE_URL. Refuses any host
- * other than the local machine, so tests can never reach production data
- * (docs/07-SECURITY-AND-TESTING.md, section 2.3).
+ * other than the local machine, however it is given, so tests can never reach
+ * production data (docs/07-SECURITY-AND-TESTING.md, section 2.3).
  */
 export function testDatabaseUrl(databaseUrl: string | undefined): string {
   if (!databaseUrl) {
@@ -24,6 +26,13 @@ export function testDatabaseUrl(databaseUrl: string | undefined): string {
   if (!LOCAL_HOSTS.has(url.hostname)) {
     throw new Error(
       `Tests only run against a local database, and DATABASE_URL points to ${url.hostname}.`,
+    );
+  }
+
+  const parameter = HOST_PARAMETERS.find((name) => url.searchParams.has(name));
+  if (parameter) {
+    throw new Error(
+      `Tests only run against a local database, and DATABASE_URL sets the ${parameter} parameter.`,
     );
   }
 

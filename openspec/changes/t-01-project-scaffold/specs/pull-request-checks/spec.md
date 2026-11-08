@@ -43,7 +43,7 @@ CI SHALL run the same commands as a developer's machine, as Security and testing
 
 ### Requirement: Documentation link check
 
-A documentation link check SHALL fail when a link in the project's Markdown documents points to a file or heading anchor that doesn't exist in the repository. It SHALL run without network access. Exported session records are excluded, because they are verbatim history.
+A documentation link check SHALL fail when a link in the project's Markdown documents points to a file or heading anchor that doesn't exist in the repository. It SHALL run without network access. Exported session records and archived OpenSpec changes are excluded, because they are history.
 
 #### Scenario: Valid links pass
 

@@ -18,13 +18,13 @@ function step(message) {
   console.log(`\n> ${message}`);
 }
 
-function run(command, args) {
+function run(command, args, hint = "") {
   const result = spawnSync(command, args, {
     stdio: "inherit",
     shell: process.platform === "win32",
   });
   if (result.status !== 0) {
-    stop(`\`${command} ${args.join(" ")}\` failed.`);
+    stop(`\`${command} ${args.join(" ")}\` failed.${hint}`);
   }
 }
 
@@ -44,6 +44,16 @@ function checkPrerequisites() {
   if (docker.status !== 0) {
     stop(
       "Docker isn't running. Install or start Docker, then run this command again.",
+    );
+  }
+
+  const compose = spawnSync("docker", ["compose", "version"], {
+    stdio: "ignore",
+    shell: process.platform === "win32",
+  });
+  if (compose.status !== 0) {
+    stop(
+      "Docker Compose isn't available. Install it, then run this command again.",
     );
   }
 }
@@ -86,7 +96,11 @@ step("Installing dependencies");
 run("npm", ["ci"]);
 
 step("Starting Postgres");
-run("docker", ["compose", "up", "-d", "--wait"]);
+run(
+  "docker",
+  ["compose", "up", "-d", "--wait"],
+  " Check that nothing else is using port 5432.",
+);
 
 step("Creating the test database");
 await createTestDatabase();

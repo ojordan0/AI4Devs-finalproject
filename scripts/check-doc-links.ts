@@ -4,8 +4,9 @@ import { join, relative } from "node:path";
 import { checkDocument } from "./doc-links";
 
 const ROOT = process.cwd();
-// Exported sessions are verbatim history, so their links stay as they were written.
-const EXCLUDED = new Set(["docs/ai-conversations"]);
+// Exported sessions and archived changes are history, so their links stay as they
+// were written.
+const EXCLUDED = new Set(["docs/ai-conversations", "openspec/changes/archive"]);
 
 function markdownFiles(folder: string, recursive: boolean): string[] {
   return readdirSync(folder, { withFileTypes: true }).flatMap((entry) => {
@@ -26,6 +27,7 @@ function markdownFiles(folder: string, recursive: boolean): string[] {
 const documents = [
   ...markdownFiles(ROOT, false),
   ...markdownFiles(join(ROOT, "docs"), true),
+  ...markdownFiles(join(ROOT, "openspec"), true),
 ];
 const broken = documents.flatMap((document) => checkDocument(ROOT, document));
 

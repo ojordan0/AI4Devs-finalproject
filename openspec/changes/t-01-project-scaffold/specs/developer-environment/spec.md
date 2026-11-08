@@ -32,7 +32,7 @@ Lets any developer go from a fresh clone to a running, tested app with one setup
 
 #### Scenario: A prerequisite is missing
 
-- **GIVEN** a machine where Docker isn't running, or Node.js is older than the version the project requires
+- **GIVEN** a machine where Docker isn't running, Docker Compose isn't available, or Node.js is older than the version the project requires
 - **WHEN** the developer runs `npm run setup`
 - **THEN** the command stops with a message naming the missing prerequisite
 
@@ -85,7 +85,7 @@ The test commands SHALL each do what Security and testing §2.5 describes, and e
 
 #### Scenario: Integration tests refuse a remote database
 
-- **GIVEN** `DATABASE_URL` points to a host other than the local machine, where the CI service container also runs
+- **GIVEN** `DATABASE_URL` points to a host other than the local machine, where the CI service container also runs, in its host or through a connection parameter
 - **WHEN** the integration tests start
 - **THEN** they stop with an error before connecting
 

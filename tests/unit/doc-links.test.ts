@@ -110,6 +110,15 @@ describe("checkDocument", () => {
     ]);
   });
 
+  it("reports invalid encoding instead of stopping", () => {
+    expect(
+      check("encoding.md", "[bad](docs/100%.md) [bad](docs/guide.md#100%)\n"),
+    ).toEqual([
+      { target: "docs/100%.md", reason: "invalid encoding", line: 1 },
+      { target: "docs/guide.md#100%", reason: "invalid encoding", line: 1 },
+    ]);
+  });
+
   it("skips code blocks and inline code", () => {
     const broken = check(
       "code.md",
