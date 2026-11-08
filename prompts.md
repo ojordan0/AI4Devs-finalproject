@@ -61,6 +61,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Part 8 | — | Design review fixes: resolving the adversarial review of pull request #47, and where new and invited users land | Claude Code | Claude Opus 5.5 | [part-8-design-review-fixes.md](docs/ai-conversations/part-8-design-review-fixes.md) |
 | Part 9 | T-01 | Project scaffold: the application, local setup, CI, quality hooks, and pull request #48 | Claude Code | Claude Opus 5.5 | [part-9-project-scaffold.md](docs/ai-conversations/part-9-project-scaffold.md) |
 | Part 10 | T-02 | Database schema: the tables and their rules, the first migration, seed data, constraint tests, the CI migration check, and pull request #49 | Claude Code | Claude Opus 5.5 | [part-10-database-schema.md](docs/ai-conversations/part-10-database-schema.md) |
+| Part 11 | — | Ticket workflow: the steps to start and finish a ticket, work outside a ticket, branch names, and pull request #51 | Claude Code | Claude Opus 5.5 | [part-11-ticket-workflow.md](docs/ai-conversations/part-11-ticket-workflow.md) |
 
 ## Tools and phases
 
