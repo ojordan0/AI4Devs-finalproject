@@ -154,8 +154,7 @@ Flows A, B, C, E, and F ([UX design §1](02-UX-DESIGN.md#1-user-flows)) work fro
 
 **Pilot entry criteria:**
 
-- Access from every launch country is confirmed ([section 10](#10-open-questions), question 1).
-- The domain is registered ([section 10](#10-open-questions), question 2).
+- The domain is registered ([section 10](#10-open-questions), question 1).
 - The Privacy Policy is published.
 - Backups are running, and a restore has been tested.
 
@@ -171,7 +170,6 @@ Flows A, B, C, E, and F ([UX design §1](02-UX-DESIGN.md#1-user-flows)) work fro
 
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
-| Google sign-in or US-based providers are restricted from Cuba | Members in Cuba cannot use the app | Confirm access before building ([section 10](#10-open-questions), question 1); sign-in is built to add other providers (FR-01) |
 | Slow or expensive mobile data in some launch countries | Screens load slowly | Mobile-first design, small thumbnails, and no live updates |
 | Free plan limits: non-commercial use only, daily scheduled jobs, storage caps | The app stops or must move to a paid plan | Monthly usage review; a paid plan is required if the project becomes commercial ([Architecture §3](03-ARCHITECTURE.md#3-technical-decisions)) |
 | Stores block link lookups | Items show no title or image | The item is always saved with its link (BR-21) |
@@ -182,12 +180,11 @@ Flows A, B, C, E, and F ([UX design §1](02-UX-DESIGN.md#1-user-flows)) work fro
 
 ## 10. Open questions
 
-1. **Access from launch countries:** confirm that Google sign-in and the hosting, database, and email providers can be used from every launch country, especially Cuba.
-2. **Domain:** confirm availability and register `comproparati.com` (preferred) or `comproparati.app`.
-3. **Terms of Service and Privacy Policy:** who writes them.
-4. **Support email address** for "Report a problem" (FR-20).
-5. **Backup storage:** where the daily encrypted database backups are kept ([Infrastructure §5](06-INFRASTRUCTURE.md#5-backups)).
-6. **Error tracking:** whether to add an error tracking service, such as Sentry's free plan, since the hosting plan keeps logs only briefly ([Infrastructure §6](06-INFRASTRUCTURE.md#6-monitoring)).
+1. **Domain:** confirm availability and register `comproparati.com` (preferred) or `comproparati.app`.
+2. **Terms of Service and Privacy Policy:** who writes them.
+3. **Support email address** for "Report a problem" (FR-20).
+4. **Backup storage:** where the daily encrypted database backups are kept ([Infrastructure §5](06-INFRASTRUCTURE.md#5-backups)).
+5. **Error tracking:** whether to add an error tracking service, such as Sentry's free plan, since the hosting plan keeps logs only briefly ([Infrastructure §6](06-INFRASTRUCTURE.md#6-monitoring)).
 
 ---
 
@@ -487,7 +484,7 @@ Each story links to the requirements that implement it and the acceptance criter
 
 | Topic | Decision | Reason |
 | --- | --- | --- |
-| Sign-in | Google only, built to add more providers | One provider keeps setup simple, and Android phones already come with a Google account. |
+| Sign-in | Google only, built to add more providers | One provider keeps setup simple, and Android phones already come with a Google account. Google sign-in has been confirmed to work from Cuba. |
 | Interface | One interface that adapts to each user's memberships; no mode switch | Users with little digital experience should not have to understand modes. Each person sees only what they can do. |
 | Shared space | Called a "group" | People who share lists may live in different homes. |
 | Item details | A single **Notes** field | Size and color only apply to clothing; notes work for any product. |

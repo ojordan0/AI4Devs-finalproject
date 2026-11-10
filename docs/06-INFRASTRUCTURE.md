@@ -1,6 +1,6 @@
 # Infrastructure and deployment
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 8, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.8 · **Date:** November 9, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -44,11 +44,11 @@ Vercel Cron calls the daily email route at 13:00 UTC, which is 9:00 am US Easter
 
 ## 5. Backups
 
-A scheduled GitHub Actions workflow runs `pg_dump` daily, encrypts the file, and stores it outside Neon (location: [PRD §10](01-PRD.md#10-open-questions), question 5). A restore into a separate database is tested before launch and then monthly.
+A scheduled GitHub Actions workflow runs `pg_dump` daily, encrypts the file, and stores it outside Neon (location: [PRD §10](01-PRD.md#10-open-questions), question 4). A restore into a separate database is tested before launch and then monthly.
 
 ## 6. Monitoring
 
-Errors are logged to the Vercel runtime logs, which the Hobby plan keeps only briefly ([PRD §10](01-PRD.md#10-open-questions), question 6). Free plan usage (database storage, Blob storage and transfer, and email volume) is reviewed monthly.
+Errors are logged to the Vercel runtime logs, which the Hobby plan keeps only briefly ([PRD §10](01-PRD.md#10-open-questions), question 5). Free plan usage (database storage, Blob storage and transfer, and email volume) is reviewed monthly.
 
 ## 7. Configuration
 
