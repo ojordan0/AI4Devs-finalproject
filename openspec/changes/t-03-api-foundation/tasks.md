@@ -12,7 +12,7 @@ T-03 keeps one acceptance criterion with an ID, AC-97, whose test is task 5.4. A
 ## 2. Shared field limits and schemas
 
 - [x] 2.1 Add the BR-32 limits and the rate limits from Security and testing §1 as constants in `src/shared/` (design decisions 5 and 6). Verify with `npx tsc --noEmit`.
-- [x] 2.2 Add a Zod schema per BR-32 field in `src/shared/`, with phone numbers parsed by libphonenumber-js and transformed to E.164, and the conversion of validation failures into `fields` codes (design decision 6). Verify with `npx tsc --noEmit`.
+- [x] 2.2 Add a Zod schema per BR-32 field in `src/shared/`, with phone numbers parsed by libphonenumber-js and transformed to E.164, and the conversion of validation failures into `fields` codes (design decision 6). Recipient detail names and values need at least one character. Verify with `npx tsc --noEmit`.
 - [x] 2.3 Test the scenario "BR-32 each field limit is enforced" in `tests/unit/`, with one test per field named with `BR-32`, each checking the value at the limit and just past it. Verify that the tests pass, and that changing one limit constant makes its test fail.
 - [x] 2.4 Test the scenarios "BR-32 phone numbers must be valid international numbers" and "BR-32 links must be http or https". Verify that the tests pass, including a number given with spaces that is stored in E.164.
 - [x] 2.5 Add an ESLint rule that stops files in `src/shared` from importing `src/server` (scenario "T-03 shared schemas have no server imports"). Verify that `npm run lint` passes, and fails after temporarily adding such an import, then remove it.
@@ -28,13 +28,14 @@ T-03 keeps one acceptance criterion with an ID, AC-97, whose test is task 5.4. A
 
 - [x] 4.1 Add the session reader interface, the placeholder reader that returns no user, and a fake reader for tests in `tests/support/` (design decision 2). Verify with `npx tsc --noEmit`.
 - [x] 4.2 Add the route definition wrapper in `src/server/http/`, with injected dependencies, the step order in design decision 1, validation of path parameters, query, and body, and the mapping of domain errors and unexpected errors into the error format (design decision 3). Verify with `npx tsc --noEmit`.
-- [x] 4.3 Add the `errors` messages for every code in API §1, plus the generic 500 message, to `src/i18n/en.json` and `src/i18n/es.json`, and the language choice in design decision 7. Verify that the existing check that both files have the same keys passes, or add it to `tests/unit/` if it doesn't exist yet.
+- [x] 4.3 Add the `errors` messages for every code in API §1, plus the generic 500 message, to `src/i18n/en.json` and `src/i18n/es.json`, and the language choice in design decision 7. Add `tests/unit/translations.test.ts`, checking that both files have the same keys and no empty message, since no such check existed. Verify that it passes.
 - [x] 4.4 Add the response schema helper in `tests/support/` (design decision 10), and test the scenario "T-03 a response that breaks its schema fails the test". Verify that the test passes.
 - [x] 4.5 Test the `api-conventions` scenarios "T-03 request without a session is rejected" and "T-03 public endpoint skips the session check" in `tests/integration/`, with endpoints defined in the test file using the wrapper. Verify that the tests pass and that a spy shows the service wasn't called on rejection.
 - [x] 4.6 Test the scenarios "T-03 domain error becomes its status and code" and "T-03 unexpected failure reveals nothing", covering every row of the API §1 table. Verify that the tests pass, and that the 500 body has no stack trace or database text.
 - [x] 4.7 Test the scenarios "T-03 message follows the user's language" and "T-03 message follows the browser without a user". Verify that the tests pass for English, Spanish, and an unsupported browser language.
 - [x] 4.8 Test the scenarios "T-03 invalid body answers with the failing fields" and "T-03 body that isn't JSON is rejected". Verify that the tests pass and that the service isn't called.
 - [x] 4.9 Test the `group-access` scenarios "BR-13 another group's data gets the same 404 as missing data" and "BR-13 a malformed ID gets the same 404" through a test endpoint that calls the membership check. Verify that the two 404 responses have identical status, headers, and bodies.
+- [x] 4.10 Add the 500 `INTERNAL_ERROR` row to the error table in `docs/05-API.md` §1, name the origin check in its `FORBIDDEN` row, and update the header. Verify with `npm run check:links`.
 
 ## 5. Origin check, rate limits, and security headers
 
@@ -43,17 +44,17 @@ T-03 keeps one acceptance criterion with an ID, AC-97, whose test is task 5.4. A
 - [x] 5.3 Apply the general limit in the wrapper, and the optional per-action limit from a route declaration. Verify with `npx tsc --noEmit`.
 - [x] 5.4 Write the test `AC-97 request over the rate limit is rejected with a friendly message` in `tests/integration/`, with a controlled clock. Verify that it passes, and that the message is the translation-file text in the user's language.
 - [x] 5.5 Test the scenarios "T-03 requests under the limit pass", "T-03 the limit resets in the next window", "T-03 each user has their own count", "T-03 simultaneous requests are all counted" (on separate database connections), and "T-03 an action limit is counted separately". Verify that the tests pass, and that the `rate_limits` rows have the expected keys, counts, and `expires_at`.
-- [x] 5.6 Add `src/server/http/security-headers.ts`, the request proxy in `src/proxy.ts` with the per-request nonce policy, the static headers in `next.config.ts`, and the API headers in the wrapper (design decision 8). Verify that `npm run build` succeeds.
+- [x] 5.6 Add `src/server/http/security-headers.ts`, the request proxy in `src/proxy.ts` with the per-request nonce policy, the static headers in `next.config.ts`, the API headers in the wrapper, and a `connection()` call in `src/app/layout.tsx` so pages render per request (design decision 8). Verify that `npm run build` succeeds.
 - [x] 5.7 Test the scenario "T-03 an API response has the security headers" in `tests/integration/`, for a success and an error response. Verify that the test passes.
 - [x] 5.8 Test the scenario "T-03 a page has the security headers" in `tests/e2e/`, against the production build, failing on any policy violation in the console. Verify that `npm run test:e2e` passes in Chromium and WebKit.
 
 ## 6. OpenAPI document and its check
 
 - [x] 6.1 Add the OpenAPI registry in `src/server/http/openapi.ts` with the server, the `sessionCookie` scheme, and the `Error` schema from API §3, and have the wrapper register each route's declaration (design decision 9). Verify with `npx tsc --noEmit`.
-- [x] 6.2 Add `scripts/generate-openapi.ts` and the `openapi:generate` npm script, writing `docs/openapi.yaml` with `yaml`, and list the file in `.prettierignore`. Generate and commit `docs/openapi.yaml`. Verify that `npm run lint` passes.
+- [x] 6.2 Add `scripts/openapi-document.ts`, which builds the document, `scripts/generate-openapi.ts` and the `openapi:generate` npm script, which write `docs/openapi.yaml` with `yaml`, and `src/server/http/zod-openapi.ts` (design decision 9), and list the file in `.prettierignore`. Generate and commit `docs/openapi.yaml`. Verify that `npm run lint` passes.
 - [x] 6.3 Test the scenarios "T-03 generated document has the shared components" and "T-03 generation is repeatable" in `tests/integration/`. Verify that the tests pass.
 - [x] 6.4 Add the `openapi` job to `.github/workflows/ci.yml`, running the script and `git diff --exit-code docs/openapi.yaml`. Verify locally that the commands pass, and fail after temporarily changing the `Error` schema without regenerating, then undo the change.
-- [x] 6.5 Add `openapi` to the required checks on `main` with `gh api`. Verify that the branch protection lists it, next to the existing checks.
+- [x] 6.5 Add `openapi` to the required checks in the `require-pull-request` ruleset on `main` with `gh api`. Verify that the ruleset lists it, next to the existing checks.
 
 ## 7. Final checks
 

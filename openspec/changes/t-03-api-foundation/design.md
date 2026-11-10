@@ -45,7 +45,7 @@ The session reader is an interface: given the request headers, it returns the si
 
 ### 3. Domain errors are thrown by services and mapped once
 
-`src/server/services/errors.ts` defines one error class per code in [API §1](../../../docs/05-API.md#1-conventions) that a service can raise: not available, forbidden, already reserved, item changed, rule violation with its reason, and invitation invalid. Services throw them; the wrapper maps each to its status and code. Errors that aren't domain errors become a 500 with a generic message, and are logged with their details on the server. The wrapper itself raises not signed in, validation failed, and rate limited.
+`src/server/services/errors.ts` defines one error class per code in [API §1](../../../docs/05-API.md#1-conventions) that a service can raise: not available, forbidden, already reserved, item changed, rule violation with its reason, and invitation invalid. Services throw them; the wrapper maps each to its status and code. Errors that aren't domain errors become `500 INTERNAL_ERROR` with a generic message, a code added to the table in [API §1](../../../docs/05-API.md#1-conventions), and are logged with their details on the server. The wrapper itself raises not signed in, validation failed, and rate limited.
 
 ### 4. The membership check lives in the services
 
@@ -63,7 +63,7 @@ The general limit uses the action `api` and the "any API request" limit from [Se
 
 ### 6. Shared field limits and schemas in `src/shared`
 
-One module holds the BR-32 numbers, and another builds a Zod schema per field from them: names, notes, quantity, recipient details (count, name, value), link, agency, delivery address, and phone numbers. Phone numbers are parsed with libphonenumber-js and transformed to E.164, which the database check already requires. Validation failures are converted into `fields`, keyed by the field path, with a small set of codes the interface can turn into text: `required`, `too_short`, `too_long`, `too_small`, `too_big`, and `invalid`.
+One module holds the BR-32 numbers, and another builds a Zod schema per field from them: names, notes, quantity, recipient details (count, name, value), link, agency, delivery address, and phone numbers. Phone numbers are parsed with libphonenumber-js and transformed to E.164, which the database check already requires. Recipient detail names and values need at least one character: BR-32 gives only their maximums, and an empty detail carries nothing. Validation failures are converted into `fields`, keyed by the field path, with a small set of codes the interface can turn into text: `required`, `too_short`, `too_long`, `too_small`, `too_big`, and `invalid`.
 
 An ESLint rule stops files in `src/shared` from importing `src/server`, so the browser bundle never pulls in server code.
 
@@ -75,7 +75,7 @@ The wrapper picks the language from the signed-in user's saved language, then fr
 
 `src/server/http/security-headers.ts` defines the headers once:
 
-- **Pages:** a request proxy (`src/proxy.ts`, Next.js 16's name for middleware) creates a nonce per request and sets the Content Security Policy with it, so Next.js marks its own scripts with the nonce. The policy is `default-src 'self'`, `script-src 'self' 'nonce-…' 'strict-dynamic'`, `style-src 'self' 'unsafe-inline'`, `img-src 'self' data: blob:`, `connect-src 'self'`, `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, and `frame-ancestors 'none'`. Locally, `script-src` also allows `'unsafe-eval'`, which React needs in development.
+- **Pages:** a request proxy (`src/proxy.ts`, Next.js 16's name for middleware) creates a nonce per request and sets the Content Security Policy with it, so Next.js marks its own scripts with the nonce. The root layout calls `connection()`, so every page renders per request: a page built once at build time would carry no nonce, and the policy would block its scripts. The policy is `default-src 'self'`, `script-src 'self' 'nonce-…' 'strict-dynamic'`, `style-src 'self' 'unsafe-inline'`, `img-src 'self' data: blob:`, `connect-src 'self'`, `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, and `frame-ancestors 'none'`. Locally, `script-src` also allows `'unsafe-eval'`, which React needs in development.
 - **Static headers** (HSTS, `nosniff`, and the referrer policy) for every route, in `next.config.ts`.
 - **API responses:** the wrapper adds the static headers and a policy of `default-src 'none'; frame-ancestors 'none'`, because JSON needs nothing else. This is what lets integration tests check them.
 
@@ -85,9 +85,11 @@ The wrapper picks the language from the signed-in user's saved language, then fr
 
 ### 9. OpenAPI generation and its check
 
-`scripts/generate-openapi.ts` (`npm run openapi:generate`) builds the document with zod-to-openapi from a registry in `src/server/http/openapi.ts`, which holds the base server, the `sessionCookie` scheme, and the `Error` schema as [API §3](../../../docs/05-API.md#3-openapi-definition-of-the-main-endpoints) defines them. Route files register their paths in the same registry, and the script imports every route module so each path is included. It writes `docs/openapi.yaml` with the `yaml` package, with keys in a fixed order so the output is repeatable.
+`scripts/openapi-document.ts` builds the document with zod-to-openapi, and `scripts/generate-openapi.ts` (`npm run openapi:generate`) writes it; tests call the first directly. The document comes from a registry in `src/server/http/openapi.ts`, which holds the base server, the `sessionCookie` scheme, and the `Error` schema as [API §3](../../../docs/05-API.md#3-openapi-definition-of-the-main-endpoints) defines them. Route files register their paths in the same registry, and the script imports every route module so each path is included. It writes `docs/openapi.yaml` with the `yaml` package, with keys in a fixed order so the output is repeatable.
 
-A new CI job named `openapi` runs the script and `git diff --exit-code docs/openapi.yaml`. It is added to the required checks on `main`. The generated file is listed in `.prettierignore`, so formatting never fights the generator.
+With Zod 4, the generator can register a named schema, such as `Error`, only if Zod was extended before that schema was created. `src/server/http/zod-openapi.ts` does the extension, and modules that define registered schemas import it first.
+
+A new CI job named `openapi` runs the script and `git diff --exit-code docs/openapi.yaml`. It is added to the required checks on `main`, in the `require-pull-request` repository ruleset. The generated file is listed in `.prettierignore`, so formatting never fights the generator.
 
 *Alternative:* writing JSON into `openapi.yaml`, which is valid YAML, to avoid a package. Rejected: hard to read in review, and [API §3](../../../docs/05-API.md#3-openapi-definition-of-the-main-endpoints) shows the document as YAML.
 
@@ -102,8 +104,8 @@ A new CI job named `openapi` runs the script and `git diff --exit-code docs/open
 - [The placeholder session reader means endpoints added before T-04 can't be reached by real users.] → Intended: T-04 is the next ticket that adds an endpoint. Tests never depend on the placeholder.
 - [A fixed window lets up to twice the limit through around a window boundary.] → Acceptable for abuse protection at this volume.
 - [Rate limit rows accumulate until the daily cleanup exists in milestone 2.] → At most one row per user, action, and minute of use; small for the pilot.
-- [A new required check must also be added to branch protection, outside the repository.] → Done with `gh api` as part of the tasks, and confirmed on this ticket's pull request.
+- [A new required check must also be added to the `require-pull-request` ruleset, outside the repository.] → Done with `gh api` as part of the tasks, and confirmed on this ticket's pull request.
 
 ## Migration Plan
 
-No schema change and no migration. Rollback is reverting the pull request; nothing outside the repository depends on it except the required `openapi` check, which is removed from branch protection if the change is reverted.
+No schema change and no migration. Rollback is reverting the pull request; nothing outside the repository depends on it except the required `openapi` check, which is removed from the `require-pull-request` ruleset if the change is reverted.

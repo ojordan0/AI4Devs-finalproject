@@ -49,11 +49,11 @@ Every endpoint in [API §2](../../../docs/05-API.md#2-endpoints) needs the same 
 
 ## Impact
 
-- **New code:** the route handler wrapper, error format, origin check, and rate limiter in `src/server/http/`; the membership check in `src/server/services/`; field limits and Zod schemas in `src/shared/`; the security headers in the Next.js configuration and the request proxy; and the OpenAPI generation script in `scripts/`.
+- **New code:** the route handler wrapper, error format, origin check, and rate limiter in `src/server/http/`; the membership check in `src/server/services/`; field limits and Zod schemas in `src/shared/`; the security headers in the Next.js configuration and the request proxy (`src/proxy.ts`); the Zod extension the generator needs, in `src/server/http/zod-openapi.ts`; and the OpenAPI generation in `scripts/openapi-document.ts`, which builds the document, and `scripts/generate-openapi.ts`, the npm command that writes it.
 - **New generated file:** `docs/openapi.yaml`.
 - **Tables:** `rate_limits` (existing, written for the first time). `memberships` and `groups` (existing, read). No schema change, so no migration.
 - **Endpoints:** none added. The base path `/api/v1` and its conventions are established.
-- **Changed files:** `next.config.ts`, `eslint.config.mjs` (shared code can't import server code), `.prettierignore` (the generated file), `src/i18n/en.json` and `src/i18n/es.json` (error messages), `package.json` (the generation script and `yaml`), and `.github/workflows/ci.yml` (the OpenAPI check).
-- **Changed documents:** `docs/03-ARCHITECTURE.md` (§1.6 and §2) and `docs/08-WORK-TICKETS.md` (AC-95 moves from T-03 to T-10).
-- **GitHub:** the new OpenAPI check is added to the required checks on `main`. The descriptions of issues #29 and #36 list AC-95 under T-10.
+- **Changed files:** `next.config.ts`, `src/app/layout.tsx` (pages render per request, so they carry the nonce), `eslint.config.mjs` (shared code can't import server code), `.prettierignore` (the generated file), `src/i18n/en.json` and `src/i18n/es.json` (error messages), `package.json` (the generation script and `yaml`), and `.github/workflows/ci.yml` (the OpenAPI check).
+- **Changed documents:** `docs/03-ARCHITECTURE.md` (§1.6 and §2), `docs/05-API.md` (§1: a 500 `INTERNAL_ERROR` row for unexpected failures, and the `FORBIDDEN` row names the origin check), and `docs/08-WORK-TICKETS.md` (AC-95 moves from T-03 to T-10).
+- **GitHub:** the new OpenAPI check is added to the required checks on `main`, which live in the `require-pull-request` repository ruleset. The descriptions of issues #29 and #36 list AC-95 under T-10.
 - **New dependency:** `yaml`, a development dependency, once Architecture §1.6 lists it.
