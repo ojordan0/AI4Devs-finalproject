@@ -8,7 +8,8 @@ export type DomainErrorCode =
   | "ALREADY_RESERVED"
   | "ITEM_CHANGED"
   | "RULE_VIOLATION"
-  | "INVITATION_INVALID";
+  | "INVITATION_INVALID"
+  | "VALIDATION_FAILED";
 
 export abstract class DomainError extends Error {
   abstract readonly code: DomainErrorCode;
@@ -46,4 +47,16 @@ export class RuleViolationError extends DomainError {
 /** The invitation was used, expired, or cancelled (BR-08). */
 export class InvitationInvalidError extends DomainError {
   readonly code = "INVITATION_INVALID";
+}
+
+/**
+ * A field refers to something the request can't use, such as a recipient of
+ * another group. Answered like any invalid field, so it reveals nothing more.
+ */
+export class InvalidFieldsError extends DomainError {
+  readonly code = "VALIDATION_FAILED";
+
+  constructor(readonly fields: Record<string, "invalid">) {
+    super(Object.keys(fields).join(", "));
+  }
 }

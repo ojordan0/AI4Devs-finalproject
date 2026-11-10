@@ -1,6 +1,6 @@
 # Product Requirements Document: Assisted Shopping Platform (MVP)
 
-**Version:** 1.7 · **Date:** November 10, 2026  
+**Version:** 1.8 · **Date:** November 10, 2026  
 **Project Manager and Product owner:** Odalys Jordan Enriquez  
 **Product Name:** ComproParaTi ("I buy for you", [section 16](#16-product-decisions))
 
@@ -365,7 +365,7 @@ Each requirement describes what users can do. The rules that apply are reference
 - **FR-13 Item fields.** An item has a required name and optional recipient, link, quantity (default 1), and notes (BR-32). Notes is a single free-text field for everything specific to the request: size, color, brand, dose, flavor, maximum price, or urgency. **Quick add:** typing only the name in the list creates the item.
 - **FR-14 Data from the link.** When a member pastes a link, the system tries to obtain the title, image, and store name from the page's public metadata, in the background (BR-21). The image is stored as the platform's own thumbnail.
 - **FR-15 Item notes first.** On the item page, the item's notes are shown before the recipient's details (BR-16).
-- **FR-16 Editing items.** Members can edit and delete items, including moving an item to another list (BR-19, BR-20).
+- **FR-16 Editing items.** Members can edit and delete items, including moving an item to another list of the same group (BR-19, BR-20).
 
 ### 13.5 Buyers
 

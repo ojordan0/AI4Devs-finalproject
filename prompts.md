@@ -65,6 +65,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Part 12 | — | D2 scope: removing the launch-country access risk, fitting D2 and D3 to the available hours, and pull request #52 | Claude Code | Claude Opus 5.5 | [part-12-d2-scope.md](docs/ai-conversations/part-12-d2-scope.md) |
 | Part 13 | T-03 | API foundation: the route wrapper, field limits, membership check, rate limits, security headers, the generated OpenAPI document, and pull request #53 | Claude Code | Claude Opus 5.5 | [part-13-api-foundation.md](docs/ai-conversations/part-13-api-foundation.md) |
 | Part 14 | T-07 | Groups API: getting started, the current user and their tabs, the group endpoints, permission tests across groups, and pull request #54, built end to end from one prompt | Claude Code | Claude Opus 5.5 | [part-14-groups-api.md](docs/ai-conversations/part-14-groups-api.md) |
+| Part 15 | T-09 | Lists and items API: lists, quick add and the item form's fields, editing within the status rules, moving and deleting items, and pull request #55, continuing part 14's session | Claude Code | Claude Opus 5.5 | [part-15-lists-items-api.md](docs/ai-conversations/part-15-lists-items-api.md) |
 
 ## Tools and phases
 

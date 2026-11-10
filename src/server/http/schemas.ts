@@ -3,6 +3,15 @@ import "./zod-openapi";
 import { z } from "zod";
 
 import { LANGUAGES } from "../../shared/languages";
+import { fieldLimits } from "../../shared/limits";
+import {
+  changesSomething,
+  createItemRequestShape,
+  createListRequestShape,
+  ITEM_STATUSES,
+  itemFiltersShape,
+  updateItemRequestShape,
+} from "../../shared/requests";
 import { openApiRegistry } from "./openapi";
 
 // Response schemas shared by several endpoints, registered by name so the
@@ -87,3 +96,73 @@ export const groupSchema = openApiRegistry.register(
     buyers: z.array(personRefSchema),
   }),
 );
+
+// Lists and items (docs/05-API.md, section 3). Request schemas are rebuilt here
+// from the shared shapes, so they can be named in the document.
+
+export const listSchema = openApiRegistry.register(
+  "List",
+  z.object({ id: z.uuid(), name: z.string() }),
+);
+
+export const listCollectionSchema = openApiRegistry.register(
+  "ListCollection",
+  z.object({ lists: z.array(listSchema) }),
+);
+
+export const createListRequestSchema = openApiRegistry.register(
+  "CreateListRequest",
+  z.object(createListRequestShape),
+);
+
+export const itemStatusSchema = openApiRegistry.register(
+  "ItemStatus",
+  z.enum(ITEM_STATUSES),
+);
+
+export const itemSchema = openApiRegistry.register(
+  "Item",
+  z.object({
+    id: z.uuid(),
+    listId: z.uuid(),
+    name: z.string().max(fieldLimits.name.max),
+    notes: z.string().max(fieldLimits.note.max).nullable(),
+    url: z.url().max(fieldLimits.link.max).nullable(),
+    storeName: z.string().nullable(),
+    thumbnailUrl: z.url().nullable(),
+    linkStatus: z.enum(["none", "pending", "done", "failed"]),
+    quantity: z
+      .number()
+      .int()
+      .min(fieldLimits.quantity.min)
+      .max(fieldLimits.quantity.max),
+    status: itemStatusSchema,
+    recipient: personRefSchema.nullable(),
+    buyer: personRefSchema.nullable(),
+    buyerNote: z.string().nullable(),
+    shipmentId: z.uuid().nullable(),
+    updatedAfterReservation: z.boolean(),
+    version: z.number().int(),
+    createdAt: z.iso.datetime(),
+    updatedAt: z.iso.datetime(),
+  }),
+);
+
+export const itemCollectionSchema = openApiRegistry.register(
+  "ItemCollection",
+  z.object({ items: z.array(itemSchema) }),
+);
+
+export const createItemRequestSchema = openApiRegistry.register(
+  "CreateItemRequest",
+  z.object(createItemRequestShape),
+);
+
+export const updateItemRequestSchema = openApiRegistry.register(
+  "UpdateItemRequest",
+  z.object(updateItemRequestShape).refine(changesSomething, {
+    message: "nothing to change",
+  }),
+);
+
+export const itemFiltersSchema = z.object(itemFiltersShape);
