@@ -10,6 +10,7 @@ openspec/
 # Generated
 .next/
 coverage/
+docs/openapi.yaml
 next-env.d.ts
 package-lock.json
 playwright-report/

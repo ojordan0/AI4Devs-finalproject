@@ -63,6 +63,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Part 10 | T-02 | Database schema: the tables and their rules, the first migration, seed data, constraint tests, the CI migration check, and pull request #49 | Claude Code | Claude Opus 5.5 | [part-10-database-schema.md](docs/ai-conversations/part-10-database-schema.md) |
 | Part 11 | — | Ticket workflow: the steps to start and finish a ticket, work outside a ticket, branch names, and pull request #51 | Claude Code | Claude Opus 5.5 | [part-11-ticket-workflow.md](docs/ai-conversations/part-11-ticket-workflow.md) |
 | Part 12 | — | D2 scope: removing the launch-country access risk, fitting D2 and D3 to the available hours, and pull request #52 | Claude Code | Claude Opus 5.5 | [part-12-d2-scope.md](docs/ai-conversations/part-12-d2-scope.md) |
+| Part 13 | T-03 | API foundation: the route wrapper, field limits, membership check, rate limits, security headers, the generated OpenAPI document, and pull request #53 | Claude Code | Claude Opus 5.5 | [part-13-api-foundation.md](docs/ai-conversations/part-13-api-foundation.md) |
 
 ## Tools and phases
 
@@ -360,6 +361,10 @@ Examples of the AI's output that the product owner corrected or redirected:
 >
 > 5- Field limits adjusted: Names of items, lists, groups, and people: 100 characters. Notes, buyer note, and "Couldn't buy it" note: 1,000. Quantity: 1 to 99. Up to 20 details per person, each with a name up to 40 characters and a value up to 150. Agency: 80. Address: 500. WhatsApp: a valid international number.
 
+**Prompt 2** (Part 13, turn 1 · T-03 · Claude Opus 5.5)
+
+> /opsx:propose Work on T-03
+
 ### 2.6. Tests
 
 **Prompt 1** (Part 4, turn 13 · Claude Opus 5.5)
@@ -425,6 +430,12 @@ Examples of the AI's output that the product owner corrected or redirected:
 > 1. Yes, I agree with your recommendation.
 > 2. yes, as I mentioned above.
 > 3. I agree with your proposal for Success metrics
+
+**Prompt 2** (Part 13, turn 2 · T-03 · Claude Opus 5.5)
+
+> 1)  moving AC-95 to T-10
+> 2) install it
+> 3) Follow your recommendation
 
 ---
 

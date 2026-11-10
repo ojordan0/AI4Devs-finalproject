@@ -19,6 +19,24 @@ const eslintConfig = [
   },
   ...nextCoreWebVitals,
   ...nextTypescript,
+  {
+    // The browser imports src/shared, so it must never pull in server code
+    // (docs/03-ARCHITECTURE.md, section 2).
+    files: ["src/shared/**"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["@/server", "@/server/*", "**/server", "**/server/*"],
+              message: "Code in src/shared runs in the browser too.",
+            },
+          ],
+        },
+      ],
+    },
+  },
 ];
 
 export default eslintConfig;

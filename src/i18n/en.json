@@ -2,5 +2,17 @@
   "placeholder": {
     "title": "ComproParaTi",
     "message": "We're getting the app ready."
+  },
+  "errors": {
+    "NOT_SIGNED_IN": "Sign in to continue.",
+    "FORBIDDEN": "You can't do that in this group.",
+    "NOT_AVAILABLE": "This page isn't available.",
+    "ALREADY_RESERVED": "Someone else already reserved it",
+    "ITEM_CHANGED": "This item changed. Showing the latest.",
+    "RULE_VIOLATION": "This can't be done right now.",
+    "INVITATION_INVALID": "This invitation is no longer valid. Ask for a new one.",
+    "VALIDATION_FAILED": "Check the highlighted fields.",
+    "RATE_LIMITED": "You're going a little fast. Wait a moment and try again.",
+    "INTERNAL_ERROR": "Something went wrong. Try again."
   }
 }

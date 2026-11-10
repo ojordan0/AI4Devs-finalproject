@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.10 · **Date:** November 9, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.11 · **Date:** November 9, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -142,7 +142,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 - Origin check for requests that change data, rate limiter, and security headers ([Security and testing §1](07-SECURITY-AND-TESTING.md#1-security)).
 - OpenAPI generation into `docs/openapi.yaml`, checked in CI.
 
-**Acceptance criteria:** AC-95, AC-97.
+**Acceptance criteria:** AC-97.
 
 ### T-04 Sign-in, onboarding, and basic profile
 
@@ -247,7 +247,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 - Item page for members, with the actions for each status ([UX design §2.5](02-UX-DESIGN.md#25-item-statuses-and-actions)).
 - Refresh, and the "This item changed" handling (AC-67, AC-68 are verified in T-12).
 
-**Acceptance criteria:** AC-23, AC-38 (interface), AC-40 (interface).
+**Acceptance criteria:** AC-23, AC-38 (interface), AC-40 (interface), AC-95.
 
 ### T-11 Status changes: reserve, release, purchase
 
