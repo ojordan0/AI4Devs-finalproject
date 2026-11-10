@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.9 · **Date:** November 8, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.10 · **Date:** November 9, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -70,13 +70,13 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 | T-03 | [#29](https://github.com/ojordan0/AI4Devs-finalproject/issues/29) | API foundation and baseline security | E-08 | US-26 | Backend | 1 | D2 | M | T-02 | `feat/t-03-api-foundation` |
 | T-04 | [#30](https://github.com/ojordan0/AI4Devs-finalproject/issues/30) | Sign-in, onboarding, and basic profile | E-01 | US-01, US-02 | Full stack | 1 | D2 | L | T-03 | `feat/t-04-sign-in-onboarding` |
 | T-05 | [#31](https://github.com/ojordan0/AI4Devs-finalproject/issues/31) | App shell, navigation, and translations | E-08 | US-25, US-07 | Frontend | 1 | D2 | M | T-01 | `feat/t-05-app-shell` |
-| T-06 | [#32](https://github.com/ojordan0/AI4Devs-finalproject/issues/32) | Production deployment | E-08 | None | DevOps | 1 | D2 | M | T-04 | `chore/t-06-production-deployment` |
+| T-06 | [#32](https://github.com/ojordan0/AI4Devs-finalproject/issues/32) | Production deployment | E-08 | None | DevOps | 1 | D3 | M | T-04 | `chore/t-06-production-deployment` |
 | T-07 | [#33](https://github.com/ojordan0/AI4Devs-finalproject/issues/33) | Groups, memberships, and access | E-02 | US-07, US-01, US-04 | Backend | 2 | D2 | M | T-03 | `feat/t-07-groups-api` |
-| T-08 | [#34](https://github.com/ojordan0/AI4Devs-finalproject/issues/34) | Buyer invitations | E-02 | US-04 | Full stack | 2 | D2 | L | T-07, T-05 | `feat/t-08-buyer-invitations` |
+| T-08 | [#34](https://github.com/ojordan0/AI4Devs-finalproject/issues/34) | Buyer invitations | E-02 | US-04 | Full stack | 2 | D3 | L | T-07, T-05 | `feat/t-08-buyer-invitations` |
 | T-09 | [#35](https://github.com/ojordan0/AI4Devs-finalproject/issues/35) | Lists and items API | E-04 | US-10, US-07, US-11, US-12, US-13 | Backend | 3 | D2 | M | T-07 | `feat/t-09-lists-items-api` |
 | T-10 | [#36](https://github.com/ojordan0/AI4Devs-finalproject/issues/36) | Lists screen, item form, and item page | E-04 | US-10, US-07 | Frontend | 3 | D2 | L | T-09, T-05 | `feat/t-10-lists-screens` |
 | T-11 | [#37](https://github.com/ojordan0/AI4Devs-finalproject/issues/37) | Status changes: reserve, release, purchase | E-05 | US-15, US-14, US-16 | Backend | 4 | D2 | M | T-09 | `feat/t-11-status-changes-api` |
-| T-12 | [#38](https://github.com/ojordan0/AI4Devs-finalproject/issues/38) | To buy, My purchases, and buyer actions | E-05 | US-14, US-15 | Frontend | 4 | D2 | M | T-11, T-10 | `feat/t-12-buyer-screens` |
+| T-12 | [#38](https://github.com/ojordan0/AI4Devs-finalproject/issues/38) | To buy, My purchases, and buyer actions | E-05 | US-14, US-15 | Frontend | 4 | D3 | M | T-11, T-10 | `feat/t-12-buyer-screens` |
 | T-13 | [#39](https://github.com/ojordan0/AI4Devs-finalproject/issues/39) | People and their details | E-03 | US-09 | Full stack | 3 | D3 | M | T-10 | `feat/t-13-people` |
 | T-14 | [#40](https://github.com/ojordan0/AI4Devs-finalproject/issues/40) | Couldn't buy it and the item timeline | E-05 | US-16, US-13 | Full stack | 4 | D3 | M | T-12 | `feat/t-14-couldnt-buy-timeline` |
 | T-15 | [#41](https://github.com/ojordan0/AI4Devs-finalproject/issues/41) | Delivery addresses | E-06 | US-18 | Full stack | 5 | D3 | M | T-07, T-05 | `feat/t-15-delivery-addresses` |
@@ -179,7 +179,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 ### T-06 Production deployment
 
-**Epic:** E-08 · **Stories:** None · **Type:** DevOps · **Increment:** 1 · **Delivery:** D2 · **Size:** M · **Depends on:** T-04
+**Epic:** E-08 · **Stories:** None · **Type:** DevOps · **Increment:** 1 · **Delivery:** D3 · **Size:** M · **Depends on:** T-04
 
 **Goal:** the app live on a public URL, deploying automatically from `main`.
 
@@ -208,7 +208,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 ### T-08 Buyer invitations
 
-**Epic:** E-02 · **Stories:** US-04 · **Type:** Full stack · **Increment:** 2 · **Delivery:** D2 · **Size:** L · **Depends on:** T-07, T-05
+**Epic:** E-02 · **Stories:** US-04 · **Type:** Full stack · **Increment:** 2 · **Delivery:** D3 · **Size:** L · **Depends on:** T-07, T-05
 
 **Goal:** a member invites a buyer with a link sent on WhatsApp, and the buyer joins.
 
@@ -265,7 +265,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 ### T-12 To buy, My purchases, and buyer actions
 
-**Epic:** E-05 · **Stories:** US-14, US-15 · **Type:** Frontend · **Increment:** 4 · **Delivery:** D2 · **Size:** M · **Depends on:** T-11, T-10
+**Epic:** E-05 · **Stories:** US-14, US-15 · **Type:** Frontend · **Increment:** 4 · **Delivery:** D3 · **Size:** M · **Depends on:** T-11, T-10
 
 **Goal:** a buyer finds what to buy, reserves it, and marks it as purchased.
 
