@@ -93,7 +93,7 @@ One shared rule SHALL decide a user's tabs from their memberships and purchases,
 
 - **GIVEN** a user with no active membership who has purchases
 - **WHEN** their tabs are decided
-- **THEN** the only tab is My purchases
+- **THEN** the only tab is My purchases, and the interface also shows that they aren't in any group yet (UX design §2.7)
 
 #### Scenario: FR-08 a user with no group gets no tabs
 

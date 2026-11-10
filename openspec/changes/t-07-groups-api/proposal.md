@@ -58,5 +58,5 @@ None. The `group-access` check from T-03 is used as specified.
 - **Translations (existing files):** `src/i18n/en.json` and `src/i18n/es.json` get the starting group and list names and "Former user".
 - **Tests:** `tests/support/routes.ts` (existing) signs in any user, not only seed users; new integration tests for each endpoint and for getting started, and a unit test for the tabs.
 - **Generated file (existing):** `docs/openapi.yaml` gets the three paths.
-- **Changed documents:** `docs/01-PRD.md` (FR-08, BR-12 row, §19 FR-05), `docs/02-UX-DESIGN.md` (§2.2, §2.3, §2.10), `docs/05-API.md` (§1 sign-in exception and collections, §2 onboarding row), and `docs/08-WORK-TICKETS.md` (AC-25 to T-09, T-04 and T-08 scope).
+- **Changed documents:** `docs/01-PRD.md` (FR-08, BR-12 row, §19 FR-05), `docs/02-UX-DESIGN.md` (§2.2, §2.3, §2.7, §2.10), `docs/05-API.md` (§1 sign-in exception and collections, §2 onboarding row), and `docs/08-WORK-TICKETS.md` (AC-25 to T-09, T-04 and T-08 scope).
 - **GitHub:** the descriptions of issues #33 and #35 list AC-25 under T-09.

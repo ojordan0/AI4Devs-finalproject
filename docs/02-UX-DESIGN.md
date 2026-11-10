@@ -292,7 +292,7 @@ The same page serves everyone. The example shows the buyer who reserved the item
 - **Loading:** skeletons in lists and in the link preview.
 - **Errors with a way out:** "Couldn't save. Check your connection and try again", keeping what the user typed.
 - **No access (BR-13):** "This page isn't available." with a button back to the main screen.
-- **No groups:** a user with no remaining group access sees "You're not in any group yet.", a **Create a group** button, and "Ask someone to invite you."
+- **No groups:** a user with no remaining group access sees "You're not in any group yet.", a **Create a group** button, and "Ask someone to invite you." If they still have purchased items to ship (BR-11), they also get My purchases, with the message above it.
 - **Session expired (BR-03):** after signing in again, the user is back on the same screen with their text filled in.
 - **Field limits (BR-32):** text fields show a character counter as they near their limit and stop accepting text at it. Invalid values, such as a quantity of 0 or a link that isn't a web address, are pointed out under the field.
 - **Default address (BR-27):** "Choose another default address first."

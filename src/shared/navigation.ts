@@ -15,7 +15,9 @@ export type TabInput = {
 /**
  * The user's tabs in display order. Lists, People, and Group for a member of
  * any group; To buy for a buyer in any group; My purchases for a buyer, or for
- * anyone with purchases. No tabs means the user isn't in any group yet.
+ * anyone with purchases. The "not in any group yet" message depends on having
+ * no memberships, not on the tabs: a user whose access ended still gets My
+ * purchases for what they have to ship (BR-11).
  */
 export function visibleTabs({ memberships, hasPurchases }: TabInput): Tab[] {
   const isMember = memberships.some(({ type }) => type === "member");
