@@ -6,7 +6,7 @@
 
 - **Tool:** Claude Code (VS Code extension), in the project repository, on `feat/t-07-groups-api`.
 - **Model:** Claude Opus 5.5 (Anthropic) · **Effort:** 15 (the `reasoning_effort` value configured for this session).
-- **Session:** one prompt, given before the product owner stepped away, that asked for T-07 and then T-09 to be built end to end without stopping. This part covers T-07, through archiving its change. The same session continues with T-09 in part 15 (`part-15-lists-items-api.md`).
+- **Session:** one prompt, given before the product owner stepped away, that asked for T-07 and then T-09 to be built end to end without stopping. This part covers T-07, through archiving its change. The same session continues with T-09 in [part 15](part-15-lists-items-api.md).
 - **Subagents:** `adversarial-reviewer`, twice, on pull request #54. Their reports aren't reproduced here; the findings, and what was done about each, are in two comments on the pull request.
 - **How it was made:** a script extracted the visible text of the responses from the session's transcript, and the tool activity line was added afterwards.
 - **What's included:** the prompt, copied as written, and the visible text of the response, in order. The work continued twice after a background review finished, without a new prompt; those points are marked.
