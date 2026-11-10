@@ -388,6 +388,36 @@ components:
           format: uuid
       required:
         - version
+    OnboardingRequest:
+      type: object
+      properties:
+        language:
+          type: string
+          enum:
+            - es
+            - en
+        whatsappNumber:
+          type: string
+        acceptsTerms:
+          type: boolean
+          enum:
+            - true
+      required:
+        - language
+        - whatsappNumber
+        - acceptsTerms
+    UpdateMeRequest:
+      type: object
+      properties:
+        language:
+          type: string
+          enum:
+            - es
+            - en
+        whatsappNumber:
+          type: string
+        receiveEmails:
+          type: boolean
   parameters: {}
 paths:
   /groups/{groupId}/lists:
@@ -409,6 +439,12 @@ paths:
                 $ref: "#/components/schemas/ListCollection"
         "401":
           description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
           content:
             application/json:
               schema:
@@ -551,6 +587,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "429":
           description: RATE_LIMITED
           content:
@@ -582,6 +624,12 @@ paths:
                 $ref: "#/components/schemas/Item"
         "401":
           description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
           content:
             application/json:
               schema:
@@ -759,6 +807,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "404":
           description: NOT_AVAILABLE
           content:
@@ -840,6 +894,51 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /me/onboarding:
+    post:
+      summary: Save the language, WhatsApp number, and age and terms acceptance, and create the user's group and first list (FR-02, BR-01, BR-04, BR-06). Returns the current user; if onboarding is already complete, changes nothing.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OnboardingRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: VALIDATION_FAILED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /me:
     get:
       summary: Current user, memberships, and onboarding state. Also available before onboarding is complete.
@@ -852,6 +951,50 @@ paths:
                 $ref: "#/components/schemas/Me"
         "401":
           description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      summary: Change the language, WhatsApp number, or email setting (FR-04). The WhatsApp number can't be removed (BR-04).
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMeRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: VALIDATION_FAILED
           content:
             application/json:
               schema:

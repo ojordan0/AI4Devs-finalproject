@@ -1,14 +1,16 @@
 import { and, eq, exists, inArray } from "drizzle-orm";
 
 import type { Language } from "../../shared/languages";
+import type { Clock } from "../clock";
 import type { Database } from "../db/client";
 import { items, users } from "../db/schema";
 import { NotAvailableError } from "./errors";
-import { listGroups } from "./groups";
+import { listGroups, startWithoutInvitationIn } from "./groups";
 import type { MembershipType } from "./access";
 
 // The signed-in user, their memberships, and whether they have purchases, which
-// together decide the screens they see (FR-08).
+// together decide the screens they see (FR-08); and the user's own changes:
+// completing onboarding (FR-02) and their profile (FR-04).
 
 export type CurrentUser = {
   id: string;
@@ -72,4 +74,71 @@ export async function getCurrentUser(
       isOwner: group.isOwner,
     })),
   };
+}
+
+export type OnboardingAnswers = {
+  language: Language;
+  /** Already in E.164, from the shared request schema (BR-04, BR-32). */
+  whatsappNumber: string;
+};
+
+/**
+ * Completes onboarding (FR-02): saves the language, the WhatsApp number, and
+ * when the terms were accepted (BR-01), then runs getting started (BR-06), all
+ * in one transaction with the user's row locked. For a user who has already
+ * completed it, changes nothing. Returns the current user either way.
+ */
+export async function completeOnboarding(
+  db: Database,
+  clock: Clock,
+  userId: string,
+  answers: OnboardingAnswers,
+): Promise<CurrentUser> {
+  await db.transaction(async (tx) => {
+    const [user] = await tx
+      .select({ onboardedAt: users.onboardedAt })
+      .from(users)
+      .where(eq(users.id, userId))
+      .for("update");
+    if (!user) throw new NotAvailableError();
+    if (user.onboardedAt) return;
+
+    const now = clock();
+    await tx
+      .update(users)
+      .set({
+        language: answers.language,
+        whatsappNumber: answers.whatsappNumber,
+        termsAcceptedAt: now,
+        onboardedAt: now,
+        updatedAt: now,
+      })
+      .where(eq(users.id, userId));
+    await startWithoutInvitationIn(tx, clock, userId, answers.language);
+  });
+  return getCurrentUser(db, userId);
+}
+
+export type ProfileChanges = {
+  language?: Language;
+  /** E.164; the number can be changed but not removed (BR-04). */
+  whatsappNumber?: string;
+  receiveEmails?: boolean;
+};
+
+/** Changes the user's language, WhatsApp number, or email setting (FR-04). */
+export async function updateProfile(
+  db: Database,
+  clock: Clock,
+  userId: string,
+  changes: ProfileChanges,
+): Promise<CurrentUser> {
+  const values = Object.fromEntries(
+    Object.entries(changes).filter(([, value]) => value !== undefined),
+  ) as ProfileChanges;
+  await db
+    .update(users)
+    .set({ ...values, updatedAt: clock() })
+    .where(eq(users.id, userId));
+  return getCurrentUser(db, userId);
 }

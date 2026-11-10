@@ -1,6 +1,6 @@
 # Infrastructure and deployment
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.8 · **Date:** November 9, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.9 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -25,10 +25,10 @@ flowchart LR
 
 | Environment | Database | Files | Email | Sign-in |
 | --- | --- | --- | --- | --- |
-| Local | Postgres in Docker, with seed data ([Data model §3](04-DATA-MODEL.md#3-seed-data)) | Local folder | Printed to the console | Google with a development OAuth client, or a development-only sign-in as a seed user |
+| Local | Postgres in Docker, with seed data ([Data model §3](04-DATA-MODEL.md#3-seed-data)) | Local folder | Printed to the console | Google with a development OAuth client, or a development-only sign-in by email ([Architecture §3](03-ARCHITECTURE.md#3-technical-decisions)) |
 | Production | Neon | Vercel Blob | Resend | Google |
 
-There is no preview environment for the MVP ([Architecture §3](03-ARCHITECTURE.md#3-technical-decisions)). The development-only sign-in exists only when the app runs locally with an explicit setting, and is never available in production, so a developer can run the app without creating Google credentials.
+There is no preview environment for the MVP ([Architecture §3](03-ARCHITECTURE.md#3-technical-decisions)). The development-only sign-in exists only when the app runs locally with `DEV_SIGN_IN` set to `true` ([section 7](#7-configuration)), and is never available in production, so a developer can run the app without creating Google credentials.
 
 ## 3. Deployment process
 
@@ -52,4 +52,4 @@ Errors are logged to the Vercel runtime logs, which the Hobby plan keeps only br
 
 ## 7. Configuration
 
-Secrets are stored as environment variables in Vercel and GitHub, never in the repository: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`, `EMAIL_FROM`, `CRON_SECRET`, `APP_URL` (also Better Auth's base address), and `SUPPORT_EMAIL`. The repository includes an `.env.example` with every variable and a setup checklist for the steps that cannot be automated: the Google OAuth consent screen and client, and the Resend sending domain.
+Secrets are stored as environment variables in Vercel and GitHub, never in the repository: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `BLOB_READ_WRITE_TOKEN`, `RESEND_API_KEY`, `EMAIL_FROM`, `CRON_SECRET`, `APP_URL` (also Better Auth's base address), and `SUPPORT_EMAIL`. One setting is not a secret: `DEV_SIGN_IN`, which turns on the development-only sign-in ([section 2](#2-environments)). It is `true` in `.env.example` and for the browser tests, and is never set in production. The repository includes an `.env.example` with every variable and a setup checklist for the steps that cannot be automated: the Google OAuth consent screen and client, and the Resend sending domain.

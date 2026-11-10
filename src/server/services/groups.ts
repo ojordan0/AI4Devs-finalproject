@@ -3,7 +3,7 @@ import { and, asc, eq, sql } from "drizzle-orm";
 import type { Language } from "../../shared/languages";
 import { fieldLimits } from "../../shared/limits";
 import type { Clock } from "../clock";
-import type { Database } from "../db/client";
+import type { Database, Transaction } from "../db/client";
 import { groups, lists, memberships, users } from "../db/schema";
 import { translator } from "../translate";
 import { type MembershipType, requireMemberAccess } from "./access";
@@ -145,51 +145,65 @@ export async function startWithoutInvitation(
   userId: string,
   language: Language,
 ): Promise<StartedGroup | null> {
-  return db.transaction(async (tx) => {
-    const [user] = await tx
-      .select({ name: users.name, email: users.email })
-      .from(users)
-      .where(eq(users.id, userId))
-      .for("update");
-    if (!user) throw new Error(`User ${userId} doesn't exist.`);
+  return db.transaction((tx) =>
+    startWithoutInvitationIn(tx, clock, userId, language),
+  );
+}
 
-    const [existing] = await tx
-      .select({ one: sql`1` })
-      .from(memberships)
-      .where(eq(memberships.userId, userId))
-      .limit(1);
-    if (existing) return null;
+/**
+ * Getting started inside the caller's transaction, such as onboarding's
+ * (design decision 4 of the T-04 change). Locks the user's row like
+ * startWithoutInvitation, so the lock order is the same for both.
+ */
+export async function startWithoutInvitationIn(
+  tx: Transaction,
+  clock: Clock,
+  userId: string,
+  language: Language,
+): Promise<StartedGroup | null> {
+  const [user] = await tx
+    .select({ name: users.name, email: users.email })
+    .from(users)
+    .where(eq(users.id, userId))
+    .for("update");
+  if (!user) throw new Error(`User ${userId} doesn't exist.`);
 
-    const now = clock();
-    const [group] = await tx
-      .insert(groups)
-      .values({
-        name: startingGroupName(firstNameOf(user.name, user.email), language),
-        ownerId: userId,
-        createdAt: now,
-        updatedAt: now,
-      })
-      .returning({ id: groups.id });
-    if (!group) throw new Error("The group insert returned no row.");
+  const [existing] = await tx
+    .select({ one: sql`1` })
+    .from(memberships)
+    .where(eq(memberships.userId, userId))
+    .limit(1);
+  if (existing) return null;
 
-    await tx.insert(memberships).values({
-      groupId: group.id,
-      userId,
-      type: "member",
-      joinedAt: now,
-    });
+  const now = clock();
+  const [group] = await tx
+    .insert(groups)
+    .values({
+      name: startingGroupName(firstNameOf(user.name, user.email), language),
+      ownerId: userId,
+      createdAt: now,
+      updatedAt: now,
+    })
+    .returning({ id: groups.id });
+  if (!group) throw new Error("The group insert returned no row.");
 
-    const [list] = await tx
-      .insert(lists)
-      .values({
-        groupId: group.id,
-        name: translator(language, "groups")("startingListName"),
-        createdAt: now,
-        updatedAt: now,
-      })
-      .returning({ id: lists.id });
-    if (!list) throw new Error("The list insert returned no row.");
-
-    return { groupId: group.id, listId: list.id };
+  await tx.insert(memberships).values({
+    groupId: group.id,
+    userId,
+    type: "member",
+    joinedAt: now,
   });
+
+  const [list] = await tx
+    .insert(lists)
+    .values({
+      groupId: group.id,
+      name: translator(language, "groups")("startingListName"),
+      createdAt: now,
+      updatedAt: now,
+    })
+    .returning({ id: lists.id });
+  if (!list) throw new Error("The list insert returned no row.");
+
+  return { groupId: group.id, listId: list.id };
 }

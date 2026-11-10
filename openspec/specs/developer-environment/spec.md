@@ -58,7 +58,7 @@ The repository SHALL include an `.env.example` listing every variable in Infrast
 
 - **GIVEN** a clone where `npm run setup` has succeeded, with `.env` unchanged
 - **WHEN** the developer runs `npm run dev` and opens the local address
-- **THEN** the placeholder page loads without errors
+- **THEN** Welcome loads without errors, with the development sign-in, and signing in as a seed user works without Google credentials
 
 ### Requirement: Test commands
 
@@ -144,14 +144,20 @@ The test commands SHALL each do what Security and testing §2.5 describes, and e
 - **WHEN** the developer runs `npm run db:migrate` and then `npm run db:seed`
 - **THEN** both finish without errors and change nothing
 
-### Requirement: Interface text from translation files
+### Requirement: Pages take their text from the translation files
 
-The placeholder page SHALL take all its visible text from the translation files, following FR-37. T-05 owns the translation setup and FR-37 as a whole.
+Every page SHALL take all its visible text and its title from the translation files, in the language chosen for the request, following FR-37. T-04 sets up translations for pages; T-05 adds date and number formatting (FR-38).
 
-#### Scenario: Placeholder text comes from the message files
+#### Scenario: Page text comes from the message files
 
-- **WHEN** the placeholder page is rendered
+- **WHEN** Welcome is rendered for a browser that prefers Spanish
 - **THEN** its visible text and title match the entries in the Spanish message file, and the document language is Spanish
+
+#### Scenario: T-04 the message files have the same keys
+
+- **WHEN** the Spanish and English message files are compared
+- **THEN** they have the same keys and no empty message
+- Verified by the existing unit test.
 
 ### Requirement: Tests start from freshly seeded data
 

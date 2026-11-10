@@ -1,9 +1,36 @@
 import { z } from "zod";
 
 import { fields } from "./fields";
+import { LANGUAGES } from "./languages";
 
-// Request bodies and queries for lists and items, built from the BR-32 fields,
-// so the browser and the server validate the same way (FR-39).
+// Request bodies and queries, built from the BR-32 fields, so the browser and
+// the server validate the same way (FR-39).
+
+/** One last step (FR-02, FR-03): language, WhatsApp number (BR-04), and the age and terms box (BR-01). */
+export const onboardingRequestShape = {
+  language: z.enum(LANGUAGES),
+  whatsappNumber: fields.phone,
+  /** The "I am 18 or older and accept the terms" box, which must be checked. */
+  acceptsTerms: z.literal(true),
+};
+
+export const onboardingRequest = z.object(onboardingRequestShape);
+
+/** Profile (FR-04). The WhatsApp number can be changed but not removed (BR-04). */
+export const updateMeRequestShape = {
+  language: z.enum(LANGUAGES).optional(),
+  whatsappNumber: fields.phone.optional(),
+  receiveEmails: z.boolean().optional(),
+};
+
+/** True when the request names at least one field. */
+export function namesAField(body: Record<string, unknown>) {
+  return Object.values(body).some((value) => value !== undefined);
+}
+
+export const updateMeRequest = z
+  .object(updateMeRequestShape)
+  .refine(namesAField, { message: "nothing to change" });
 
 export const ITEM_STATUSES = [
   "pending",

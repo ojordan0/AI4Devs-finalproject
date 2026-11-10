@@ -39,7 +39,7 @@ test("T-03 a page has the security headers", async ({ page }) => {
 
   // The page still works: it renders, and every script Next.js added carries the nonce.
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    messages.placeholder.title,
+    messages.welcome.title,
   );
   const scriptNonces = await page
     .locator("script")

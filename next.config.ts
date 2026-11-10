@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 import {
   apiContentSecurityPolicy,
@@ -33,4 +34,7 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Page translations (design decision 6 of the T-04 change).
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
+
+export default withNextIntl(nextConfig);

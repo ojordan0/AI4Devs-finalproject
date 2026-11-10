@@ -1,6 +1,6 @@
 # Security and testing
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 8, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.8 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -78,7 +78,7 @@ The whole test suite runs the same way on a developer's machine and in CI. It ne
 | Email (Resend) | The email adapter's test version keeps sent messages in memory, so tests check recipients, language, and content. |
 | Thumbnails (Vercel Blob) | The local-folder adapter, writing to a temporary folder. |
 | Store websites | The link lookup's fetcher is replaced by a fake. A local server with sample pages can't be used, because the address check correctly blocks localhost. |
-| Time | Services read the current time from a clock they receive, never directly. Unit and integration tests set it, for example to 31 days after the last use (AC-06). Browser tests use the real clock. |
+| Time | Services read the current time from a clock they receive, never directly, and unit and integration tests set it. Better Auth reads the system time, so session tests date the session rows instead, for example a last use 31 days ago (AC-06). Browser tests use the real clock. |
 | Vercel Cron | Tests call the daily email route directly, with the cron secret. |
 
 ### 2.5 Running tests locally and in CI
@@ -107,7 +107,7 @@ CI runs the same commands, with a Postgres service container instead of Docker C
 | --- | --- | --- |
 | `AC-59 two buyers reserve at the same time` | Integration | Two connections reserve the same pending item at once: exactly one succeeds, the other gets the conflict error, and the item has one buyer. |
 | `AC-26 request for another group's items is rejected` | Integration | The response is the same 404 as for an item that doesn't exist (BR-13), so it reveals nothing. |
-| `AC-06 session expires after 31 days without use` | Integration | With the clock set 31 days after the last use, the request is rejected as signed out; at 20 days, the session is renewed (AC-05). |
+| `AC-06 session expires after 31 days without use` | Integration | With the session last used 31 days ago, the request is rejected as signed out; with a last use 20 days ago, the session is renewed (AC-05). |
 | `BR-22 rejects shipping an item that was not purchased` | Unit | Only the transitions in BR-22 are allowed. |
 | `AC-95 notes with script tags are shown as text` | Browser | The tags appear as text, and nothing runs. |
 | `AC-98 language prefilled on One last step` | Browser | Spanish is prefilled; switching to English changes the screen and saves English. |

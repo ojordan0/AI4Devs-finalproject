@@ -1,7 +1,68 @@
 {
-  "placeholder": {
+  "common": {
+    "appName": "ComproParaTi",
+    "language": "Idioma",
+    "languageNames": {
+      "es": "Español",
+      "en": "English"
+    },
+    "continue": "Continuar",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "saved": "Guardado",
+    "couldNotSave": "No se pudo guardar. Revisa tu conexión e inténtalo de nuevo",
+    "tryAgain": "Intentar de nuevo"
+  },
+  "welcome": {
     "title": "ComproParaTi",
-    "message": "Estamos preparando la aplicación."
+    "tagline": "Listas de compras que comparte tu familia.",
+    "continueWithGoogle": "Continuar con Google",
+    "signingIn": "Entrando…",
+    "signInError": "No pudimos iniciar tu sesión. Inténtalo de nuevo.",
+    "signInUnavailable": "El acceso no está disponible ahora. Inténtalo más tarde."
+  },
+  "devSignIn": {
+    "title": "Acceso de desarrollo",
+    "description": "Solo en este equipo. Escribe el correo de un usuario de prueba, o uno nuevo para registrarte.",
+    "email": "Correo",
+    "submit": "Entrar",
+    "invalidEmail": "Escribe un correo válido.",
+    "failed": "No se pudo entrar. Revisa tu conexión e inténtalo de nuevo"
+  },
+  "onboarding": {
+    "title": "Un último paso",
+    "intro": "Solo te tomará unos segundos.",
+    "acceptsTerms": "Tengo 18 años o más y acepto los términos",
+    "acceptsTermsRequired": "Marca esta casilla para continuar.",
+    "whatsappHelp": "Los miembros y compradores de tus grupos lo usan para escribirte por WhatsApp. Puedes cambiarlo después."
+  },
+  "phoneField": {
+    "label": "Número de WhatsApp",
+    "country": "País",
+    "chooseCountry": "Elige un país",
+    "number": "Número",
+    "required": "Escribe tu número de WhatsApp. Se puede cambiar, pero no eliminar.",
+    "invalid": "Escribe un número válido, con su país."
+  },
+  "profile": {
+    "title": "Perfil",
+    "contact": "Contacto",
+    "whatsappHelp": "Se puede cambiar, pero no eliminar. Solo lo ven los miembros y compradores de tus grupos.",
+    "preferences": "Preferencias",
+    "emails": "Correo diario con los cambios del grupo",
+    "emailsHelp": "Un correo al día con lo que se compró, se envió o no se pudo comprar.",
+    "account": "Cuenta",
+    "signOut": "Cerrar sesión",
+    "signingOut": "Cerrando sesión…",
+    "signOutFailed": "No se pudo cerrar la sesión. Revisa tu conexión e inténtalo de nuevo"
+  },
+  "lists": {
+    "title": "Listas",
+    "comingSoon": "Aquí aparecerán los artículos de tu lista.",
+    "noLists": "Todavía no hay listas. Crea una.",
+    "notInGroup": "Todavía no perteneces a ningún grupo.",
+    "askForInvitation": "Pide a alguien que te invite.",
+    "profile": "Perfil"
   },
   "errors": {
     "NOT_SIGNED_IN": "Inicia sesión para continuar.",

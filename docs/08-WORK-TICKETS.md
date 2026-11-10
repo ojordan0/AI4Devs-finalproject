@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.13 · **Date:** November 10, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.14 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -69,7 +69,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 | T-02 | [#28](https://github.com/ojordan0/AI4Devs-finalproject/issues/28) | Database schema, migrations, and seed data | E-08 | None | Database | 1 | D2 | L | T-01 | `feat/t-02-database-schema` |
 | T-03 | [#29](https://github.com/ojordan0/AI4Devs-finalproject/issues/29) | API foundation and baseline security | E-08 | US-26 | Backend | 1 | D2 | M | T-02 | `feat/t-03-api-foundation` |
 | T-04 | [#30](https://github.com/ojordan0/AI4Devs-finalproject/issues/30) | Sign-in, onboarding, and basic profile | E-01 | US-01, US-02 | Full stack | 1 | D2 | L | T-03 | `feat/t-04-sign-in-onboarding` |
-| T-05 | [#31](https://github.com/ojordan0/AI4Devs-finalproject/issues/31) | App shell, navigation, and translations | E-08 | US-25, US-07 | Frontend | 1 | D2 | M | T-01 | `feat/t-05-app-shell` |
+| T-05 | [#31](https://github.com/ojordan0/AI4Devs-finalproject/issues/31) | App shell, navigation, and translations | E-08 | US-25, US-07 | Frontend | 1 | D2 | M | T-04 | `feat/t-05-app-shell` |
 | T-06 | [#32](https://github.com/ojordan0/AI4Devs-finalproject/issues/32) | Production deployment | E-08 | None | DevOps | 1 | D3 | M | T-04 | `chore/t-06-production-deployment` |
 | T-07 | [#33](https://github.com/ojordan0/AI4Devs-finalproject/issues/33) | Groups, memberships, and access | E-02 | US-07, US-01, US-04 | Backend | 2 | D2 | M | T-03 | `feat/t-07-groups-api` |
 | T-08 | [#34](https://github.com/ojordan0/AI4Devs-finalproject/issues/34) | Buyer invitations | E-02 | US-04 | Full stack | 2 | D3 | L | T-07, T-05 | `feat/t-08-buyer-invitations` |
@@ -153,23 +153,25 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 **Scope:**
 
 - Better Auth with the Google provider, the Drizzle adapter, and database sessions (FR-01, BR-02, BR-03).
-- Development-only sign-in as a seed user ([Architecture §3](03-ARCHITECTURE.md#3-technical-decisions)).
+- Development-only sign-in by email, as a seed user or a new user ([Architecture §3](03-ARCHITECTURE.md#3-technical-decisions)).
 - Welcome and "One last step" screens (FR-02, FR-03), with WhatsApp validation (BR-04). Completing onboarding runs getting started from T-07, so the user gets their group and first list (BR-06).
 - Profile: language, WhatsApp number, email setting, and sign out (FR-04, without account deletion).
+- What these screens need from the interface foundation: page translations choosing the language from the user, the Welcome choice, or the browser (FR-37); Tailwind CSS with the design tokens ([DESIGN.md](../DESIGN.md)); and the shadcn/ui components the screens use.
+- A placeholder at the Lists address, where a new user lands until T-10 builds Lists.
 
 **Acceptance criteria:** AC-02, AC-03, AC-04, AC-05, AC-06, AC-98.
 
 ### T-05 App shell, navigation, and translations
 
-**Epic:** E-08 · **Stories:** US-25, US-07 · **Type:** Frontend · **Increment:** 1 · **Delivery:** D2 · **Size:** M · **Depends on:** T-01
+**Epic:** E-08 · **Stories:** US-25, US-07 · **Type:** Frontend · **Increment:** 1 · **Delivery:** D2 · **Size:** M · **Depends on:** T-04
 
 **Goal:** the frame every screen lives in, in both languages.
 
 **Scope:**
 
 - Bottom navigation and header with group selector and Refresh ([UX design §2.2](02-UX-DESIGN.md#22-navigation)), showing only the tabs the user's memberships allow (FR-08).
-- Translation setup with Spanish and English message files, and date and number formatting by language (FR-37, FR-38).
-- Tailwind CSS and shadcn/ui set up, with the components the shell needs.
+- Date and number formatting by language (FR-38), on the translation setup from T-04 (FR-37).
+- The shadcn/ui components the shell needs, on the Tailwind CSS setup from T-04.
 - Shared components for the design principles, empty states, loading, and errors ([UX design §2.1](02-UX-DESIGN.md#21-design-principles), [§2.7](02-UX-DESIGN.md#27-empty-states-loading-and-errors)).
 - Mobile-first layout from 360 px wide, with a desktop layout.
 
@@ -242,7 +244,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 **Scope:**
 
-- Lists screen with quick add, list switcher, and filters ([UX design §2.4](02-UX-DESIGN.md#24-key-screens)).
+- Lists screen with quick add, list switcher, and filters ([UX design §2.4](02-UX-DESIGN.md#24-key-screens)), replacing the placeholder from T-04.
 - Item form with the fields in FR-13, validated as the user types (FR-39). The link is stored and opens in the store (FR-23); the lookup of title and image comes in milestone 2.
 - Item page for members, with the actions for each status ([UX design §2.5](02-UX-DESIGN.md#25-item-statuses-and-actions)).
 - Refresh, and the "This item changed" handling (AC-67, AC-68 are verified in T-12).

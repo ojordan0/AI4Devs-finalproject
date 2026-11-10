@@ -31,6 +31,13 @@ export default defineConfig({
     env: {
       APP_URL: baseURL,
       DATABASE_URL: testDatabaseUrl(process.env.DATABASE_URL),
+      // Browser tests sign in through the development-only sign-in
+      // (docs/07-SECURITY-AND-TESTING.md, section 2.4).
+      DEV_SIGN_IN: "true",
+      // CI has no .env; the browser tests sign sessions with a test-only value.
+      BETTER_AUTH_SECRET:
+        process.env.BETTER_AUTH_SECRET ??
+        "browser-tests-only-secret-with-32-or-more-characters",
     },
   },
 });
