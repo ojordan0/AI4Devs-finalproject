@@ -66,6 +66,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Part 13 | T-03 | API foundation: the route wrapper, field limits, membership check, rate limits, security headers, the generated OpenAPI document, and pull request #53 | Claude Code | Claude Opus 5.5 | [part-13-api-foundation.md](docs/ai-conversations/part-13-api-foundation.md) |
 | Part 14 | T-07 | Groups API: getting started, the current user and their tabs, the group endpoints, permission tests across groups, and pull request #54, built end to end from one prompt | Claude Code | Claude Opus 5.5 | [part-14-groups-api.md](docs/ai-conversations/part-14-groups-api.md) |
 | Part 15 | T-09 | Lists and items API: lists, quick add and the item form's fields, editing within the status rules, moving and deleting items, and pull request #55, continuing part 14's session | Claude Code | Claude Opus 5.5 | [part-15-lists-items-api.md](docs/ai-conversations/part-15-lists-items-api.md) |
+| Part 16 | T-04 | Sign-in and onboarding: Google sign-in and sessions, the development sign-in, One last step and Profile, the interface foundation, sign-in methods for later providers, and pull request #56 | Claude Code | Claude Fable 5.2 for turn 1, then Claude Opus 5.5 | [part-16-sign-in-onboarding.md](docs/ai-conversations/part-16-sign-in-onboarding.md) |
 
 ## Tools and phases
 
@@ -366,6 +367,10 @@ Examples of the AI's output that the product owner corrected or redirected:
 **Prompt 2** (Part 13, turn 1 · T-03 · Claude Opus 5.5)
 
 > /opsx:propose Work on T-03
+
+**Prompt 3** (Part 16, turn 7 · T-04 · Claude Opus 5.5)
+
+> if in the future we have multiple login providers and a user signs in with google, then sign in with Apple hiding the email, how can the platform know it is the same user?
 
 ### 2.6. Tests
 
