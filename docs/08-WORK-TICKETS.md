@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.15 · **Date:** November 10, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.16 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -245,8 +245,8 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 **Scope:**
 
 - Lists screen with quick add, list switcher, and filters ([UX design §2.4](02-UX-DESIGN.md#24-key-screens)), replacing the placeholder from T-04.
-- Item form with the fields in FR-13, validated as the user types (FR-39). The link is stored and opens in the store (FR-23); the lookup of title and image comes in milestone 2.
-- Item page for members, with the actions for each status ([UX design §2.5](02-UX-DESIGN.md#25-item-statuses-and-actions)).
+- Item form with the fields in FR-13 except the recipient, which T-13 adds, validated as the user types (FR-39). The link is stored and opens in the store (FR-23); the lookup of title and image comes in milestone 2.
+- Item page for members, with the actions for each status ([UX design §2.5](02-UX-DESIGN.md#25-item-statuses-and-actions)). "I'll buy it" calls the reservation endpoint from T-11; T-12 verifies the tap.
 - Refresh, and the "This item changed" handling (AC-67, AC-68 are verified in T-12).
 
 **Acceptance criteria:** AC-23, AC-38 (interface), AC-40 (interface), AC-95.

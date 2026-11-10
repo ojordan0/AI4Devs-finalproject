@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
@@ -100,29 +100,135 @@ export async function signInAsSeedUser(page: Page, name: SeedUser) {
  * so this writes to the test database that the app under test uses.
  */
 export async function addMemberGroup(email: string, groupName: string) {
-  const pool = new Pool({
-    connectionString: testDatabaseUrl(process.env.DATABASE_URL),
-  });
-  try {
-    const db = drizzle(pool, { schema });
-    const [user] = await db
-      .select({ id: schema.users.id })
-      .from(schema.users)
-      .where(eq(schema.users.email, email));
-    if (!user) throw new Error(`No user has the email ${email}.`);
+  return withTestDatabase(async (db) => {
+    const userId = await userIdOf(db, email);
     const [group] = await db
       .insert(schema.groups)
-      .values({ name: groupName, ownerId: user.id })
+      .values({ name: groupName, ownerId: userId })
       .returning({ id: schema.groups.id });
     if (!group) throw new Error("The group insert returned no row.");
     await db.insert(schema.memberships).values({
       groupId: group.id,
-      userId: user.id,
+      userId,
       type: "member",
       joinedAt: new Date(),
     });
     return group.id;
+  });
+}
+
+type TestDatabase = ReturnType<typeof drizzle<typeof schema>>;
+
+/** Runs `work` against the test database that the app under test uses. */
+async function withTestDatabase<T>(work: (db: TestDatabase) => Promise<T>) {
+  const pool = new Pool({
+    connectionString: testDatabaseUrl(process.env.DATABASE_URL),
+  });
+  try {
+    return await work(drizzle(pool, { schema }));
   } finally {
     await pool.end();
   }
+}
+
+async function userIdOf(db: TestDatabase, email: string) {
+  const [user] = await db
+    .select({ id: schema.users.id })
+    .from(schema.users)
+    .where(eq(schema.users.email, email));
+  if (!user) throw new Error(`No user has the email ${email}.`);
+  return user.id;
+}
+
+/**
+ * Makes the user with this email a member or buyer of the group. No milestone
+ * 1 endpoint adds a user to a group, so this writes to the test database.
+ */
+export async function addMember(
+  email: string,
+  groupId: string,
+  type: "member" | "buyer" = "member",
+) {
+  await withTestDatabase(async (db) => {
+    await db.insert(schema.memberships).values({
+      groupId,
+      userId: await userIdOf(db, email),
+      type,
+      joinedAt: new Date(),
+    });
+  });
+}
+
+/**
+ * Changes an item's status as another request would, raising its version
+ * (BR-20). The reservation endpoints aren't built yet, so this writes to the
+ * test database.
+ */
+export async function setItemStatus(
+  itemId: string,
+  status: "reserved" | "purchased" | "shipped" | "unavailable",
+  buyerEmail: string,
+) {
+  await withTestDatabase(async (db) => {
+    await db
+      .update(schema.items)
+      .set({
+        status,
+        buyerId: await userIdOf(db, buyerEmail),
+        unavailableNote: status === "unavailable" ? "Out of stock" : null,
+        version: sql`${schema.items.version} + 1`,
+        updatedAt: new Date(),
+      })
+      .where(eq(schema.items.id, itemId));
+  });
+}
+
+/** Deletes a list and its items, for the "No lists yet" state. */
+export async function deleteList(listId: string) {
+  await withTestDatabase(async (db) => {
+    await db.delete(schema.lists).where(eq(schema.lists.id, listId));
+  });
+}
+
+/** The signed-in user's first group and its lists, in creation order. */
+export async function myGroup(page: Page) {
+  const me = await readMe(page);
+  const groupId: string = me.memberships[0].groupId;
+  const response = await page.request.get(`/api/v1/groups/${groupId}/lists`);
+  expect(response.ok()).toBe(true);
+  const { lists }: { lists: { id: string; name: string }[] } =
+    await response.json();
+  return { groupId, lists };
+}
+
+/** Creates a list through the API, as New list does. */
+export async function createList(page: Page, groupId: string, name: string) {
+  const response = await page.request.post(`/api/v1/groups/${groupId}/lists`, {
+    data: { name },
+    headers: sameOrigin(),
+  });
+  expect(response.status()).toBe(201);
+  const list: { id: string; name: string } = await response.json();
+  return list;
+}
+
+/** Creates an item through the API, as the item form does. */
+export async function createItem(
+  page: Page,
+  listId: string,
+  body: {
+    name: string;
+    url?: string;
+    quantity?: number;
+    notes?: string;
+  },
+) {
+  const response = await page.request.post(`/api/v1/lists/${listId}/items`, {
+    data: body,
+    headers: sameOrigin(),
+  });
+  expect(response.status()).toBe(201);
+  const item: { id: string; name: string; version: number } =
+    await response.json();
+  return item;
 }

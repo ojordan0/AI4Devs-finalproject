@@ -1,6 +1,6 @@
 # UX design
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.9 · **Date:** November 10, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.10 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -134,10 +134,12 @@ An item has six fields and a person has three.
 └───────────────────────────────┘
 ```
 
-- `Unavailable` items appear first, because they are waiting for a decision from a member.
-- Shipped items are grouped at the end, collapsed.
-- Simple filters above the list: by person and by status.
-- The list menu (**Medicine ▾**) switches lists and offers **Rename**, **Archive**, and **Delete**. When an action is not allowed, the menu says why ([section 2.7](#27-empty-states-loading-and-errors)).
+- Lists opens the group's first list, in the order the lists were created, or the list chosen in the list menu, which the address keeps.
+- `Unavailable` items appear first, because they are waiting for a decision from a member. The other items follow, newest first, so an item added with the quick field appears right under it.
+- Shipped items are grouped at the end, collapsed, with their count.
+- Simple filters above the list: by person ("All", each person with items in the list, and "No person" when an item has none) and by status ("All", and each status in the list, with its count). Both apply together.
+- The list menu (**Medicine ▾**) switches lists, offers **New list**, which asks for the list's name, and offers **Rename**, **Archive**, and **Delete**. When an action is not allowed, the menu says why ([section 2.7](#27-empty-states-loading-and-errors)).
+- On desktop, the item side shows "Choose an item to see it here." until an item is chosen.
 
 **Add item (member, mobile)**
 
@@ -193,6 +195,7 @@ The same page serves everyone. The example shows the buyer who reserved the item
 
 - The item's notes come before the person's details and take precedence over them.
 - The main button and the secondary actions change with the user and the status ([section 2.5](#25-item-statuses-and-actions)). Members find Edit and Delete in the **⋯** menu while the item is not purchased.
+- **Delete** asks for confirmation, naming the item.
 - **I bought it** opens a sheet with an optional field "Want to leave a note?" and a "Done" button.
 - **Couldn't buy it** requires a note.
 - If a member edits an item after it was reserved, the buyer sees an **Updated** tag on the item card and at the top of the item page until they open it.
@@ -401,3 +404,42 @@ The same page serves everyone. The example shows the buyer who reserved the item
 | You're not in any group yet. | Todavía no perteneces a ningún grupo. |
 | Ask someone to invite you. | Pide a alguien que te invite. |
 | Choose another default address first. | Primero elige otra dirección predeterminada. |
+| New list | Nueva lista |
+| List name | Nombre de la lista |
+| List | Lista |
+| Create | Crear |
+| Cancel | Cancelar |
+| Type what you want… | Escribe lo que quieres… |
+| Add | Agregar |
+| Added: {name} | Agregado: {nombre} |
+| Add item | Agregar artículo |
+| Edit item | Editar artículo |
+| Edit | Editar |
+| Back | Volver |
+| Name | Nombre |
+| Paste a link (optional) | Pega un enlace (opcional) |
+| Quantity | Cantidad |
+| Size, color, brand, dose, or anything the buyer should know. | Talla, color, marca, dosis o lo que el comprador deba saber. |
+| Enter a name. | Escribe un nombre. |
+| Use {max} characters or fewer. | Usa {max} caracteres o menos. |
+| Enter a web address that starts with https:// or http://. | Escribe una dirección web que empiece con https:// o http://. |
+| Enter a quantity from 1 to 99. | Escribe una cantidad del 1 al 99. |
+| {count} of {max} characters | {count} de {max} caracteres |
+| Limit reached | Límite alcanzado |
+| No items yet. Type what you want above. | Todavía no hay artículos. Escribe arriba lo que quieres. |
+| All | Todos |
+| Person | Persona |
+| Status | Estado |
+| Shipped (N) | Enviados (N) |
+| Reserved by {name} | Reservado por {nombre} |
+| Reserved by you | Reservado por ti |
+| Purchased by {name} | Comprado por {nombre} |
+| Purchased by you | Comprado por ti |
+| For: {name} | Para: {nombre} |
+| Quantity: N | Cantidad: N |
+| Item notes | Notas del artículo |
+| Opens in a new tab | Se abre en una pestaña nueva |
+| More actions | Más acciones |
+| Delete "{name}"? | ¿Eliminar "{nombre}"? |
+| It's removed from the list for everyone. | Se quita de la lista para todos. |
+| Choose an item to see it here. | Elige un artículo para verlo aquí. |

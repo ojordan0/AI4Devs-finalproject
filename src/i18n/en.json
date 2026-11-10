@@ -11,7 +11,8 @@
     "saving": "Saving…",
     "saved": "Saved",
     "couldNotSave": "Couldn't save. Check your connection and try again",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "cancel": "Cancel"
   },
   "shell": {
     "navigation": "Main navigation",
@@ -82,8 +83,65 @@
   },
   "lists": {
     "title": "Lists",
-    "comingSoon": "This is where the items on your list will show up.",
-    "noLists": "No lists yet. Create one."
+    "noLists": "No lists yet. Create one.",
+    "noItems": "No items yet. Type what you want above.",
+    "listMenu": "List",
+    "newList": "New list",
+    "listName": "List name",
+    "create": "Create",
+    "quickAdd": "Type what you want…",
+    "add": "Add",
+    "added": "Added: {name}",
+    "addItem": "Add item",
+    "byPerson": "Person",
+    "byStatus": "Status",
+    "all": "All",
+    "noPerson": "No person",
+    "shipped": "Shipped ({count})",
+    "chooseItem": "Choose an item to see it here."
+  },
+  "item": {
+    "back": "Back",
+    "for": "For: {name}",
+    "quantity": "Quantity: {count}",
+    "reservedBy": "Reserved by {name}",
+    "reservedByYou": "Reserved by you",
+    "purchasedBy": "Purchased by {name}",
+    "purchasedByYou": "Purchased by you",
+    "notes": "Item notes",
+    "openInStore": "Open in store",
+    "opensInNewTab": "Opens in a new tab",
+    "reserve": "I'll buy it",
+    "edit": "Edit",
+    "delete": "Delete",
+    "moreActions": "More actions",
+    "deleteTitle": "Delete \"{name}\"?",
+    "deleteDescription": "It's removed from the list for everyone."
+  },
+  "itemForm": {
+    "addTitle": "Add item",
+    "editTitle": "Edit item",
+    "link": "Paste a link (optional)",
+    "name": "Name",
+    "list": "List",
+    "quantity": "Quantity",
+    "notes": "Notes",
+    "notesHelp": "Size, color, brand, dose, or anything the buyer should know."
+  },
+  "fieldMessages": {
+    "nameRequired": "Enter a name.",
+    "tooLong": "Use {max} characters or fewer.",
+    "linkInvalid": "Enter a web address that starts with https:// or http://.",
+    "quantityInvalid": "Enter a quantity from 1 to 99.",
+    "characterCount": "{count} of {max} characters",
+    "limitReached": "Limit reached"
+  },
+  "status": {
+    "pending": "Pending",
+    "reserved": "Reserved",
+    "purchased": "Purchased",
+    "shipped": "Shipped",
+    "unavailable": "Unavailable"
   },
   "errors": {
     "NOT_SIGNED_IN": "Sign in to continue.",
