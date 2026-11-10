@@ -75,6 +75,21 @@ The schemas are registered by name in the OpenAPI registry (`Me`, `Membership`, 
 
 `tests/support/routes.ts` gets a `session` option on `apiRequest` that signs the request in as any session user, such as a factory user who hasn't completed onboarding, alongside the existing `as` option for seed users. The seed user list adds Pedro, the former buyer. Tests of getting started call the service directly, since its endpoint is T-04's.
 
+## Open points in the documents
+
+The documents left these points open or in conflict. Each was settled in the document that owns it, in this pull request; this section records why.
+
+- **AC-25 belonged to a later ticket.** T-07 listed AC-25, which opens an item, but T-07 has no item endpoint. *Chosen:* move AC-25 to T-09, which builds `GET /items/{itemId}`. *Changed:* [Work tickets T-07](../../../../docs/08-WORK-TICKETS.md#t-07-groups-memberships-and-access) and [T-09](../../../../docs/08-WORK-TICKETS.md#t-09-lists-and-items-api), and their GitHub issues.
+- **When BR-06 runs.** Nothing said when the user's own group and list are created. *Chosen:* when onboarding completes, called by T-04, and skipped by T-08 for sign-ups through an invitation, because the names need the language confirmed at onboarding and an invitation's type is only known when it is accepted (decision 3). *Changed:* the onboarding row in [API §2](../../../../docs/05-API.md#2-endpoints), FR-05 in [PRD §19](../../../../docs/01-PRD.md#19-traceability), and the scopes of [T-04](../../../../docs/08-WORK-TICKETS.md#t-04-sign-in-onboarding-and-basic-profile) and [T-08](../../../../docs/08-WORK-TICKETS.md#t-08-buyer-invitations).
+- **`GET /me` before onboarding.** The onboarding check covered every endpoint, which made the `onboarded` flag of `GET /me` unreadable for the users it is meant for. *Chosen:* `GET /me` answers before onboarding, so the interface can tell where to send the user. *Changed:* [API §1](../../../../docs/05-API.md#1-conventions).
+- **Who sees a group's people.** BR-12 didn't say whether buyers can open `GET /groups/{groupId}`. *Chosen:* members only, and 403 for a buyer, because the Group screen is a member screen and buyers reach the people they need through items. *Changed:* a new row in the BR-12 table, [PRD §12.3](../../../../docs/01-PRD.md#123-access-and-permissions).
+- **Spanish names for the starting group and list.** The Spanish strings had no entries for them. *Chosen:* "Grupo de {nombre}" and "Mi lista", matching the English pattern. *Changed:* [UX §2.10](../../../../docs/02-UX-DESIGN.md#210-spanish-interface-strings).
+- **When a member gets My purchases.** FR-08 and UX said "once they reserve", which would hide the tab while the member still has purchased items to ship. *Chosen:* while they have reserved or purchased items, the `hasPurchases` flag. *Changed:* FR-08 in [PRD §13.2](../../../../docs/01-PRD.md#132-groups-and-invitations), [UX §2.2](../../../../docs/02-UX-DESIGN.md#22-navigation), and the tab row in [UX §2.3](../../../../docs/02-UX-DESIGN.md#23-screens).
+- **A user with no group but purchases to ship.** Nothing said what they see (adversarial re-review, finding 1). *Chosen:* the no-groups message, with My purchases below it, so BR-11 still lets them ship what they bought. *Changed:* [UX §2.7](../../../../docs/02-UX-DESIGN.md#27-empty-states-loading-and-errors).
+- **How collections are returned.** No convention existed. *Chosen:* an object with the collection under a property named after the resource, such as `{ "groups": [...] }`, so a response can gain fields without breaking clients (decision 4). *Changed:* [API §1](../../../../docs/05-API.md#1-conventions).
+
+No package outside [Architecture §1.6](../../../../docs/03-ARCHITECTURE.md#16-dependencies) was needed.
+
 ## Risks / Trade-offs
 
 - [Getting started has no caller until T-04 builds onboarding.] → T-04's scope names it ([Work tickets §4](../../../docs/08-WORK-TICKETS.md#t-04-sign-in-onboarding-and-basic-profile)), and its service is tested on its own here.
