@@ -8,6 +8,7 @@ import {
   newEmail,
   readMe,
   signInAs,
+  signInAsSeedUser,
   signUpOnboarded,
 } from "./support";
 
@@ -128,6 +129,15 @@ test("T-04 an onboarded user skips onboarding", async ({ page }) => {
   for (const path of ["/", "/onboarding"]) {
     await page.goto(path);
     await expect(page).toHaveURL("/lists");
+  }
+});
+
+test("FR-08 a user who is only a buyer lands on To buy", async ({ page }) => {
+  await signInAsSeedUser(page, "juan");
+
+  for (const path of ["/", "/onboarding"]) {
+    await page.goto(path);
+    await expect(page).toHaveURL("/to-buy");
   }
 });
 

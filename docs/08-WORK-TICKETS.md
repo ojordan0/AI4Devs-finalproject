@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.14 · **Date:** November 10, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.15 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -217,7 +217,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 **Scope:**
 
 - Create, list, and cancel invitations, and the preview and accept endpoints, for the buyer type (FR-06, BR-08, BR-09). A user who signs up through an invitation skips getting started (BR-06).
-- Group screen with members, buyers, and pending invitations; invitation screen with sign-in ([UX design §1](02-UX-DESIGN.md#1-user-flows), flow C).
+- Group screen with members, buyers, and pending invitations, replacing the placeholder from T-05; invitation screen with sign-in ([UX design §1](02-UX-DESIGN.md#1-user-flows), flow C).
 - Share on WhatsApp and copy link.
 
 **Acceptance criteria:** AC-10, AC-11, AC-12, AC-13, AC-15, AC-16.
@@ -273,7 +273,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 **Scope:**
 
-- To buy, grouped by person with group and list filters; My purchases ([UX design §2.4](02-UX-DESIGN.md#24-key-screens)).
+- To buy, grouped by person with group and list filters; My purchases ([UX design §2.4](02-UX-DESIGN.md#24-key-screens)). Both replace the placeholders from T-05.
 - Buyer's item page: notes first, then the person's details, "Open in store", "I'll buy it", "I bought it", and release (FR-15, FR-22, FR-23).
 - Reservation conflict and changed-item messages, and Refresh.
 
@@ -288,7 +288,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 **Scope:**
 
 - Recipients and their free-form details: create, read, and edit (FR-09, FR-10). Deleting people is milestone 2.
-- People screen and person page; recipient selection on the item form.
+- People screen, replacing the placeholder from T-05, and person page; recipient selection on the item form.
 - Recipient details shown to buyers only inside items (FR-22, BR-12).
 
 **Acceptance criteria:** AC-35, AC-36, AC-37.

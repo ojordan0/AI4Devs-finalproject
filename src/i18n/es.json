@@ -13,6 +13,30 @@
     "couldNotSave": "No se pudo guardar. Revisa tu conexión e inténtalo de nuevo",
     "tryAgain": "Intentar de nuevo"
   },
+  "shell": {
+    "navigation": "Navegación principal",
+    "skipToContent": "Saltar al contenido",
+    "refresh": "Actualizar",
+    "refreshing": "Actualizando…",
+    "chooseGroup": "Elegir grupo",
+    "profile": "Perfil"
+  },
+  "tabs": {
+    "lists": "Listas",
+    "people": "Personas",
+    "group": "Grupo",
+    "toBuy": "Por comprar",
+    "purchases": "Mis compras"
+  },
+  "states": {
+    "loading": "Cargando…",
+    "goToStart": "Ir al inicio",
+    "notInGroup": "Todavía no perteneces a ningún grupo.",
+    "askForInvitation": "Pide a alguien que te invite."
+  },
+  "placeholder": {
+    "comingSoon": "Esta pantalla llegará pronto."
+  },
   "welcome": {
     "title": "ComproParaTi",
     "tagline": "Listas de compras que comparte tu familia.",
@@ -59,10 +83,7 @@
   "lists": {
     "title": "Listas",
     "comingSoon": "Aquí aparecerán los artículos de tu lista.",
-    "noLists": "Todavía no hay listas. Crea una.",
-    "notInGroup": "Todavía no perteneces a ningún grupo.",
-    "askForInvitation": "Pide a alguien que te invite.",
-    "profile": "Perfil"
+    "noLists": "Todavía no hay listas. Crea una."
   },
   "errors": {
     "NOT_SIGNED_IN": "Inicia sesión para continuar.",

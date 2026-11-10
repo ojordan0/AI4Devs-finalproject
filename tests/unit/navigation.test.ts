@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { visibleTabs } from "../../src/shared/navigation";
+import {
+  chooseCurrentGroup,
+  mainScreenPath,
+  sortGroupsByName,
+  visibleTabs,
+} from "../../src/shared/navigation";
 
 // The tabs in docs/02-UX-DESIGN.md, section 2.2 (FR-08).
 
@@ -47,5 +52,50 @@ describe("visibleTabs", () => {
 
   it("FR-08 a user with no group gets no tabs", () => {
     expect(visibleTabs({ memberships: [], hasPurchases: false })).toEqual([]);
+  });
+});
+
+describe("mainScreenPath", () => {
+  it("FR-08 the main screen follows the tabs", () => {
+    const tabsOf = (memberships: { type: "member" | "buyer" }[]) =>
+      visibleTabs({ memberships, hasPurchases: false });
+    expect(mainScreenPath(tabsOf([member]))).toBe("/lists");
+    expect(mainScreenPath(tabsOf([buyer]))).toBe("/to-buy");
+    expect(mainScreenPath(tabsOf([]))).toBe("/profile");
+    expect(
+      mainScreenPath(visibleTabs({ memberships: [], hasPurchases: true })),
+    ).toBe("/purchases");
+  });
+});
+
+describe("chooseCurrentGroup", () => {
+  const garcia = { groupId: "b-garcia", groupName: "García Group" };
+  const perez = { groupId: "a-perez", groupName: "Pérez Group" };
+
+  it("BR-12 a remembered group the user no longer belongs to is ignored", () => {
+    expect(chooseCurrentGroup([perez, garcia], "another-group")).toBe(garcia);
+    expect(chooseCurrentGroup([], garcia.groupId)).toBeUndefined();
+  });
+
+  it("T-05 the remembered group is current while the user is a member", () => {
+    expect(chooseCurrentGroup([garcia, perez], perez.groupId)).toBe(perez);
+  });
+
+  it("T-05 with nothing remembered, the first group by name is current", () => {
+    expect(chooseCurrentGroup([perez, garcia], undefined)).toBe(garcia);
+  });
+});
+
+describe("sortGroupsByName", () => {
+  it("T-05 groups are listed by name, ignoring case and accents", () => {
+    const zeta = { groupId: "1", groupName: "Zeta family" };
+    const own = { groupId: "2", groupName: "e2e-user's group" };
+    const alvarez = { groupId: "3", groupName: "Álvarez" };
+    expect(sortGroupsByName([zeta, own, alvarez])).toEqual([
+      alvarez,
+      own,
+      zeta,
+    ]);
+    expect(chooseCurrentGroup([zeta, own], undefined)).toBe(own);
   });
 });

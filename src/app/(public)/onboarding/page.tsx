@@ -7,6 +7,7 @@ import { getSessionUser } from "@/server/auth";
 import type { Language } from "@/shared/languages";
 import { browserRegion } from "@/shared/phone";
 
+import { mainScreenOf } from "../../main-screen";
 import { OnboardingForm } from "./onboarding-form";
 
 // One last step (docs/02-UX-DESIGN.md, section 2.3, screen 2; FR-02, FR-03).
@@ -20,7 +21,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function OnboardingPage() {
   const user = await getSessionUser();
   if (!user) redirect("/");
-  if (user.onboarded) redirect("/lists");
+  if (user.onboarded) redirect(await mainScreenOf(user.id));
 
   const t = await getTranslations("onboarding");
   // The language chosen on Welcome, or the browser's (AC-98).

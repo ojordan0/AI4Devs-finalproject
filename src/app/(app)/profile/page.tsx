@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { db } from "@/server/db/client";
-import { getCurrentUser } from "@/server/services/me";
-
-import { requireOnboardedUser } from "../require-user";
+import { loadShell } from "../shell-data";
 
 import { ProfileForm } from "./profile-form";
 
@@ -19,8 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function ProfilePage() {
   const t = await getTranslations("profile");
-  const user = await requireOnboardedUser();
-  const me = await getCurrentUser(db, user.id);
+  const { user: me } = await loadShell();
 
   return (
     <>

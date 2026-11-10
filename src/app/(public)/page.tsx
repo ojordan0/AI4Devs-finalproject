@@ -8,12 +8,13 @@ import {
   googleSignInAvailable,
 } from "@/server/auth";
 
+import { mainScreenOf } from "../main-screen";
 import { WelcomeActions } from "./welcome-actions";
 import { WelcomeLanguage } from "./welcome-language";
 
 // Welcome (docs/02-UX-DESIGN.md, section 2.3, screen 1): the product name, a
 // language selector, and Continue with Google. A signed-in user goes on to
-// onboarding or Lists (design decision 5 of the T-04 change).
+// onboarding or to their main screen (design decision 4 of the T-05 change).
 
 export default async function WelcomePage({
   searchParams,
@@ -21,7 +22,9 @@ export default async function WelcomePage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const user = await getSessionUser();
-  if (user) redirect(user.onboarded ? "/lists" : "/onboarding");
+  if (user) {
+    redirect(user.onboarded ? await mainScreenOf(user.id) : "/onboarding");
+  }
 
   const t = await getTranslations("welcome");
   const { error } = await searchParams;

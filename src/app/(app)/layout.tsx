@@ -1,16 +1,27 @@
 import type { ReactNode } from "react";
 
-import { requireOnboardedUser } from "./require-user";
+import { AppShell, initialsOf } from "@/components/app-shell/app-shell";
 
-// Screens for a signed-in user who has completed onboarding. Anyone else goes to
-// Welcome or One last step (design decision 5 of the T-04 change). The header
-// and navigation come with T-05.
+import { loadShell } from "./shell-data";
+
+// Screens for a signed-in user who has completed onboarding, inside the app
+// shell. Anyone else goes to Welcome or One last step (design decision 5 of the
+// T-04 change).
 export default async function AppLayout({ children }: { children: ReactNode }) {
-  await requireOnboardedUser();
+  const { user, tabs, memberGroups, currentGroup } = await loadShell();
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[640px] flex-col gap-6 px-4 py-8 md:px-8">
+    <AppShell
+      tabs={tabs}
+      memberGroups={memberGroups.map(({ groupId, groupName }) => ({
+        groupId,
+        groupName,
+      }))}
+      currentGroupId={currentGroup?.groupId}
+      inAnyGroup={user.memberships.length > 0}
+      initials={initialsOf(user.name, user.email)}
+    >
       {children}
-    </main>
+    </AppShell>
   );
 }
