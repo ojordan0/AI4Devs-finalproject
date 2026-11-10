@@ -1,6 +1,6 @@
 # Product Requirements Document: Assisted Shopping Platform (MVP)
 
-**Version:** 1.5 · **Date:** October 18, 2026  
+**Version:** 1.6 · **Date:** November 9, 2026  
 **Project Manager and Product owner:** Odalys Jordan Enriquez  
 **Product Name:** ComproParaTi ("I buy for you", [section 16](#16-product-decisions))
 
@@ -171,7 +171,7 @@ Flows A, B, C, E, and F ([UX design §1](02-UX-DESIGN.md#1-user-flows)) work fro
 
 | Risk | Impact | Mitigation |
 | --- | --- | --- |
-| Google sign-in or US-based providers are restricted from Cuba | Members in Cuba cannot use the app | Confirm access before building ([section 10](#10-open-questions), question 1); sign-in is built to add other providers (FR-01) |
+| US-based hosting, database, or email providers are restricted from Cuba | Members in Cuba cannot use the app | Confirm access before building ([section 10](#10-open-questions), question 1) |
 | Slow or expensive mobile data in some launch countries | Screens load slowly | Mobile-first design, small thumbnails, and no live updates |
 | Free plan limits: non-commercial use only, daily scheduled jobs, storage caps | The app stops or must move to a paid plan | Monthly usage review; a paid plan is required if the project becomes commercial ([Architecture §3](03-ARCHITECTURE.md#3-technical-decisions)) |
 | Stores block link lookups | Items show no title or image | The item is always saved with its link (BR-21) |
@@ -182,7 +182,7 @@ Flows A, B, C, E, and F ([UX design §1](02-UX-DESIGN.md#1-user-flows)) work fro
 
 ## 10. Open questions
 
-1. **Access from launch countries:** confirm that Google sign-in and the hosting, database, and email providers can be used from every launch country, especially Cuba.
+1. **Access from launch countries:** confirm that the hosting, database, and email providers can be used from every launch country, especially Cuba.
 2. **Domain:** confirm availability and register `comproparati.com` (preferred) or `comproparati.app`.
 3. **Terms of Service and Privacy Policy:** who writes them.
 4. **Support email address** for "Report a problem" (FR-20).
@@ -487,7 +487,7 @@ Each story links to the requirements that implement it and the acceptance criter
 
 | Topic | Decision | Reason |
 | --- | --- | --- |
-| Sign-in | Google only, built to add more providers | One provider keeps setup simple, and Android phones already come with a Google account. |
+| Sign-in | Google only, built to add more providers | One provider keeps setup simple, and Android phones already come with a Google account. Google sign-in has been confirmed to work from Cuba. |
 | Interface | One interface that adapts to each user's memberships; no mode switch | Users with little digital experience should not have to understand modes. Each person sees only what they can do. |
 | Shared space | Called a "group" | People who share lists may live in different homes. |
 | Item details | A single **Notes** field | Size and color only apply to clothing; notes work for any product. |
