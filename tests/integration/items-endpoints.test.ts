@@ -618,6 +618,29 @@ describe("PATCH /items/{itemId}", () => {
     });
   });
 
+  it("BR-21 sending the same link again keeps what was looked up", async () => {
+    const item = await pendingItem({
+      url: "https://store.example.com/same",
+      storeName: "Same store",
+      thumbnailUrl: "https://blob.example.com/same.webp",
+      linkStatus: "done",
+    });
+
+    const response = await updateItemAs("ana", item.id, {
+      version: 1,
+      name: "Renamed",
+      url: "https://store.example.com/same",
+    });
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      name: "Renamed",
+      storeName: "Same store",
+      thumbnailUrl: "https://blob.example.com/same.webp",
+      linkStatus: "done",
+    });
+  });
+
   it("AC-51 a buyer's request to edit or delete an item is rejected", async () => {
     const before = await itemRow(seedItems.pending);
 

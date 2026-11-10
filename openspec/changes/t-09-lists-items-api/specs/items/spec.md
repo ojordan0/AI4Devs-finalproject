@@ -202,3 +202,9 @@ An edit that changes or clears an item's link SHALL clear the store name and thu
 - **GIVEN** an item with a link, a store name, a thumbnail, and a finished lookup
 - **WHEN** a member edits it with a different link
 - **THEN** the item has the new link, no store name or thumbnail, and no lookup
+
+#### Scenario: BR-21 sending the same link again keeps what was looked up
+
+- **GIVEN** an item with a link, a store name, a thumbnail, and a finished lookup
+- **WHEN** a member edits its name and sends the same link again
+- **THEN** the store name, thumbnail, and lookup are kept

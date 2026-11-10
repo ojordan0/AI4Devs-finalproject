@@ -148,6 +148,7 @@ async function loadItem(db: Database, itemId: string) {
       id: items.id,
       status: items.status,
       version: items.version,
+      url: items.url,
       groupId: lists.groupId,
     })
     .from(items)
@@ -299,13 +300,15 @@ export async function updateItem(
   const changes: Partial<typeof items.$inferInsert> = {
     ...(input.name !== undefined && { name: input.name }),
     ...(input.recipientId !== undefined && { recipientId: input.recipientId }),
-    // A new or cleared link drops what was looked up for the old one (BR-21).
-    ...(input.url !== undefined && {
-      url: input.url,
-      storeName: null,
-      thumbnailUrl: null,
-      linkStatus: "none",
-    }),
+    // A new or cleared link drops what was looked up for the old one (BR-21);
+    // the same link sent again keeps it.
+    ...(input.url !== undefined &&
+      input.url !== item.url && {
+        url: input.url,
+        storeName: null,
+        thumbnailUrl: null,
+        linkStatus: "none",
+      }),
     ...(input.quantity !== undefined && { quantity: input.quantity }),
     ...(input.notes !== undefined && { notes: input.notes }),
     ...(input.listId !== undefined && { listId: input.listId }),
