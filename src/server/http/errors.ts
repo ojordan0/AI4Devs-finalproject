@@ -3,7 +3,11 @@ import "./zod-openapi";
 import { z } from "zod";
 
 import type { FieldError } from "../../shared/fields";
-import { DomainError, RuleViolationError } from "../services/errors";
+import {
+  DomainError,
+  InvalidFieldsError,
+  RuleViolationError,
+} from "../services/errors";
 import { errorMessage, type ErrorMessageKey } from "./language";
 import type { Language } from "./session";
 
@@ -73,6 +77,9 @@ export function toErrorResult(error: unknown, language: Language): ErrorResult {
 
   if (error instanceof RuleViolationError) {
     return build(error.code, { reason: error.reason });
+  }
+  if (error instanceof InvalidFieldsError) {
+    return build(error.code, { fields: error.fields });
   }
   if (error instanceof DomainError || error instanceof RequestError) {
     return build(error.code);

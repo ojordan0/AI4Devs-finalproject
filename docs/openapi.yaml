@@ -182,8 +182,312 @@ components:
         - name
         - members
         - buyers
+    List:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+      required:
+        - id
+        - name
+    ListCollection:
+      type: object
+      properties:
+        lists:
+          type: array
+          items:
+            $ref: "#/components/schemas/List"
+      required:
+        - lists
+    CreateListRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+      required:
+        - name
+    ItemStatus:
+      type: string
+      enum:
+        - pending
+        - reserved
+        - purchased
+        - shipped
+        - unavailable
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        listId:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 100
+        notes:
+          type:
+            - string
+            - "null"
+          maxLength: 1000
+        url:
+          type:
+            - string
+            - "null"
+          maxLength: 2000
+          format: uri
+        storeName:
+          type:
+            - string
+            - "null"
+        thumbnailUrl:
+          type:
+            - string
+            - "null"
+          format: uri
+        linkStatus:
+          type: string
+          enum:
+            - none
+            - pending
+            - done
+            - failed
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 99
+        status:
+          $ref: "#/components/schemas/ItemStatus"
+        recipient:
+          allOf:
+            - $ref: "#/components/schemas/PersonRef"
+            - type:
+                - object
+                - "null"
+        buyer:
+          allOf:
+            - $ref: "#/components/schemas/PersonRef"
+            - type:
+                - object
+                - "null"
+        buyerNote:
+          type:
+            - string
+            - "null"
+        shipmentId:
+          type:
+            - string
+            - "null"
+          format: uuid
+        updatedAfterReservation:
+          type: boolean
+        version:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - listId
+        - name
+        - notes
+        - url
+        - storeName
+        - thumbnailUrl
+        - linkStatus
+        - quantity
+        - status
+        - recipient
+        - buyer
+        - buyerNote
+        - shipmentId
+        - updatedAfterReservation
+        - version
+        - createdAt
+        - updatedAt
+    ItemCollection:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Item"
+      required:
+        - items
+    CreateItemRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        recipientId:
+          type:
+            - string
+            - "null"
+          format: uuid
+        url:
+          type:
+            - string
+            - "null"
+          maxLength: 2000
+          format: uri
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 99
+          default: 1
+        notes:
+          type:
+            - string
+            - "null"
+          maxLength: 1000
+      required:
+        - name
+    UpdateItemRequest:
+      type: object
+      properties:
+        version:
+          type: integer
+          minimum: 1
+        name:
+          type: string
+          minLength: 1
+          maxLength: 100
+        recipientId:
+          type:
+            - string
+            - "null"
+          format: uuid
+        url:
+          type:
+            - string
+            - "null"
+          maxLength: 2000
+          format: uri
+        quantity:
+          type: integer
+          minimum: 1
+          maximum: 99
+        notes:
+          type:
+            - string
+            - "null"
+          maxLength: 1000
+        listId:
+          type: string
+          format: uuid
+      required:
+        - version
   parameters: {}
 paths:
+  /groups/{groupId}/lists:
+    get:
+      summary: The group's lists that aren't archived, for members and buyers (BR-12)
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: true
+          name: groupId
+          in: path
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListCollection"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create a list. Members only (BR-12).
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: true
+          name: groupId
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateListRequest"
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/List"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: VALIDATION_FAILED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /groups/{groupId}:
     get:
       summary: The group with its members and buyers. Members only (BR-12).
@@ -243,6 +547,283 @@ paths:
                 $ref: "#/components/schemas/GroupList"
         "401":
           description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /items/{itemId}:
+    get:
+      summary: One item, for members and buyers of its group (BR-12)
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: true
+          name: itemId
+          in: path
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      summary: Edit or move an item. Members only, while pending, reserved, or unavailable (BR-19), at the version last seen (BR-20).
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: true
+          name: itemId
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateItemRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: ITEM_CHANGED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: VALIDATION_FAILED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Delete an item. Members only, while pending or unavailable (BR-19).
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: true
+          name: itemId
+          in: path
+      responses:
+        "204":
+          description: Success, with no content
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: ITEM_CHANGED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /lists/{listId}/items:
+    get:
+      summary: Items in a list, for members and buyers, filterable by recipient (`none` for no recipient) and status (FR-11)
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: true
+          name: listId
+          in: path
+        - schema:
+            anyOf:
+              - type: string
+                format: uuid
+              - type: string
+                enum:
+                  - none
+          required: false
+          name: recipientId
+          in: query
+        - schema:
+            type: string
+            enum:
+              - pending
+              - reserved
+              - purchased
+              - shipped
+              - unavailable
+          required: false
+          name: status
+          in: query
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ItemCollection"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: VALIDATION_FAILED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    post:
+      summary: Create an item. Members only. A name is enough (quick add), and the item starts as pending (FR-13).
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: true
+          name: listId
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateItemRequest"
+      responses:
+        "201":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: VALIDATION_FAILED
           content:
             application/json:
               schema:

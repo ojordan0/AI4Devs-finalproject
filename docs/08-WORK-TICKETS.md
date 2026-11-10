@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.12 · **Date:** November 10, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.13 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -228,7 +228,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 **Scope:**
 
-- Create lists; list the items in a list ([API §2](05-API.md#2-endpoints)).
+- List and create lists, without the archived lists, which come with archiving in milestone 2 (FR-12); list the items in a list ([API §2](05-API.md#2-endpoints)).
 - Create, read, edit, and delete items, including moving an item to another list (FR-13, FR-16), with the status limits in BR-19 and the item version (BR-20).
 - Creation and status changes written to the status history (BR-26).
 
