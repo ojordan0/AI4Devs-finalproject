@@ -96,3 +96,32 @@ export function DropdownMenuRadioItem({
     </DropdownMenuPrimitive.RadioItem>
   );
 }
+
+export function DropdownMenuItem({
+  className,
+  ...props
+}: ComponentProps<typeof DropdownMenuPrimitive.Item>) {
+  return (
+    <DropdownMenuPrimitive.Item
+      data-slot="dropdown-menu-item"
+      className={cn(
+        "text-body-lg data-highlighted:bg-muted relative flex min-h-12 cursor-default items-center gap-3 rounded-md px-3 py-2 font-medium break-words outline-none select-none data-disabled:pointer-events-none data-disabled:opacity-60 [&_svg]:size-5 [&_svg]:shrink-0",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function DropdownMenuSeparator({
+  className,
+  ...props
+}: ComponentProps<typeof DropdownMenuPrimitive.Separator>) {
+  return (
+    <DropdownMenuPrimitive.Separator
+      data-slot="dropdown-menu-separator"
+      className={cn("bg-border -mx-1.5 my-1.5 h-px", className)}
+      {...props}
+    />
+  );
+}

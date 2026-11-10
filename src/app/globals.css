@@ -58,6 +58,25 @@
   --shadow-card: 0 2px 4px rgba(15, 23, 42, 0.04);
   --shadow-floating:
     0 4px 12px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.06);
+  /* Level 3: sheets and dialogs (DESIGN.md, Elevation Levels). */
+  --shadow-dialog: 0 12px 32px rgba(15, 23, 42, 0.16);
+
+  /* DESIGN.md, Status Color Pairing Rules. */
+  --color-status-pending-bg: #f8fafc;
+  --color-status-pending-text: #334155;
+  --color-status-pending-border: #94a3b8;
+  --color-status-reserved-bg: #fff7ed;
+  --color-status-reserved-text: #9a3412;
+  --color-status-reserved-border: #fdba74;
+  --color-status-purchased-bg: #eff6ff;
+  --color-status-purchased-text: #1e40af;
+  --color-status-purchased-border: #93c5fd;
+  --color-status-shipped-bg: #ecfdf5;
+  --color-status-shipped-text: #065f46;
+  --color-status-shipped-border: #6ee7b7;
+  --color-status-unavailable-bg: #fef2f2;
+  --color-status-unavailable-text: #991b1b;
+  --color-status-unavailable-border: #fca5a5;
 }
 
 @layer base {

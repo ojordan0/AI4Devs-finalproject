@@ -11,7 +11,9 @@ import { UserAvatar } from "./user-avatar";
 
 // The frame of every screen for a signed-in user (docs/02-UX-DESIGN.md,
 // section 2.2; DESIGN.md, Layout & Spacing): a header with the group, Refresh,
-// and the avatar; the tabs; and the screen in a column up to 640px wide.
+// and the avatar; the tabs; and the screen in a column up to 640px wide, or
+// 1120px from 1024px for a screen marked data-layout="wide", which shows the
+// list and the item side by side (DESIGN.md, Responsive Layout Model).
 
 /** Up to two initials from the user's name, or the first letter of their email. */
 export function initialsOf(name: string | null, email: string | null): string {
@@ -62,7 +64,7 @@ export function AppShell({
       <main
         id="content"
         tabIndex={-1}
-        className="mx-auto flex w-full max-w-[640px] flex-col gap-6 px-4 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] outline-none md:px-8 md:pb-10"
+        className="mx-auto flex w-full max-w-[640px] flex-col gap-6 px-4 pt-6 pb-[calc(6rem+env(safe-area-inset-bottom))] outline-none md:px-8 md:pb-10 lg:has-[[data-layout=wide]]:max-w-[1120px]"
       >
         {!inAnyGroup && <NoGroupNotice />}
         {children}

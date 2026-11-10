@@ -104,7 +104,7 @@ spacing:
 
 # Design system: Warm Utilitarian Care
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.0 · **Date:** November 8, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.1 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](readme.md)). This document owns the visual design: tokens, components, and layout. Behavior, screens, and interface text are defined in [UX design](docs/02-UX-DESIGN.md) and the [PRD](docs/01-PRD.md); where they differ from this document or from the Stitch screens, they take precedence.
 
@@ -177,8 +177,8 @@ The layout is **mobile first**, built for 360px to 390px viewports. Desktop uses
   - On Lists, the **+ Agregar** floating button sits `16px` above the bottom bar.
 - **Tablet & Desktop (≥ 768px)**:
   - The bottom bar becomes a left sidebar (`260px` to `280px`) with the same tabs.
-  - Lists shows the list (`380px` to `420px`) and the selected item page side by side.
   - Other screens keep the mobile column, centered, up to `640px` wide.
+  - From `1024px`, Lists and the item page show the list (`380px` to `420px`) and the selected item page side by side, in a content area up to `1120px` wide. From `768px` to `1023px`, they keep the centered column.
   - Page margins grow to `32px` and column gutters to `24px`.
 
 ## Navigation

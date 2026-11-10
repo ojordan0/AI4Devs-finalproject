@@ -11,7 +11,8 @@
     "saving": "Guardando…",
     "saved": "Guardado",
     "couldNotSave": "No se pudo guardar. Revisa tu conexión e inténtalo de nuevo",
-    "tryAgain": "Intentar de nuevo"
+    "tryAgain": "Intentar de nuevo",
+    "cancel": "Cancelar"
   },
   "shell": {
     "navigation": "Navegación principal",
@@ -82,8 +83,66 @@
   },
   "lists": {
     "title": "Listas",
-    "comingSoon": "Aquí aparecerán los artículos de tu lista.",
-    "noLists": "Todavía no hay listas. Crea una."
+    "noLists": "Todavía no hay listas. Crea una.",
+    "noItems": "Todavía no hay artículos. Escribe arriba lo que quieres.",
+    "listMenu": "Lista",
+    "newList": "Nueva lista",
+    "listName": "Nombre de la lista",
+    "create": "Crear",
+    "quickAdd": "Escribe lo que quieres…",
+    "add": "Agregar",
+    "added": "Agregado: {name}",
+    "addItem": "Agregar artículo",
+    "byPerson": "Persona",
+    "byStatus": "Estado",
+    "all": "Todos",
+    "noPerson": "Sin persona",
+    "noMatches": "Ningún artículo coincide con estos filtros.",
+    "shipped": "Enviados ({count})",
+    "chooseItem": "Elige un artículo para verlo aquí."
+  },
+  "item": {
+    "back": "Volver",
+    "for": "Para: {name}",
+    "quantity": "Cantidad: {count}",
+    "reservedBy": "Reservado por {name}",
+    "reservedByYou": "Reservado por ti",
+    "purchasedBy": "Comprado por {name}",
+    "purchasedByYou": "Comprado por ti",
+    "notes": "Notas del artículo",
+    "openInStore": "Abrir en la tienda",
+    "opensInNewTab": "Se abre en una pestaña nueva",
+    "reserve": "Yo lo compro",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "moreActions": "Más acciones",
+    "deleteTitle": "¿Eliminar \"{name}\"?",
+    "deleteDescription": "Se quita de la lista para todos."
+  },
+  "itemForm": {
+    "addTitle": "Agregar artículo",
+    "editTitle": "Editar artículo",
+    "link": "Pega un enlace (opcional)",
+    "name": "Nombre",
+    "list": "Lista",
+    "quantity": "Cantidad",
+    "notes": "Notas",
+    "notesHelp": "Talla, color, marca, dosis o lo que el comprador deba saber."
+  },
+  "fieldMessages": {
+    "nameRequired": "Escribe un nombre.",
+    "tooLong": "Usa {max} caracteres o menos.",
+    "linkInvalid": "Escribe una dirección web que empiece con https:// o http://.",
+    "quantityInvalid": "Escribe una cantidad del 1 al 99.",
+    "characterCount": "{count} de {max} caracteres",
+    "limitReached": "Límite alcanzado"
+  },
+  "status": {
+    "pending": "Pendiente",
+    "reserved": "Reservado",
+    "purchased": "Comprado",
+    "shipped": "Enviado",
+    "unavailable": "No disponible"
   },
   "errors": {
     "NOT_SIGNED_IN": "Inicia sesión para continuar.",

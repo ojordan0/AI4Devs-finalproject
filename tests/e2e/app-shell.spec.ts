@@ -155,14 +155,23 @@ test.describe("layout", () => {
     expect(nav!.width).toBeLessThanOrEqual(280);
     // One navigation element, and it's the sidebar: no bottom bar.
     await expect(page.getByRole("navigation")).toHaveCount(1);
-    // The content is centered in the space next to the sidebar.
-    const content = await page.locator("main").boundingBox();
-    expect(content!.width).toBeLessThanOrEqual(640);
-    const spaceLeft = content!.x - nav!.width;
-    const spaceRight = 1280 - (content!.x + content!.width);
-    expect(spaceLeft).toBeGreaterThan(0);
-    expect(Math.abs(spaceLeft - spaceRight)).toBeLessThanOrEqual(2);
-    await expectNoSidewaysScroll(page);
+    // The content is centered in the space next to the sidebar: Lists shows
+    // the list and the item side by side, up to 1120px wide, and other
+    // screens keep a 640px column (DESIGN.md, Responsive Layout Model).
+    for (const [path, maxWidth] of [
+      ["/lists", 1120],
+      ["/people", 640],
+    ] as const) {
+      await page.goto(path);
+      await expect(screen.nav).toBeVisible();
+      const content = await page.locator("main").boundingBox();
+      expect(content!.width).toBeLessThanOrEqual(maxWidth);
+      const spaceLeft = content!.x - nav!.width;
+      const spaceRight = 1280 - (content!.x + content!.width);
+      expect(spaceLeft).toBeGreaterThanOrEqual(0);
+      expect(Math.abs(spaceLeft - spaceRight)).toBeLessThanOrEqual(2);
+      await expectNoSidewaysScroll(page);
+    }
   });
 });
 
