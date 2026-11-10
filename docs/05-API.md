@@ -71,7 +71,7 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 | POST | `/groups/{groupId}/shipments` | Mark one or more items as shipped | BR-28 |
 | PATCH | `/shipments/{shipmentId}` | Edit a shipment | BR-29 |
 
-Outside `/api/v1`: `/api/auth/*` belongs to Better Auth, and `GET /api/cron/daily-email` is called only by Vercel Cron with the cron secret.
+Outside `/api/v1`: `/api/auth/*` belongs to Better Auth, and `GET /api/cron/daily-email` is called only by Vercel Cron with the cron secret. Of Better Auth's endpoints, the app serves only Google sign-in and its callback, reading the session, signing out, the sign-in error page, and, locally, the development sign-in ([Architecture §3](03-ARCHITECTURE.md#3-technical-decisions)); every other address under `/api/auth` answers 404, so account changes go through `/api/v1`.
 
 ## 3. OpenAPI definition of the main endpoints
 

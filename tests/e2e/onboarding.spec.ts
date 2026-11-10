@@ -191,3 +191,37 @@ for (const language of ["en", "es"] as const) {
     await expectNoAccessibilityViolations(page);
   });
 }
+
+test.describe("One last step after choosing English in a Spanish browser", () => {
+  test.use({ locale: "es-ES" });
+
+  test("AC-99 One last step in English", async ({ page }) => {
+    await chooseLanguage(page, "en");
+    await signInAs(page);
+
+    await page.goto("/onboarding");
+
+    const t = messages.en;
+    const fields = form(page, "en");
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(
+      page.getByRole("heading", { level: 1, name: t.onboarding.title }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("group", { name: t.phoneField.label }),
+    ).toBeVisible();
+    for (const text of [t.onboarding.intro, t.onboarding.whatsappHelp]) {
+      await expect(page.getByText(text, { exact: true })).toBeVisible();
+    }
+    await expect(fields.language).toHaveValue("en");
+    await expect(fields.terms).toBeVisible();
+    await expect(fields.submit).toBeVisible();
+    // Country names and numbers in the English format.
+    await expect(
+      fields.country.getByRole("option", { name: "Spain (+34)" }),
+    ).toBeAttached();
+    await fields.country.selectOption("US");
+    await fields.number.pressSequentially("2025550123");
+    await expect(fields.number).toHaveValue("(202) 555-0123");
+  });
+});

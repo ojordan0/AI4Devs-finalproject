@@ -1,6 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-import { expectNoAccessibilityViolations, messages } from "./support";
+import {
+  chooseLanguage,
+  expectNoAccessibilityViolations,
+  messages,
+} from "./support";
 
 // Welcome (docs/02-UX-DESIGN.md, section 2.3, screen 1) and where a signed-out
 // person is sent.
@@ -79,5 +83,30 @@ test.describe("Welcome in a browser that prefers Spanish", () => {
       await expect(page).toHaveURL("/");
       await expect(page.getByText(messages.es.welcome.tagline)).toBeVisible();
     }
+  });
+});
+
+test.describe("Welcome after choosing English in a Spanish browser", () => {
+  test.use({ locale: "es-ES" });
+
+  test("AC-99 Welcome in English", async ({ page }) => {
+    await chooseLanguage(page, "en");
+
+    await page.goto("/");
+
+    const t = messages.en;
+    await expect(page.locator("html")).toHaveAttribute("lang", "en");
+    await expect(page.getByText(t.welcome.tagline)).toBeVisible();
+    await expect(
+      page.getByRole("radio", { name: t.common.languageNames.en }),
+    ).toBeChecked();
+    await expect(
+      page.getByRole("heading", { name: t.devSignIn.title }),
+    ).toBeVisible();
+    await expect(page.getByText(t.devSignIn.description)).toBeVisible();
+    await expect(page.getByLabel(t.devSignIn.email)).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: t.devSignIn.submit }),
+    ).toBeVisible();
   });
 });

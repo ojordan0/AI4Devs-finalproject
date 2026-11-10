@@ -29,13 +29,13 @@
 
 `createAuth({ db, appUrl, secret, google, devSignIn })` in `src/server/auth/auth.ts` returns a configured `betterAuth(...)` instance. `src/server/auth/index.ts` builds the app's instance from the environment, and tests build their own with the test database.
 
-- **Adapter:** `drizzleAdapter(db, { provider: "pg", schema: { users, accounts, sessions, verifications }, usePlural: true })`. IDs come from the database's `uuid` default (`advanced.database.generateId: false`).
+- **Adapter:** `drizzleAdapter(db, { provider: "pg", schema: { users, accounts, sessions, verifications }, usePlural: true })`. Better Auth generates UUIDs (`advanced.database.generateId: "uuid"`), matching the `uuid` columns.
 - **Sessions (BR-03):** `session.expiresIn` 30 days and `session.updateAge` 1 day, with the cookie cache off, so every request checks the database. IP address tracking is off (`advanced.ipAddress.disableIpTracking`), matching the `sessions.ip_address` column's note. Cookies use Better Auth's defaults (`httpOnly`, `SameSite=Lax`), and `Secure` when `APP_URL` is `https`.
-- **Identities (BR-02):** account linking by email is turned off (`account.accountLinking.disableImplicitLinking`), so a provider identity only ever matches by provider and account ID, which the `accounts` unique constraints already enforce.
-- **Google:** registered only when `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are both set. `mapProfileToUser` calls `checkProviderProfile`, a pure function that refuses a profile whose `email_verified` isn't true and shortens the name to the 100 characters `users.name` allows.
+- **Identities (BR-02):** account linking by email is turned off (`account.accountLinking.disableImplicitLinking`), so a provider identity only ever matches by provider and account ID, which the `accounts` unique constraints already enforce. `user.validateUserInfo` calls `checkProviderUser`, a pure function that refuses a provider profile whose email isn't verified.
+- **Google:** registered only when `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are both set. `mapProfileToUser` shortens the name to the 100 characters `users.name` allows.
 - **App columns:** `language`, `onboardedAt`, and the other app columns are declared as `user.additionalFields` with `input: false`, so the session carries them and no sign-in request can set them.
-- **Origins:** `baseURL` and `trustedOrigins` are `APP_URL`, so Better Auth refuses state changes from other origins, as the API does (Security and testing §1).
-- **Handler:** `src/app/api/auth/[...all]/route.ts` exports `toNextJsHandler(auth)`. The `nextCookies()` plugin lets server code set cookies.
+- **Origins:** `baseURL` and `trustedOrigins` are `APP_URL`, so Better Auth refuses state changes from other origins, as the API does (Security and testing §1). `advanced.disableOriginCheck` is set to `false`, because Better Auth otherwise skips the check when it detects a test run.
+- **Handler:** `src/app/api/auth/[...all]/route.ts` serves Better Auth through `createAuthHandler` (`src/server/auth/handler.ts`), which passes on only the endpoints the app uses: Google sign-in and its callback, the session, sign-out, the error page, and the development sign-in. Every other Better Auth endpoint, such as changing the user's name, answers 404, so no account change bypasses the `/api/v1` checks. The `nextCookies()` plugin isn't used: only the proxy and the API set cookies (decision 2).
 
 *Alternatives:* a module-level instance only. Rejected: integration tests need the test database and the development sign-in, and must not depend on the developer's `.env`.
 
@@ -110,7 +110,7 @@ Better Auth renews a session by moving `expiresAt` and resending the cookie with
 - **Integration** tests build the auth instance with `createAuth` against the test database and use `createSessionReader` in the route dependencies. `tests/support/sessions.ts` inserts session rows with chosen dates and builds the signed cookie with Better Auth's `makeSignature` (from `better-auth/crypto`) and `BETTER_AUTH_SECRET`, as Security and testing §2.4 allows ("Integration tests create sessions directly in the database").
 - **Time:** Better Auth reads the system time and can't take the services' clock. The session tests set the dates on the session rows instead: AC-05 has `createdAt` 45 days ago, `updatedAt` 20 days ago, and `expiresAt` in 10 days, and expects `expiresAt` to move to 30 days from now; AC-06 has an `expiresAt` from yesterday. The services keep taking the clock.
 - **Factories** stay as they are. The test session reader carries the onboarding flag with the user, so existing tests keep their meaning, and tests that need an onboarded factory user set `onboardedAt`.
-- **Unit** tests cover `checkProviderProfile`, `checkDevSignInSetting`, and the auth options for BR-02 and BR-03.
+- **Unit** tests cover `checkProviderUser`, `checkDevSignInSetting`, and the auth options for BR-02 and BR-03. **Integration** tests run Google sign-in through Better Auth's own sign-in and callback, answering Google's token endpoint in the test (BR-02).
 - **Browser** tests in `tests/e2e/` sign in through the development sign-in. Each scenario uses a new `@example.com` email, so seed users are never changed. A failed save is simulated with Playwright's `page.route` aborting the request. Axe checks run on each screen in both languages. `playwright.config.ts` sets `DEV_SIGN_IN=true` for the web server. `placeholder.spec.ts` is replaced by Welcome's tests.
 
 ## Open points in the documents

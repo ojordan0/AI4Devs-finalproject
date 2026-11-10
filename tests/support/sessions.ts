@@ -20,12 +20,22 @@ export function daysFromNow(days: number): Date {
   return new Date(Date.now() + days * DAY_MS);
 }
 
-export function testAuth(db: Database, { devSignIn = false } = {}) {
+/** Google credentials for tests; the tests answer Google's token endpoint themselves. */
+export const TEST_GOOGLE = {
+  clientId: "test-client-id",
+  clientSecret: "test-client-secret",
+};
+
+export function testAuth(
+  db: Database,
+  { devSignIn = false, google = false } = {},
+) {
   return createAuth({
     db,
     appUrl: TEST_APP_URL,
     secret: TEST_AUTH_SECRET,
     devSignIn,
+    ...(google ? { google: TEST_GOOGLE } : {}),
   });
 }
 

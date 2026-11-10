@@ -23,6 +23,13 @@ Welcome SHALL show the product name, a language selector, and Continue with Goog
 - **WHEN** the person chooses Spanish
 - **THEN** the screen switches to Spanish without signing in
 
+#### Scenario: AC-99 Welcome in English
+
+- **GIVEN** a person who chose English on Welcome, in a browser that prefers Spanish
+- **WHEN** they open Welcome
+- **THEN** all its text is in English, from the English message file, and the document language is English
+- Verified by a browser test.
+
 #### Scenario: T-04 Welcome has no accessibility violations
 
 - **WHEN** Welcome is checked in Spanish and in English on a phone-size screen
@@ -56,6 +63,13 @@ A signed-out person SHALL see Welcome for any page that needs sign-in. A signed-
 ### Requirement: One last step collects the language, the age and terms acceptance, and the WhatsApp number
 
 One last step SHALL show the language, prefilled with the Welcome choice, the "I am 18 or older and accept the terms" checkbox, and a WhatsApp number field with a country selector and automatic formatting (FR-02, FR-03, docs/02-UX-DESIGN.md §2.3 and §2.8). Changing the language SHALL switch the screen right away.
+
+#### Scenario: AC-99 One last step in English
+
+- **GIVEN** a new user who chose English on Welcome, in a browser that prefers Spanish
+- **WHEN** they reach One last step
+- **THEN** all its text is in English, country names are in English, and the number is formatted as it is written in English
+- Verified by a browser test.
 
 #### Scenario: AC-98 the Welcome language is prefilled and can be changed
 

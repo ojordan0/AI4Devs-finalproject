@@ -15,14 +15,21 @@ The app SHALL let a person sign in with their Google account, with no password o
 - **GIVEN** a Google profile whose email is not verified
 - **WHEN** it is used to sign in
 - **THEN** no account or session is created
-- Verified by a unit test of the check that runs on the provider's profile. Google itself is not called (docs/07-SECURITY-AND-TESTING.md §2.4).
+- Verified by an integration test through Better Auth's sign-in and callback, with Google's token endpoint answered by the test, so Google itself is not called (docs/07-SECURITY-AND-TESTING.md §2.4).
 
 #### Scenario: BR-02 an identity is matched by the provider's ID, not by email
 
-- **GIVEN** the sign-in configuration
-- **WHEN** a provider identity arrives whose email matches an existing user who has no identity with that provider
-- **THEN** it is not linked to that user by email
-- Verified by a unit test of the sign-in configuration.
+- **GIVEN** an existing user with a verified email and no Google identity
+- **WHEN** a Google identity with the same email signs in
+- **THEN** it is not linked to that user, no session is created, and Welcome shows the sign-in error
+- Verified by an integration test through Better Auth's sign-in and callback.
+
+#### Scenario: BR-02 a returning identity keeps its account after its email changes
+
+- **GIVEN** a user who signed in with Google
+- **WHEN** they sign in again with the same Google identity and a different email
+- **THEN** they are signed in as the same user
+- Verified by an integration test through Better Auth's sign-in and callback.
 
 ### Requirement: Sessions renew with use and expire after 30 days without use
 
@@ -68,6 +75,17 @@ Requests to the sign-in endpoints that change state SHALL be refused when their 
 - **GIVEN** a signed-in user's cookie
 - **WHEN** a sign-out request arrives with another site's `Origin`
 - **THEN** it is refused and the session still exists
+- Verified by an integration test.
+
+### Requirement: Only the sign-in endpoints the app uses are served
+
+Under `/api/auth`, the app SHALL serve only Google sign-in and its callback, reading the session, signing out, the sign-in error page, and, when it is on, the development sign-in. Every other address SHALL answer 404, so changes to an account go through `/api/v1` and its checks (docs/05-API.md §2).
+
+#### Scenario: T-04 Better Auth's own account changes are not served
+
+- **GIVEN** the app's sign-in endpoints
+- **WHEN** a request is sent to another Better Auth endpoint, such as changing the user's name or deleting the user
+- **THEN** it answers 404
 - Verified by an integration test.
 
 ### Requirement: Development-only sign-in

@@ -20,14 +20,16 @@ T-04's acceptance criteria are AC-02 (tasks 5.4 and 8.3), AC-03 (tasks 5.5 and 8
 
 ## 3. Sign-in and sessions
 
-- [x] 3.1 Add `createAuth` in `src/server/auth/auth.ts` with the Drizzle adapter on `users`, `accounts`, `sessions`, and `verifications`, the session lengths, IP tracking off, implicit linking off, trusted origins, the app columns as additional fields, Google when configured, and `checkProviderProfile` (design decision 1). Add `src/server/auth/index.ts` and `src/app/api/auth/[...all]/route.ts`. Verify with `npx tsc --noEmit` and `npm run build`.
+- [x] 3.1 Add `createAuth` in `src/server/auth/auth.ts` with the Drizzle adapter on `users`, `accounts`, `sessions`, and `verifications`, the session lengths, IP tracking off, implicit linking off, trusted origins, the app columns as additional fields, Google when configured, and `checkProviderUser` (design decision 1). Add `src/server/auth/index.ts` and `src/app/api/auth/[...all]/route.ts`. Verify with `npx tsc --noEmit` and `npm run build`.
 - [x] 3.2 Add `createSessionReader` and `getSessionUser` in `src/server/auth/session.ts`, returning the renewed cookie headers; append them in the route wrapper (`src/server/http/route.ts`) and in `src/proxy.ts`; make it the default reader in `defaultRouteDependencies()` (design decision 2). Verify with `npx tsc --noEmit` and the existing tests.
 - [x] 3.3 Add `tests/support/sessions.ts`, which inserts `sessions` rows with chosen dates and builds the signed cookie (design decision 8). Verify with the tests below.
 - [x] 3.4 Test the scenario "T-04 an endpoint reads a real session" for `GET /me`. Verify that it passes.
 - [x] 3.5 Write the test `AC-05 a user who used the app 20 days ago is still signed in` in `tests/integration/`, checking that `expiresAt` moves to 30 days from now and the response renews the cookie. Verify that it passes.
 - [x] 3.6 Write the test `AC-06 a user who last used the app 31 days ago signs in again`, checking 401 `NOT_SIGNED_IN` from `GET /me`. Verify that it passes.
 - [x] 3.7 Test the scenarios "BR-03 a session used twice in one day is renewed once", "BR-03 signing out deletes the session" (through `/api/auth/sign-out`), and "T-04 a sign-out from another origin is refused". Verify that they pass.
-- [x] 3.8 Write unit tests for "BR-02 a Google profile without a verified email is refused" (`checkProviderProfile`) and "BR-02 an identity is matched by the provider's ID, not by email" (the auth options). Verify that they pass.
+- [x] 3.8 Write unit tests for "BR-02 a Google profile without a verified email is refused" (`checkProviderUser`) and "BR-02 an identity is matched by the provider's ID, not by email" (the auth options). Verify that they pass.
+- [x] 3.9 Serve only the Better Auth endpoints the app uses, through `createAuthHandler` in `src/server/auth/handler.ts`, and test "T-04 Better Auth's own account changes are not served". Verify that it passes.
+- [x] 3.10 Test Google sign-in through Better Auth's sign-in and callback in `tests/integration/google-sign-in.test.ts`, answering Google's token endpoint in the test: "FR-01 a first Google sign-in creates the account and signs the user in", "BR-02 a returning identity signs in as the same user after its email changes", "BR-02 an identity whose email matches another user is not linked to them", and "BR-02 a Google profile without a verified email is refused". Verify that they pass, and that the linking test fails with implicit linking on.
 
 ## 4. Development sign-in
 
@@ -72,6 +74,7 @@ T-04's acceptance criteria are AC-02 (tasks 5.4 and 8.3), AC-03 (tasks 5.5 and 8
 - [x] 8.6 Write the browser test `AC-04 Profile doesn't let the user remove their WhatsApp number`. Verify that it passes.
 - [x] 8.7 Test the scenarios "AC-99 Profile in English", "FR-04 changing the language in Profile switches the screen", "BR-03 signing out from Profile", and "T-04 a failed save keeps what the user typed" (Profile). Verify that they pass.
 - [x] 8.8 Test "T-04 Welcome has no accessibility violations", "T-04 One last step has no accessibility violations" (also with indicated fields), and "T-04 Profile has no accessibility violations" with Axe, in both languages. Verify that they report no violations.
+- [x] 8.9 Write the browser tests `AC-99 Welcome in English` and `AC-99 One last step in English`, in a browser that prefers Spanish. Verify that they pass.
 
 ## 9. OpenAPI document and checks
 
