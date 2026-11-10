@@ -1,7 +1,9 @@
 // How the route wrapper learns who is signed in. T-04 replaces the placeholder
 // with a reader backed by Better Auth; tests pass their own reader.
 
-export type Language = "es" | "en";
+import type { Language } from "../../shared/languages";
+
+export type { Language };
 
 export type SessionUser = {
   id: string;

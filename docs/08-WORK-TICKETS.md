@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.11 · **Date:** November 9, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.12 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -154,7 +154,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 - Better Auth with the Google provider, the Drizzle adapter, and database sessions (FR-01, BR-02, BR-03).
 - Development-only sign-in as a seed user ([Architecture §3](03-ARCHITECTURE.md#3-technical-decisions)).
-- Welcome and "One last step" screens (FR-02, FR-03), with WhatsApp validation (BR-04).
+- Welcome and "One last step" screens (FR-02, FR-03), with WhatsApp validation (BR-04). Completing onboarding runs getting started from T-07, so the user gets their group and first list (BR-06).
 - Profile: language, WhatsApp number, email setting, and sign out (FR-04, without account deletion).
 
 **Acceptance criteria:** AC-02, AC-03, AC-04, AC-05, AC-06, AC-98.
@@ -204,7 +204,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 - `GET /me`, `GET /groups`, `GET /groups/{groupId}` ([API §2](05-API.md#2-endpoints)).
 - Permission tests across two groups using the seed data.
 
-**Acceptance criteria:** AC-01, AC-24, AC-25, AC-26.
+**Acceptance criteria:** AC-01, AC-24, AC-26.
 
 ### T-08 Buyer invitations
 
@@ -214,7 +214,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 **Scope:**
 
-- Create, list, and cancel invitations, and the preview and accept endpoints, for the buyer type (FR-06, BR-08, BR-09).
+- Create, list, and cancel invitations, and the preview and accept endpoints, for the buyer type (FR-06, BR-08, BR-09). A user who signs up through an invitation skips getting started (BR-06).
 - Group screen with members, buyers, and pending invitations; invitation screen with sign-in ([UX design §1](02-UX-DESIGN.md#1-user-flows), flow C).
 - Share on WhatsApp and copy link.
 
@@ -232,7 +232,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 - Create, read, edit, and delete items, including moving an item to another list (FR-13, FR-16), with the status limits in BR-19 and the item version (BR-20).
 - Creation and status changes written to the status history (BR-26).
 
-**Acceptance criteria:** AC-27, AC-38, AC-39, AC-40, AC-41, AC-45, AC-47, AC-48, AC-50, AC-51.
+**Acceptance criteria:** AC-25, AC-27, AC-38, AC-39, AC-40, AC-41, AC-45, AC-47, AC-48, AC-50, AC-51.
 
 ### T-10 Lists screen, item form, and item page
 

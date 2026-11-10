@@ -254,6 +254,23 @@ export function routeErrorCodes(definition: {
 }
 
 /**
+ * Declares a route without building its handler. Next.js lets a route.ts file
+ * export only its method handlers, so each resource folder keeps its
+ * declarations in a separate file: route.ts passes them to defineRoute, and
+ * tests to createRouteHandler with their own dependencies. The type
+ * parameters check the handler against the declared schemas.
+ */
+export function routeDefinition<
+  A extends Access = "signed-in",
+  P extends z.ZodType | undefined = undefined,
+  Q extends z.ZodType | undefined = undefined,
+  B extends z.ZodType | undefined = undefined,
+  R extends z.ZodType | undefined = undefined,
+>(definition: RouteDefinition<A, P, Q, B, R>): RouteDefinition<A, P, Q, B, R> {
+  return definition;
+}
+
+/**
  * Declares an /api/v1 route: registers it in the OpenAPI document and returns
  * the Next.js route handler, for example `export const GET = defineRoute({...})`.
  */

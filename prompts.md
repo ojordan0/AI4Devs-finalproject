@@ -64,6 +64,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Part 11 | — | Ticket workflow: the steps to start and finish a ticket, work outside a ticket, branch names, and pull request #51 | Claude Code | Claude Opus 5.5 | [part-11-ticket-workflow.md](docs/ai-conversations/part-11-ticket-workflow.md) |
 | Part 12 | — | D2 scope: removing the launch-country access risk, fitting D2 and D3 to the available hours, and pull request #52 | Claude Code | Claude Opus 5.5 | [part-12-d2-scope.md](docs/ai-conversations/part-12-d2-scope.md) |
 | Part 13 | T-03 | API foundation: the route wrapper, field limits, membership check, rate limits, security headers, the generated OpenAPI document, and pull request #53 | Claude Code | Claude Opus 5.5 | [part-13-api-foundation.md](docs/ai-conversations/part-13-api-foundation.md) |
+| Part 14 | T-07 | Groups API: getting started, the current user and their tabs, the group endpoints, permission tests across groups, and pull request #54, built end to end from one prompt | Claude Code | Claude Opus 5.5 | [part-14-groups-api.md](docs/ai-conversations/part-14-groups-api.md) |
 
 ## Tools and phases
 
@@ -436,6 +437,41 @@ Examples of the AI's output that the product owner corrected or redirected:
 > 1)  moving AC-95 to T-10
 > 2) install it
 > 3) Follow your recommendation
+
+**Prompt 3** (Part 14, turn 1 · T-07 · Claude Opus 5.5)
+
+> Work on T-07 and then T-09 end to end while I sleep, without waiting for me at
+> any point. For these two tickets I explicitly authorize these overrides of
+> CLAUDE.md and openspec/config.yaml:
+>
+> 1. Proposal approval: after /opsx:propose, review the proposal yourself and
+>    continue to /commit and /opsx:apply without waiting.
+> 2. Gaps or conflicts in the docs: don't ask me. Choose the option you would
+>    recommend and update the document that owns the fact first, in the same PR,
+>    following the documentation rules. Technical choices go in design.md as
+>    usual.
+> 3. Dependencies: if a package outside Architecture §1.6 is really required,
+>    install it and add it to Architecture §1.6 in the same PR. Prefer existing
+>    dependencies whenever they are enough.
+> 4. Opening the PR: when every task is done and lint, tsc and tests pass, open
+>    the PR, run the adversarial-reviewer, post its findings, fix what's
+>    warranted, and re-review once.
+> 5. Merge readiness: assume each PR is ready to merge once step 4 is done, and
+>    run step 5 (archive, point the OpenSpec link to the archived change, AI usage
+>    record, commit, push) without waiting for me. Record T-07 as one part and
+>    T-09 as the next part, noting that it continues the same session.
+> 6. T-09 branching: after T-07's step 5, create feat/t-09-lists-items-api from
+>    feat/t-07-groups-api (not from main) and open its PR with
+>    --base feat/t-07-groups-api. Follow the same flow for T-09.
+>
+> Don't record the decisions you made on my behalf anywhere in the repository.
+> Still never merge, force-push, or commit to protected branches. If something
+> truly blocks a ticket, stop and explain.
+>
+> When you finish, reply with: both PR URLs, the merge order, one line per
+> unresolved review finding, and a summary of every decision you made under
+> items 1–3 for each ticket (what was open, what you chose, why, and which
+> document you changed), so I can check them before merging.
 
 ---
 

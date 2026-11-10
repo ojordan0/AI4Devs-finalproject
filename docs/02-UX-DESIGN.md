@@ -1,6 +1,6 @@
 # UX design
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 8, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -80,13 +80,13 @@ Lists         member of at least one group
 People        member of at least one group
 Group         member of at least one group
 To buy        buyer in at least one group
-My purchases  buyers always; members once
-              they reserve an item
+My purchases  buyers always; members while
+              they have reserved or purchased items
 
 Header:  [García Group ▾]      ↻     (avatar)
 ```
 
-- A person who only requests sees Lists, People, and Group. A person who only buys sees To buy and My purchases. A member who reserves an item also gets My purchases, with no mode switch.
+- A person who only requests sees Lists, People, and Group. A person who only buys sees To buy and My purchases. A member who reserves an item also gets My purchases while they have reserved or purchased items, with no mode switch.
 - The group selector appears only if the user belongs to more than one group.
 - Profile opens from the avatar in the header, for every user.
 - **Refresh (↻)** in the header reloads the current screen. Screens also load fresh data when opened; there are no live updates.
@@ -106,7 +106,7 @@ Header:  [García Group ▾]      ↻     (avatar)
 | 7 | People | Members | List of people, and a page for each with details, notes, and delete | 09, 10 |
 | 8 | Group | Members | Group name (rename), members, buyers, delivery addresses, invite, remove, transfer ownership | 06, 07, 17, 19, 27 |
 | 9 | To buy | Buyers | Pending items from their groups, grouped by person, filters by group and list | 18, 21, 24 |
-| 10 | My purchases | Buyers, and members with reserved items | Reserved and purchased items; select purchased items to ship them together | 25, 29, 31 |
+| 10 | My purchases | Buyers, and members with reserved or purchased items | Reserved and purchased items; select purchased items to ship them together | 25, 29, 31 |
 | 11 | Mark as shipped | The item's buyer | Sheet with delivery address, ship date, shipping agency, and service (see [section 2.4](#24-key-screens)); also used to edit a shipment | 28, 29 |
 | 12 | Profile | All | Language, WhatsApp, emails, groups (leave), create a group, sign out, delete account, report a problem | 04, 05, 19, 20, 36 |
 
@@ -292,7 +292,7 @@ The same page serves everyone. The example shows the buyer who reserved the item
 - **Loading:** skeletons in lists and in the link preview.
 - **Errors with a way out:** "Couldn't save. Check your connection and try again", keeping what the user typed.
 - **No access (BR-13):** "This page isn't available." with a button back to the main screen.
-- **No groups:** a user with no remaining group access sees "You're not in any group yet.", a **Create a group** button, and "Ask someone to invite you."
+- **No groups:** a user with no remaining group access sees "You're not in any group yet.", a **Create a group** button, and "Ask someone to invite you." If they still have purchased items to ship (BR-11), they also get My purchases, with the message above it.
 - **Session expired (BR-03):** after signing in again, the user is back on the same screen with their text filled in.
 - **Field limits (BR-32):** text fields show a character counter as they near their limit and stop accepting text at it. Invalid values, such as a quantity of 0 or a link that isn't a web address, are pointed out under the field.
 - **Default address (BR-27):** "Choose another default address first."
@@ -333,6 +333,8 @@ The same page serves everyone. The example shows the buyer who reserved the item
 | Invite a member | Invitar a un miembro |
 | Invite a buyer | Invitar a un comprador |
 | Create a group | Crear un grupo |
+| {First name}'s group | Grupo de {nombre} |
+| My list | Mi lista |
 | + Add | + Agregar |
 | Notes | Notas |
 | Who is it for? | ¿Para quién? |

@@ -14,5 +14,12 @@
     "VALIDATION_FAILED": "Check the highlighted fields.",
     "RATE_LIMITED": "You're going a little fast. Wait a moment and try again.",
     "INTERNAL_ERROR": "Something went wrong. Try again."
+  },
+  "groups": {
+    "startingGroupName": "{firstName}'s group",
+    "startingListName": "My list"
+  },
+  "people": {
+    "formerUser": "Former user"
   }
 }
