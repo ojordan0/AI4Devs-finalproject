@@ -30,7 +30,7 @@ When a screen in the shell fails to load, the header and navigation SHALL stay v
 
 ### Requirement: Inaccessible and missing addresses show "not available"
 
-An address in the shell that doesn't exist, or that the user can't see, SHALL show the same "not available" message with a button back to the user's main screen, and SHALL reveal nothing about why (BR-13, docs/02-UX-DESIGN.md §2.7).
+An address that doesn't exist, or a screen the user can't see, SHALL show the same "not available" message with a button back to the user's main screen, and SHALL reveal nothing about why (BR-13, docs/02-UX-DESIGN.md §2.7). A screen the user can't see shows it inside the shell; an address that doesn't exist shows it on its own page, outside the shell.
 
 #### Scenario: BR-13 a missing address shows "not available"
 

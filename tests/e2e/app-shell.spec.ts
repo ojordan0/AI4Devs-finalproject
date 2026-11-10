@@ -122,6 +122,9 @@ test.describe("layout", () => {
       const screen = shell(page, "es");
       await expect(screen.header).toBeInViewport({ ratio: 1 });
       await expect(screen.nav).toBeInViewport({ ratio: 1 });
+      const bar = await screen.nav.boundingBox();
+      expect(bar!.height).toBeGreaterThanOrEqual(64);
+      expect(bar!.y + bar!.height).toBeCloseTo(740, 0);
       await expectNoSidewaysScroll(page);
       for (const link of await screen.nav.getByRole("link").all()) {
         const box = await link.boundingBox();
@@ -150,9 +153,15 @@ test.describe("layout", () => {
     expect(nav).toMatchObject({ x: 0, y: 0, height: 800 });
     expect(nav!.width).toBeGreaterThanOrEqual(260);
     expect(nav!.width).toBeLessThanOrEqual(280);
+    // One navigation element, and it's the sidebar: no bottom bar.
+    await expect(page.getByRole("navigation")).toHaveCount(1);
+    // The content is centered in the space next to the sidebar.
     const content = await page.locator("main").boundingBox();
-    expect(content!.x).toBeGreaterThanOrEqual(nav!.width);
     expect(content!.width).toBeLessThanOrEqual(640);
+    const spaceLeft = content!.x - nav!.width;
+    const spaceRight = 1280 - (content!.x + content!.width);
+    expect(spaceLeft).toBeGreaterThan(0);
+    expect(Math.abs(spaceLeft - spaceRight)).toBeLessThanOrEqual(2);
     await expectNoSidewaysScroll(page);
   });
 });
@@ -192,12 +201,22 @@ test.describe("header", () => {
       headers: sameOrigin(),
     });
     expect(response.ok()).toBe(true);
-    await shell(page, "es").refresh.click();
+    // Holds back the server's answer, so the working state can be seen.
+    await page.route("**/lists**", async (route) => {
+      const headers = route.request().headers();
+      if (headers["rsc"] && !headers["next-router-prefetch"]) {
+        await new Promise((resolve) => setTimeout(resolve, 1_500));
+      }
+      await route.continue();
+    });
+    const refresh = shell(page, "es").refresh;
+    await refresh.click();
 
+    await expect(refresh).toHaveAttribute("aria-busy", "true");
     await expect(
       shell(page, "en").heading(messages.en.lists.title),
     ).toBeVisible();
-    await expect(shell(page, "en").refresh).toBeVisible();
+    await expect(shell(page, "en").refresh).not.toHaveAttribute("aria-busy");
     await expect(page).toHaveURL("/lists");
   });
 });
@@ -256,9 +275,11 @@ test.describe("group selector", () => {
     await page.getByRole("menuitemradio", { name: "Zeta family" }).click();
     await expect(screen.groupSelector).toContainText("Zeta family");
 
-    await page.reload();
-    await page.goto("/people");
+    await page.reload({ waitUntil: "networkidle" });
+    await expect(screen.groupSelector).toContainText("Zeta family");
+    await screen.tab("people").click();
 
+    await expect(page).toHaveURL("/people");
     await expect(screen.groupSelector).toContainText("Zeta family");
   });
 });
