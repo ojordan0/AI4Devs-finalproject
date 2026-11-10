@@ -41,12 +41,14 @@ export function ListColumn({
   return (
     <div className="flex min-w-0 flex-col gap-6 pb-20 md:pb-0">
       <ListMenu groupId={groupId} lists={lists} currentListId={list.id} />
-      <QuickAdd key={list.id} listId={list.id} />
+      {/* Keyed by list, so the quick field and the filters start over when
+          the list changes; sibling keys must differ. */}
+      <QuickAdd key={`quick-add-${list.id}`} listId={list.id} />
       {items.length === 0 ? (
         <EmptyState icon={ListPlusIcon}>{t("noItems")}</EmptyState>
       ) : (
         <FilteredItems
-          key={list.id}
+          key={`items-${list.id}`}
           items={items}
           userId={userId}
           openItemId={openItemId}
