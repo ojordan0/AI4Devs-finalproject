@@ -29,9 +29,10 @@ import { useItemRefusal } from "./item-refusals";
 // The item form for adding and editing (docs/02-UX-DESIGN.md, section 2.4;
 // FR-13, FR-16; design decision 5): every field on one screen, checked with
 // the shared schemas on save and then as the user types (FR-39). An edit
-// sends only what changed with the version the member loaded; when the item
-// changed meanwhile, the form keeps what they typed and takes the latest
-// version (BR-20). The recipient comes with T-13; an edit keeps it.
+// sends only the fields the member changed, with the version the form last
+// loaded. When the item changed meanwhile, the form keeps what they typed and
+// shows the latest item in every other field, so saving again applies only
+// their changes (BR-20). The recipient comes with T-13; an edit keeps it.
 
 type Values = {
   link: string;
@@ -83,16 +84,31 @@ function orNull(value: string): string | null {
   return text === "" ? null : text;
 }
 
-/** The fields that differ from the item, in the API's names. */
-function changesFrom(item: EditedItem, values: Values) {
+/**
+ * The fields the member changed that differ from the latest item, in the
+ * API's names. Fields they didn't touch are never sent, so another member's
+ * edit to them stands.
+ */
+function changesFrom(item: EditedItem, edited: Partial<Values>) {
   const changes: Record<string, unknown> = {};
-  if (values.name.trim() !== item.name) changes.name = values.name;
-  if (orNull(values.link) !== item.url) changes.url = orNull(values.link);
-  if (Number(values.quantity) !== item.quantity) {
-    changes.quantity = Number(values.quantity);
+  if (edited.name !== undefined && edited.name.trim() !== item.name) {
+    changes.name = edited.name;
   }
-  if (orNull(values.notes) !== item.notes) changes.notes = orNull(values.notes);
-  if (values.listId !== item.listId) changes.listId = values.listId;
+  if (edited.link !== undefined && orNull(edited.link) !== item.url) {
+    changes.url = orNull(edited.link);
+  }
+  if (
+    edited.quantity !== undefined &&
+    Number(edited.quantity) !== item.quantity
+  ) {
+    changes.quantity = Number(edited.quantity);
+  }
+  if (edited.notes !== undefined && orNull(edited.notes) !== item.notes) {
+    changes.notes = orNull(edited.notes);
+  }
+  if (edited.listId !== undefined && edited.listId !== item.listId) {
+    changes.listId = edited.listId;
+  }
   return changes;
 }
 
@@ -114,7 +130,11 @@ export function ItemForm({
   const id = useId();
   const refs = useRef<Partial<Record<CheckedField, HTMLElement | null>>>({});
 
-  const [values, setValues] = useState<Values>(() => valuesOf(item, listId));
+  // Only what the member typed is kept; every other field shows the item as
+  // last loaded, including after a refresh brings a newer version.
+  const [edited, setEdited] = useState<Partial<Values>>({});
+  const loaded = valuesOf(item, listId);
+  const values: Values = { ...loaded, ...edited };
   const [errors, setErrors] = useState<
     Partial<Record<CheckedField, FieldErrorCode>>
   >({});
@@ -123,7 +143,7 @@ export function ItemForm({
   const [pending, setPending] = useState(false);
 
   function change(field: keyof Values, value: string) {
-    setValues((current) => ({ ...current, [field]: value }));
+    setEdited((current) => ({ ...current, [field]: value }));
     if (field !== "listId" && checked.has(field)) {
       setErrors((current) => ({
         ...current,
@@ -138,7 +158,7 @@ export function ItemForm({
    * on leaving would move Save while the user is pressing it.
    */
   function leave(field: CheckedField) {
-    if (values[field] !== valuesOf(item, listId)[field]) {
+    if (values[field] !== loaded[field]) {
       setChecked((current) => new Set(current).add(field));
     }
   }
@@ -162,7 +182,7 @@ export function ItemForm({
 
     let result;
     if (item) {
-      const changes = changesFrom(item, values);
+      const changes = changesFrom(item, edited);
       if (Object.keys(changes).length === 0) {
         router.push(`/items/${item.id}`);
         return;

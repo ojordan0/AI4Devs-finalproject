@@ -111,13 +111,20 @@ Each item SHALL show its name, who it is for, its quantity, and its status with 
 
 ### Requirement: Items can be filtered by person and by status
 
-Lists SHALL offer filters by person (All, each person with items in the list, and No person when some item has none) and by status (All, and each status present in the list, with its count) (docs/02-UX-DESIGN.md §2.4). Both filters SHALL apply together, and SHALL reset when the list changes.
+Lists SHALL offer filters by person (All, each person with items in the list, and No person when some item has none) and by status (All, and each status present in the list, with its count) (docs/02-UX-DESIGN.md §2.4). Both filters SHALL apply together, and SHALL reset when the list changes. When no item matches, Lists SHALL say so.
 
 #### Scenario: T-10 a member filters by person and by status
 
 - **GIVEN** the seed member Ana, on "Anthony's birthday"
 - **WHEN** they choose a person, then a status
 - **THEN** only that person's items in that status are shown, and choosing All for each shows every item again
+- Verified by a browser test.
+
+#### Scenario: T-10 filters that match no item say so
+
+- **GIVEN** the seed member Ana, on "Medicine"
+- **WHEN** they choose Grandma, then Pending
+- **THEN** they see "No items match these filters." instead of an empty list
 - Verified by a browser test.
 
 #### Scenario: T-10 the filter choices come from the list

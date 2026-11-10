@@ -139,6 +139,12 @@ export function FilteredItems({
         </ChipRow>
       </div>
 
+      {open.length === 0 && shipped.length === 0 && (
+        <p className="text-body-lg text-muted-foreground py-4 text-center">
+          {t("noMatches")}
+        </p>
+      )}
+
       {open.length > 0 && (
         <ul className="flex flex-col gap-3">
           {open.map((item) => (

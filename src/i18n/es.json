@@ -97,6 +97,7 @@
     "byStatus": "Estado",
     "all": "Todos",
     "noPerson": "Sin persona",
+    "noMatches": "Ningún artículo coincide con estos filtros.",
     "shipped": "Enviados ({count})",
     "chooseItem": "Elige un artículo para verlo aquí."
   },

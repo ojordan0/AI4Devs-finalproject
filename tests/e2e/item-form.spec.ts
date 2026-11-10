@@ -243,27 +243,41 @@ test.describe("moving and changed items", () => {
     const {
       lists: [first],
     } = await myGroup(page);
-    const item = await createItem(page, first!.id, { name: "Milk" });
+    const item = await createItem(page, first!.id, {
+      name: "Milk",
+      quantity: 1,
+    });
     await open(page, `/items/${item.id}/edit`);
     const fields = form(page, "en");
 
+    // Another request renames the item after the form loaded.
     const other = await page.request.patch(`/api/v1/items/${item.id}`, {
-      data: { version: item.version, name: "Milk 2" },
+      data: { version: item.version, name: "Oat milk" },
       headers: sameOrigin(),
     });
     expect(other.ok()).toBe(true);
     await fields.notes.fill("Lactose free");
+    await fields.quantity.fill("2");
     await fields.save.click();
 
+    // What the member typed is kept; the field they didn't touch shows the
+    // latest item.
     await expect(fields.alert).toHaveText(fields.t.errors.ITEM_CHANGED);
     await expect(fields.notes).toHaveValue("Lactose free");
-    await expect(fields.name).toHaveValue("Milk");
+    await expect(fields.quantity).toHaveValue("2");
+    await expect(fields.name).toHaveValue("Oat milk");
 
+    // Saving again applies their changes over the latest item, keeping the
+    // other edit.
     await fields.save.click();
     await expect(page).toHaveURL(`/items/${item.id}`);
-    await expect(page.getByText("Lactose free")).toBeVisible();
+    const article = page.getByRole("article");
     await expect(
-      page.getByRole("heading", { level: 1, name: "Milk" }),
+      article.getByRole("heading", { level: 1, name: "Oat milk" }),
+    ).toBeVisible();
+    await expect(article.getByText("Lactose free")).toBeVisible();
+    await expect(
+      article.getByText(fields.t.item.quantity.replace("{count}", "2")),
     ).toBeVisible();
   });
 });

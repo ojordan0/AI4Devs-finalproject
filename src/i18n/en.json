@@ -97,6 +97,7 @@
     "byStatus": "Status",
     "all": "All",
     "noPerson": "No person",
+    "noMatches": "No items match these filters.",
     "shipped": "Shipped ({count})",
     "chooseItem": "Choose an item to see it here."
   },

@@ -264,6 +264,20 @@ test.describe("items", () => {
     await expect(screen.items).toHaveCount(3);
   });
 
+  test("T-10 filters that match no item say so", async ({ page }) => {
+    await signInAsSeedUser(page, "ana");
+    await open(page, `/lists?list=${seedIds.lists.medicine}`);
+    const screen = lists(page, "en");
+    const { t } = screen;
+    await expect(page.getByText(t.lists.noMatches)).toHaveCount(0);
+
+    await screen.filter("byPerson", "Grandma").click();
+    await screen.filter("byStatus", t.status.pending).click();
+
+    await expect(screen.items).toHaveCount(0);
+    await expect(page.getByText(t.lists.noMatches)).toBeVisible();
+  });
+
   test("T-10 + Add opens the form for the current list", async ({ page }) => {
     await signUpOnboarded(page, { language: "en" });
     const { groupId } = await myGroup(page);

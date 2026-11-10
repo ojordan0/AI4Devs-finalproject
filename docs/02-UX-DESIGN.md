@@ -137,7 +137,7 @@ An item has six fields and a person has three.
 - Lists opens the group's first list, in the order the lists were created, or the list chosen in the list menu, which the address keeps.
 - `Unavailable` items appear first, because they are waiting for a decision from a member. The other items follow, newest first, so an item added with the quick field appears right under it.
 - Shipped items are grouped at the end, collapsed, with their count.
-- Simple filters above the list: by person ("All", each person with items in the list, and "No person" when an item has none) and by status ("All", and each status in the list, with its count). Both apply together.
+- Simple filters above the list: by person ("All", each person with items in the list, and "No person" when an item has none) and by status ("All", and each status in the list, with its count). Both apply together. When no item matches, the list says "No items match these filters."
 - The list menu (**Medicine ▾**) switches lists, offers **New list**, which asks for the list's name, and offers **Rename**, **Archive**, and **Delete**. When an action is not allowed, the menu says why ([section 2.7](#27-empty-states-loading-and-errors)).
 - On desktop, the item side shows "Choose an item to see it here." until an item is chosen.
 
@@ -443,3 +443,4 @@ The same page serves everyone. The example shows the buyer who reserved the item
 | Delete "{name}"? | ¿Eliminar "{nombre}"? |
 | It's removed from the list for everyone. | Se quita de la lista para todos. |
 | Choose an item to see it here. | Elige un artículo para verlo aquí. |
+| No items match these filters. | Ningún artículo coincide con estos filtros. |

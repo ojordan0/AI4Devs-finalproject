@@ -30,6 +30,7 @@ T-10's acceptance criteria are AC-23 (task 6.2), AC-38 (task 4.3), AC-40 (task 5
 - [x] 4.4 Add `T-10 a new member lands on their first list`, `T-10 a list from another group in the address shows the first list`, `T-10 a member switches to another list`, `FR-12 a member creates a list from the list menu`, `BR-32 an empty list name isn't created`, and `T-10 a group with no lists`. Verify that they pass.
 - [x] 4.5 Add `T-10 the seed lists show every status in order`, `T-10 tapping an item opens its page`, `T-10 a member filters by person and by status`, `T-10 + Add opens the form for the current list`, `T-10 Refresh shows an item added elsewhere`, and `T-10 a member on desktop opens an item`. Verify that they pass.
 - [x] 4.6 Add `AC-99 Lists in English` and `T-10 Lists has no accessibility violations`. Verify that they pass.
+- [x] 4.7 Show "No items match these filters." when the filters hide every item (adversarial review), with UX §2.4 and §2.10 updated, and add `T-10 filters that match no item say so`. Verify that it passes.
 
 ## 5. Item form
 
