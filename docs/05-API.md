@@ -1,6 +1,6 @@
 # API specification
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.5 · **Date:** October 18, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 9, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -23,7 +23,7 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 | Status | Code | When |
 | --- | --- | --- |
 | 401 | `NOT_SIGNED_IN` | No valid session |
-| 403 | `FORBIDDEN` | The user can see the resource but not take this action (BR-12). The interface never offers such actions, so this only happens when it is bypassed. |
+| 403 | `FORBIDDEN` | The user can see the resource but not take this action (BR-12), or a change came from another site's origin ([Security and testing §1](07-SECURITY-AND-TESTING.md#1-security)). The interface never offers such actions, so this only happens when it is bypassed. |
 | 404 | `NOT_AVAILABLE` | Outside the user's groups, deleted, or archived (BR-13) |
 | 409 | `ALREADY_RESERVED` | Someone else reserved the item first (BR-23) |
 | 409 | `ITEM_CHANGED` | The item changed since the user loaded it (BR-20), or the action no longer applies to its status |
@@ -31,6 +31,7 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 | 410 | `INVITATION_INVALID` | The invitation was used, expired, or cancelled (BR-08) |
 | 422 | `VALIDATION_FAILED` | A field breaks BR-32 or a required field is missing |
 | 429 | `RATE_LIMITED` | Over a rate limit ([Security and testing §1](07-SECURITY-AND-TESTING.md#1-security)) |
+| 500 | `INTERNAL_ERROR` | An unexpected failure. The message is generic and the response contains no internal details. |
 
 ## 2. Endpoints
 

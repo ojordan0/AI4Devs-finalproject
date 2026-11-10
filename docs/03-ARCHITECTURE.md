@@ -1,6 +1,6 @@
 # Architecture
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 8, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.8 · **Date:** November 9, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -190,6 +190,7 @@ Every package the project installs. Milestone 1 packages are installed with the 
 | `typescript` | Type checking in strict mode | 1 |
 | `drizzle-kit` | Generates and applies migrations | 1 |
 | `tsx` | Runs the TypeScript scripts: seed data and OpenAPI generation | 1 |
+| `yaml` | Writes the generated `docs/openapi.yaml` | 1 |
 | `@tailwindcss/postcss` | Builds Tailwind CSS in Next.js | 1 |
 | `eslint`, `eslint-config-next` | Linting, including the accessibility rules in `eslint-plugin-jsx-a11y` | 1 |
 | `prettier`, `prettier-plugin-tailwindcss` | Formatting, including a consistent order of Tailwind classes | 1 |
@@ -227,11 +228,11 @@ Planned layout of the repository:
 │   ├── components/               Shared interface components
 │   │   └── ui/                   shadcn/ui components
 │   ├── server/
-│   │   ├── services/             Domain services, one per capability
+│   │   ├── services/             Domain services, one per capability, and the membership check (BR-12)
 │   │   ├── db/                   Drizzle schema, client, and migrations
 │   │   ├── auth/                 Better Auth configuration
 │   │   ├── adapters/             storage/, email/ (with React Email templates), link-lookup/; production and local versions
-│   │   └── http/                 Error format, authorization guard, rate limiter
+│   │   └── http/                 Error format, request checks, rate limiter
 │   ├── shared/                   Zod schemas, types, and limits (BR-32) used by browser and server
 │   └── i18n/                     es.json and en.json message files
 ├── tests/

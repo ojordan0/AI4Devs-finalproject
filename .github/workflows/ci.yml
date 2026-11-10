@@ -37,6 +37,23 @@ jobs:
       - run: npm ci
       - run: npx tsc --noEmit
 
+  openapi:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run openapi:generate
+      # Fails when the document is missing from the commit, or differs from the
+      # generator's output; the diff shows what changed.
+      - name: Check that docs/openapi.yaml is up to date
+        run: |
+          git ls-files --error-unmatch docs/openapi.yaml
+          git diff --exit-code -- docs/openapi.yaml
+
   test:
     runs-on: ubuntu-latest
     env:

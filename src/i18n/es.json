@@ -2,5 +2,17 @@
   "placeholder": {
     "title": "ComproParaTi",
     "message": "Estamos preparando la aplicación."
+  },
+  "errors": {
+    "NOT_SIGNED_IN": "Inicia sesión para continuar.",
+    "FORBIDDEN": "No puedes hacer eso en este grupo.",
+    "NOT_AVAILABLE": "Esta página no está disponible.",
+    "ALREADY_RESERVED": "Otra persona ya lo reservó",
+    "ITEM_CHANGED": "Este artículo cambió. Mostrando lo más reciente.",
+    "RULE_VIOLATION": "Esto no se puede hacer ahora.",
+    "INVITATION_INVALID": "Esta invitación ya no es válida. Pide una nueva.",
+    "VALIDATION_FAILED": "Revisa los campos marcados.",
+    "RATE_LIMITED": "Vas un poco rápido. Espera un momento y vuelve a intentarlo.",
+    "INTERNAL_ERROR": "Algo salió mal. Inténtalo de nuevo."
   }
 }
