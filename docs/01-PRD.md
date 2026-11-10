@@ -1,6 +1,6 @@
 # Product Requirements Document: Assisted Shopping Platform (MVP)
 
-**Version:** 1.6 · **Date:** November 9, 2026  
+**Version:** 1.7 · **Date:** November 10, 2026  
 **Project Manager and Product owner:** Odalys Jordan Enriquez  
 **Product Name:** ComproParaTi ("I buy for you", [section 16](#16-product-decisions))
 
@@ -246,6 +246,7 @@ Business rules are enforced on the server. The interface reflects them, but neve
   | Leave the group | ✔ (BR-07 for the owner) | ✔ |
   | View lists, items, delivery addresses, and the recipient details on each item | ✔ | ✔ |
   | Browse and manage the group's recipients | ✔ | ✖ |
+  | View the group's members and buyers | ✔ | ✖ |
   | Reserve items | ✔ | ✔ |
   | Release; mark as purchased, unavailable, or shipped; undo; edit the shipment | Items they reserved | Items they reserved |
   | Message on WhatsApp | ✔ | ✔ |
@@ -350,7 +351,7 @@ Each requirement describes what users can do. The rules that apply are reference
 - **FR-05 Getting started and creating groups.** New users start with a group and a list, or join the group that invited them (BR-06). Any user can create a group from their profile (BR-07).
 - **FR-06 Invitations.** A member creates a member or buyer invitation and shares its link on WhatsApp or copies it. Members can see pending invitations and cancel them (BR-08, BR-09).
 - **FR-07 Members.** Members view and edit the group's lists, items, recipients, and delivery addresses, and can also buy for their own group without a separate invitation. Members can rename the group. The owner can remove members and transfer ownership (BR-07, BR-10, BR-12).
-- **FR-08 Single interface.** The app has no mode switch. It shows each user the screens and actions their memberships allow (BR-12): someone who only buys sees the items to buy and their purchases; a member sees lists, recipients, and the group, plus their purchases once they reserve an item. A user with no remaining access to any group sees "You're not in any group yet." with a **Create a group** button and a note to ask for an invitation.
+- **FR-08 Single interface.** The app has no mode switch. It shows each user the screens and actions their memberships allow (BR-12): someone who only buys sees the items to buy and their purchases; a member sees lists, recipients, and the group, plus their purchases while they have reserved or purchased items. A user with no remaining access to any group sees "You're not in any group yet." with a **Create a group** button and a note to ask for an invitation.
 
 ### 13.3 Recipients
 
@@ -697,7 +698,7 @@ Each functional requirement, with the user stories, business rules, API endpoint
 | FR-02 Onboarding | US-01 | BR-04 | `/me/onboarding` | users | 1 |
 | FR-03 Age declaration | US-01 | BR-01 | `/me/onboarding` | users | 1 |
 | FR-04 Profile | US-02, US-03 | BR-04, BR-05 | `/me` | users, accounts, sessions | 1 (account deletion: 9) |
-| FR-05 Getting started and creating groups | US-01, US-06 | BR-06, BR-07 | `/groups` | groups, memberships, lists | 2 (more groups: 6) |
+| FR-05 Getting started and creating groups | US-01, US-06 | BR-06, BR-07 | `/me/onboarding`, `/groups` | groups, memberships, lists | 2 (more groups: 6) |
 | FR-06 Invitations | US-04 | BR-08, BR-09 | `/groups/{groupId}/invitations`, `/invitations/{invitationId}`, `/invitations/by-code/{code}`, `…/accept` | invitations, memberships | 2 (member invitations: 6) |
 | FR-07 Members | US-05 | BR-07, BR-10, BR-12 | `/groups/{groupId}`, `…/owner`, `…/memberships/{userId}` | groups, memberships | 2 (rename and transfer: 6; removing: 9) |
 | FR-08 Single interface | US-07 | BR-12 | `/me` | memberships | 2 |

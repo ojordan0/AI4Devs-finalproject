@@ -1,6 +1,6 @@
 # API specification
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 9, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -9,8 +9,9 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 ## 1. Conventions
 
 - **Base path:** `/api/v1`. JSON request and response bodies, with property names in camelCase.
-- **Authentication:** the Better Auth session cookie. Every endpoint requires a signed-in, onboarded user, except the invitation preview and the onboarding endpoint.
+- **Authentication:** the Better Auth session cookie. Every endpoint requires a signed-in, onboarded user, except the invitation preview, the onboarding endpoint, and `GET /me`, which reports whether onboarding is complete.
 - **Identifiers and dates:** IDs are UUIDs. Timestamps use ISO 8601 in UTC; calendar dates such as `shipDate` use `YYYY-MM-DD`.
+- **Collections** are returned as an object with one property named after the resource, for example `{ "groups": [...] }`.
 - **Concurrency:** item edits include the `version` the user last saw (BR-20).
 - **Errors** use one format:
 
@@ -38,7 +39,7 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 | Method | Path | Purpose | Rules |
 | --- | --- | --- | --- |
 | GET | `/me` | Current user, memberships, and onboarding state | FR-08 |
-| POST | `/me/onboarding` | Language, WhatsApp number, and age and terms acceptance | FR-02, BR-01, BR-04 |
+| POST | `/me/onboarding` | Language, WhatsApp number, and age and terms acceptance; completing it without an invitation creates the user's group and first list | FR-02, BR-01, BR-04, BR-06 |
 | PATCH | `/me` | Change language, WhatsApp number, or email setting | FR-04 |
 | DELETE | `/me` | Delete the account | BR-05 |
 | GET, POST | `/groups` | List the user's groups; create a group | BR-07 |

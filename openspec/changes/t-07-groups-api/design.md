@@ -32,12 +32,12 @@ The OpenAPI script already imports every `route.ts`, which imports its declarati
 
 ### 2. Services take the user, language, and clock; handlers only pass them on
 
-- `src/server/services/me.ts`: `getCurrentUser(db, userId, language)` reads the user, their active memberships joined with each group's name and owner, and whether any item has them as buyer with status `reserved` or `purchased`.
+- `src/server/services/me.ts`: `getCurrentUser(db, userId)` reads the user, their active memberships joined with each group's name and owner, and whether any item has them as buyer with status `reserved` or `purchased`.
 - `src/server/services/groups.ts`: `listGroups(db, userId)`, `getGroup(db, userId, groupId, language)`, and `startWithoutInvitation(db, clock, userId, language)`.
 
 `getGroup` calls `requireMemberAccess` from T-03, which gives the 404 for a missing, foreign, or malformed group and the 403 for a buyer. Only then does it read the group's people, so nothing about the group is read for a user who can't see it.
 
-The language passed in is the requesting user's, from the route context. Services translate the few texts they produce (group and list names, "Former user") with a small translator in `src/server/translate.ts`, which reads the same message files as the error messages. The error message helper in `src/server/http/language.ts` moves onto it, so both use one translator. The `Language` type moves from `src/server/http/session.ts` to `src/shared/languages.ts`, re-exported from where it was, so services and shared code don't import the API layer for a type.
+The language passed in is the requesting user's, from the route context. Services translate the few texts they produce (group and list names, and "Former user" through `personName` in `src/server/services/people.ts`, which T-09 reuses for buyers) with a small translator in `src/server/translate.ts`, which reads the same message files as the error messages. The error message helper in `src/server/http/language.ts` moves onto it, so both use one translator. The `Language` type moves from `src/server/http/session.ts` to `src/shared/languages.ts`, re-exported from where it was, so services and shared code don't import the API layer for a type.
 
 ### 3. Getting started is idempotent and serialized per user
 

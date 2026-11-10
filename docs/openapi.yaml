@@ -38,6 +38,253 @@ components:
             - message
       required:
         - error
+    MembershipType:
+      type: string
+      enum:
+        - member
+        - buyer
+    PersonRef:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          description: '"Former user" for deleted accounts'
+      required:
+        - id
+        - name
+    Membership:
+      type: object
+      properties:
+        groupId:
+          type: string
+          format: uuid
+        groupName:
+          type: string
+        type:
+          $ref: "#/components/schemas/MembershipType"
+        isOwner:
+          type: boolean
+      required:
+        - groupId
+        - groupName
+        - type
+        - isOwner
+    Me:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type:
+            - string
+            - "null"
+        email:
+          type:
+            - string
+            - "null"
+        image:
+          type:
+            - string
+            - "null"
+        language:
+          type:
+            - string
+            - "null"
+          enum:
+            - es
+            - en
+            - null
+          description: Null until onboarding
+        whatsappNumber:
+          type:
+            - string
+            - "null"
+          description: E.164; null until onboarding
+        receiveEmails:
+          type: boolean
+        onboarded:
+          type: boolean
+        hasPurchases:
+          type: boolean
+          description: The user is the buyer of a reserved or purchased item, which gives a member the My purchases tab (FR-08)
+        memberships:
+          type: array
+          items:
+            $ref: "#/components/schemas/Membership"
+      required:
+        - id
+        - name
+        - email
+        - image
+        - language
+        - whatsappNumber
+        - receiveEmails
+        - onboarded
+        - hasPurchases
+        - memberships
+    GroupSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          $ref: "#/components/schemas/MembershipType"
+        isOwner:
+          type: boolean
+      required:
+        - id
+        - name
+        - type
+        - isOwner
+    GroupList:
+      type: object
+      properties:
+        groups:
+          type: array
+          items:
+            $ref: "#/components/schemas/GroupSummary"
+      required:
+        - groups
+    GroupMember:
+      allOf:
+        - $ref: "#/components/schemas/PersonRef"
+        - type: object
+          properties:
+            isOwner:
+              type: boolean
+          required:
+            - isOwner
+    Group:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/GroupMember"
+        buyers:
+          type: array
+          items:
+            $ref: "#/components/schemas/PersonRef"
+      required:
+        - id
+        - name
+        - members
+        - buyers
   parameters: {}
-paths: {}
+paths:
+  /groups/{groupId}:
+    get:
+      summary: The group with its members and buyers. Members only (BR-12).
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: true
+          name: groupId
+          in: path
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /groups:
+    get:
+      summary: The groups the user belongs to, with their role in each
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GroupList"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /me:
+    get:
+      summary: Current user, memberships, and onboarding state. Also available before onboarding is complete.
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Me"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 webhooks: {}

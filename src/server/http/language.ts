@@ -1,12 +1,8 @@
-import { createTranslator } from "next-intl";
-
-import en from "../../i18n/en.json";
-import es from "../../i18n/es.json";
+import type en from "../../i18n/en.json";
+import { translator } from "../translate";
 import type { Language, SessionUser } from "./session";
 
 // Error messages come from the translation files (FR-37), in the user's language.
-
-const messages = { en, es } as const;
 
 export type ErrorMessageKey = keyof typeof en.errors;
 
@@ -51,10 +47,5 @@ export function requestLanguage(
 }
 
 export function errorMessage(language: Language, key: ErrorMessageKey): string {
-  const t = createTranslator({
-    locale: language,
-    messages: messages[language],
-    namespace: "errors",
-  });
-  return t(key);
+  return translator(language, "errors")(key);
 }

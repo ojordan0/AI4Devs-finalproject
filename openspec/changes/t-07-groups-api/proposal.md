@@ -22,7 +22,7 @@ Every screen and endpoint after this one works inside a group: lists, items, rec
   - **`GET /me` before onboarding.** [API §1](../../../docs/05-API.md#1-conventions) requires an onboarded user on every endpoint except the invitation preview and onboarding, but `GET /me` returns the onboarding state, which is only useful before onboarding is done. `GET /me` is added to the exceptions.
   - **Who can see a group's members.** BR-12 doesn't say. The Group screen is for members ([UX design §2.3](../../../docs/02-UX-DESIGN.md#23-screens)), and buyers reach the people they need through items (BR-30), so a row is added to BR-12: members can view the group's members and buyers; buyers can't.
   - **Spanish names for the starting group and list.** [UX design §2.10](../../../docs/02-UX-DESIGN.md#210-spanish-interface-strings) has no Spanish for "{First name}'s group" and "My list". Rows are added.
-  - **When members see My purchases.** [UX design §2.2](../../../docs/02-UX-DESIGN.md#22-navigation) says "once they reserve an item", and §2.3 says "members with reserved items". A member with only purchased items still needs the tab to ship them, so both say "while they have reserved or purchased items".
+  - **When members see My purchases.** FR-08 and [UX design §2.2](../../../docs/02-UX-DESIGN.md#22-navigation) say "once they reserve an item", and §2.3 says "members with reserved items". A member with only purchased items still needs the tab to ship them, so all three say "while they have reserved or purchased items".
   - **How collections are returned.** No endpoint returns a collection yet. [API §1](../../../docs/05-API.md#1-conventions) gets one convention for all of them: an object with one property named after the resource, for example `{ "groups": [...] }`.
 
 ## Capabilities
@@ -58,5 +58,5 @@ None. The `group-access` check from T-03 is used as specified.
 - **Translations (existing files):** `src/i18n/en.json` and `src/i18n/es.json` get the starting group and list names and "Former user".
 - **Tests:** `tests/support/routes.ts` (existing) signs in any user, not only seed users; new integration tests for each endpoint and for getting started, and a unit test for the tabs.
 - **Generated file (existing):** `docs/openapi.yaml` gets the three paths.
-- **Changed documents:** `docs/01-PRD.md` (BR-12 row, §19 FR-05), `docs/02-UX-DESIGN.md` (§2.2, §2.3, §2.10), `docs/05-API.md` (§1 sign-in exception and collections, §2 onboarding row), and `docs/08-WORK-TICKETS.md` (AC-25 to T-09, T-04 and T-08 scope).
+- **Changed documents:** `docs/01-PRD.md` (FR-08, BR-12 row, §19 FR-05), `docs/02-UX-DESIGN.md` (§2.2, §2.3, §2.10), `docs/05-API.md` (§1 sign-in exception and collections, §2 onboarding row), and `docs/08-WORK-TICKETS.md` (AC-25 to T-09, T-04 and T-08 scope).
 - **GitHub:** the descriptions of issues #33 and #35 list AC-25 under T-09.
