@@ -299,7 +299,13 @@ export async function updateItem(
   const changes: Partial<typeof items.$inferInsert> = {
     ...(input.name !== undefined && { name: input.name }),
     ...(input.recipientId !== undefined && { recipientId: input.recipientId }),
-    ...(input.url !== undefined && { url: input.url }),
+    // A new or cleared link drops what was looked up for the old one (BR-21).
+    ...(input.url !== undefined && {
+      url: input.url,
+      storeName: null,
+      thumbnailUrl: null,
+      linkStatus: "none",
+    }),
     ...(input.quantity !== undefined && { quantity: input.quantity }),
     ...(input.notes !== undefined && { notes: input.notes }),
     ...(input.listId !== undefined && { listId: input.listId }),

@@ -192,3 +192,13 @@ An edit SHALL be able to move an item to another list of its group that isn't ar
 - **GIVEN** a purchased item (docs/01-PRD.md §17.4, AC-48)
 - **WHEN** a member tries to delete it
 - **THEN** the response is 409 `ITEM_CHANGED`, and the item still exists, still purchased
+
+### Requirement: A new link drops the old link's looked-up data
+
+An edit that changes or clears an item's link SHALL clear the store name and thumbnail looked up for the old link and reset the lookup's progress, so they never describe a different link (BR-21).
+
+#### Scenario: BR-21 changing the link drops what was looked up for the old one
+
+- **GIVEN** an item with a link, a store name, a thumbnail, and a finished lookup
+- **WHEN** a member edits it with a different link
+- **THEN** the item has the new link, no store name or thumbnail, and no lookup

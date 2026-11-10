@@ -596,6 +596,28 @@ describe("PATCH /items/{itemId}", () => {
     });
   });
 
+  it("BR-21 changing the link drops what was looked up for the old one", async () => {
+    const item = await pendingItem({
+      url: "https://store.example.com/old",
+      storeName: "Old store",
+      thumbnailUrl: "https://blob.example.com/old.webp",
+      linkStatus: "done",
+    });
+
+    const response = await updateItemAs("ana", item.id, {
+      version: 1,
+      url: "https://store.example.com/new",
+    });
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      url: "https://store.example.com/new",
+      storeName: null,
+      thumbnailUrl: null,
+      linkStatus: "none",
+    });
+  });
+
   it("AC-51 a buyer's request to edit or delete an item is rejected", async () => {
     const before = await itemRow(seedItems.pending);
 

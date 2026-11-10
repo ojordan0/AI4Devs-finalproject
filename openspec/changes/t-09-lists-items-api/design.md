@@ -50,6 +50,8 @@ A `recipientId` or a target `listId` that doesn't belong to the item's group, do
 ### 4. Status and version checks as conditional statements
 
 - **Edit:** one `UPDATE … WHERE id = $id AND version = $version AND status IN ('pending', 'reserved', 'unavailable') RETURNING …`, inside a transaction with the status history insert. It sets the new values, `version = version + 1`, and `updated_at` from the clock. For a reserved item it also sets `updated_after_reservation = true`. For an unavailable item it sets `status = 'pending'`, `buyer_id`, `unavailable_note`, and `buyer_note` to null, and inserts the `unavailable` → `pending` history row with the member as author. The new status depends on the old one, so the statement updates only rows still in the status the service read; a row that changed in between doesn't match.
+- **Link fields:** an edit that changes or clears `url` also resets `store_name`, `thumbnail_url`, and `link_status` to null, null, and `none`, so a later lookup (FR-14) never shows the old link's store or image (adversarial review, finding 2).
+- **The "Updated" marker:** any saved edit of a reserved item sets it, even one whose values match the stored ones; comparing every field isn't worth a read for a case the form doesn't produce (adversarial review, finding 4).
 - **Delete:** `DELETE … WHERE id = $id AND status IN ('pending', 'unavailable')`. The status history rows go with the item (cascade).
 - **When nothing matches:** the service reads the item again. A missing item is not available. An item that still exists answers `409 ITEM_CHANGED`. That covers a stale version (BR-20) and a status that no longer allows the action ([API §1](../../../docs/05-API.md#1-conventions): "the action no longer applies to its status"). The interface never offers editing a purchased item or deleting a reserved one, so reaching this means the screen is out of date, and UX design §2.7 shows "This item changed" and refreshes.
 
@@ -65,7 +67,7 @@ One transaction inserts the item with `added_by`, the clock's time, and `version
 - `Item`: exactly the schema in [API §3](../../../docs/05-API.md#3-openapi-definition-of-the-main-endpoints). `recipient` is `{ id, name }` from `recipients`, or null. `buyer` is a `PersonRef`, named with `personName` (Former user). `shipmentId` is returned as stored. `ItemCollection`: `{ items: [...] }`, ordered by creation time, then ID; the interface groups them by status (UX design §2.4).
 - `ItemStatus` is registered by name, as in API §3.
 
-A recipient deleted under BR-15 (milestone 2) leaves `recipient_id` null and `recipient_name` set; showing that name is part of deleting recipients.
+A recipient deleted under BR-15 (milestone 2) leaves `recipient_id` null and `recipient_name` set. Until recipients can be deleted, no item is in that state, so `recipient` is built only from the joined recipient. Showing the saved name, which needs a recipient shape without an ID in API §3, and leaving those items out of the `none` filter, are part of deleting recipients (adversarial review, finding 1).
 
 ### 7. Tests
 
@@ -73,6 +75,7 @@ Integration tests per endpoint, building handlers from the declarations with `te
 
 ## Risks / Trade-offs
 
+- [The target list is checked before the `UPDATE`, so a list archived in between could receive the moved item.] → Archiving is milestone 2; that ticket guards the move in the statement itself (adversarial review, finding 3).
 - [Re-reading the item after a refused change costs one more query.] → Only on the refusal path.
 - [The full-schema `Item` response includes `updatedAfterReservation` for every user.] → It is the buyer's marker (BR-19); members see it too, which shows that the buyer has an update to read. No personal data.
 - [Items in a list are returned all at once.] → Lists hold tens of items for a family; pagination can come with search ([PRD §18](../../../docs/01-PRD.md#18-future-features)).

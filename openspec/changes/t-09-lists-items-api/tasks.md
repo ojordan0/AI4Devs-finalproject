@@ -46,4 +46,5 @@ T-09's acceptance criteria each have a test task named with their ID: AC-25 (4.2
 ## 7. OpenAPI document and checks
 
 - [x] 7.1 Regenerate `docs/openapi.yaml` with `npm run openapi:generate`. Verify that it has the seven operations with their named schemas and errors, that `Item` matches API §3, and that a second run changes nothing.
-- [x] 7.2 Run `npm run lint`, `npx tsc --noEmit`, `npm test`, `npm run test:coverage`, `npm run check:links`, and `npm run build`. Verify that all pass and the domain services keep at least 80% line coverage.
+- [x] 7.2 Reset the link lookup fields when an edit changes `url`, and record the deleted recipient's name, the archiving race, and the "Updated" marker in design.md (adversarial review, findings 1 to 4). Test "BR-21 changing the link drops what was looked up for the old one". Verify that it passes.
+- [x] 7.3 Run `npm run lint`, `npx tsc --noEmit`, `npm test`, `npm run test:coverage`, `npm run check:links`, and `npm run build`. Verify that all pass and the domain services keep at least 80% line coverage.
