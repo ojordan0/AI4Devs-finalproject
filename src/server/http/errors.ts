@@ -11,7 +11,7 @@ import type { Language } from "./session";
 
 export const errorBodySchema = z.object({
   error: z.object({
-    code: z.string().meta({ example: "STALE_DOCUMENT_PROBE" }),
+    code: z.string().meta({ example: "VALIDATION_FAILED" }),
     message: z.string().meta({ example: "Check the highlighted fields." }),
     reason: z.string().optional().meta({ example: "LIST_NOT_DELETABLE" }),
     fields: z.record(z.string(), z.string()).optional(),
