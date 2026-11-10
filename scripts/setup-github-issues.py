@@ -42,7 +42,7 @@ LABELS = {
 MILESTONES = {
     "D1": ("D1: Technical documentation", "2026-10-22"),
     "D2": ("D2: Working code", "2026-11-19"),
-    "D3": ("D3: Final delivery", "2026-12-06"),
+    "D3": ("D3: Final delivery", "2026-12-09"),
     "M2": ("M2: Complete MVP", "2026-12-31"),
 }
 
