@@ -44,4 +44,6 @@ T-07's acceptance criteria are AC-01 (task 3.3), AC-24 (tasks 4.3 and 4.4), and 
 ## 6. OpenAPI document and checks
 
 - [x] 6.1 Regenerate `docs/openapi.yaml` with `npm run openapi:generate`. Verify that it has the three paths with their named schemas and errors, and that a second run changes nothing.
-- [x] 6.2 Run `npm run lint`, `npx tsc --noEmit`, `npm test`, `npm run test:coverage`, and `npm run check:links`. Verify that all pass and the domain services keep at least 80% line coverage.
+- [x] 6.3 Decide "Former user" by `users.deleted_at` in `personName`, `src/server/services/people.ts`, with the email's local part for a live user without a name (adversarial review, finding 1). Test the scenario "BR-05 only a deleted account is named 'Former user'". Verify that the test passes and fails if the rule keys on the name.
+- [x] 6.4 Test the scenarios "BR-11 a user whose access ended keeps My purchases for what they bought" (Pedro, through `GET /me`) and "BR-11 a user with no group but purchases to ship gets only My purchases" (adversarial review, finding 3). Verify that the tests pass.
+- [x] 6.5 Run `npm run lint`, `npx tsc --noEmit`, `npm test`, `npm run test:coverage`, and `npm run check:links`. Verify that all pass and the domain services keep at least 80% line coverage.

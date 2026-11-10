@@ -98,7 +98,13 @@ The starting group's name SHALL be between 1 and 100 characters (BR-32), using t
 
 ### Requirement: Deleted accounts are shown as "Former user"
 
-Wherever these endpoints name a person whose account was deleted, the name SHALL be the translation-file text for "Former user" in the requesting user's language (BR-05).
+Wherever these endpoints name a person whose account was deleted, the name SHALL be the translation-file text for "Former user" in the requesting user's language (BR-05). Whether an account was deleted SHALL be decided by its deletion date, not by a missing name; a live user without a name SHALL be named by the part of their email before the `@`.
+
+#### Scenario: BR-05 only a deleted account is named "Former user"
+
+- **GIVEN** a group with a deleted account whose name is still stored, and a live account with no name
+- **WHEN** a member of the group requests it
+- **THEN** the deleted account is named "Former user", and the live one by the part of their email before the `@`
 
 #### Scenario: BR-05 a deleted user in a group is named "Former user"
 

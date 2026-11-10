@@ -151,6 +151,37 @@ describe("GET /groups/{groupId}", () => {
     expect((await response.json()).error.code).toBe("NOT_AVAILABLE");
   });
 
+  it("BR-05 only a deleted account is named 'Former user'", async () => {
+    const group = await createGroup(db, { ownerId: users.ana, name: "Mixed" });
+    await createMembership(db, { groupId: group.id, userId: users.ana });
+    // Deleted, though its name wasn't erased yet: still "Former user".
+    const deletedWithName = await createUser(db, {
+      name: "Old Name",
+      deletedAt: new Date("2026-02-01T00:00:00Z"),
+    });
+    // A live account whose provider gave no name.
+    const liveWithoutName = await createUser(db, {
+      name: null,
+      email: "nina.ortiz@example.com",
+    });
+    for (const [index, user] of [deletedWithName, liveWithoutName].entries()) {
+      await createMembership(db, {
+        groupId: group.id,
+        userId: user.id,
+        type: "buyer",
+        joinedAt: new Date(`2026-01-1${index + 5}T00:00:00Z`),
+      });
+    }
+
+    const response = await requestGroup("ana", group.id);
+
+    expect(response.status).toBe(200);
+    expect((await response.json()).buyers).toEqual([
+      { id: deletedWithName.id, name: en.people.formerUser },
+      { id: liveWithoutName.id, name: "nina.ortiz" },
+    ]);
+  });
+
   it("BR-05 a deleted user in a group is named 'Former user'", async () => {
     const group = await createGroup(db, { ownerId: users.ana, name: "Old" });
     await createMembership(db, { groupId: group.id, userId: users.ana });

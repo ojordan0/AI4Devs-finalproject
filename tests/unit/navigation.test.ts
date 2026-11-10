@@ -39,6 +39,12 @@ describe("visibleTabs", () => {
     ).toEqual(["lists", "people", "group", "toBuy", "purchases"]);
   });
 
+  it("BR-11 a user with no group but purchases to ship gets only My purchases", () => {
+    expect(visibleTabs({ memberships: [], hasPurchases: true })).toEqual([
+      "purchases",
+    ]);
+  });
+
   it("FR-08 a user with no group gets no tabs", () => {
     expect(visibleTabs({ memberships: [], hasPurchases: false })).toEqual([]);
   });

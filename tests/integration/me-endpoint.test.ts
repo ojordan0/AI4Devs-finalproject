@@ -79,6 +79,15 @@ describe("GET /me", () => {
     expect(pedro.memberships).toEqual([]);
   });
 
+  it("BR-11 a user whose access ended keeps My purchases for what they bought", async () => {
+    // Pedro's membership ended, and he still has a purchased item to ship.
+    const pedro = await me("pedro");
+
+    expect(pedro.memberships).toEqual([]);
+    expect(pedro.hasPurchases).toBe(true);
+    expect(visibleTabs(pedro)).toEqual(["purchases"]);
+  });
+
   it("T-07 a request without a session is rejected", async () => {
     const response = await handler(apiRequest("/me"));
 

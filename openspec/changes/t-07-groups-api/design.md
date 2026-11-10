@@ -61,7 +61,7 @@ All three endpoints return objects, with collections under a property named afte
 - `GET /groups`: `{ groups: [{ id, name, type, isOwner }] }`, in the same order.
 - `GET /groups/{groupId}`: `{ id, name, members: [{ id, name, isOwner }], buyers: [{ id, name }] }`, each ordered by when they joined, then user ID.
 
-People use the `PersonRef` shape from [API §3](../../../docs/05-API.md#3-openapi-definition-of-the-main-endpoints), `{ id, name }`, where `id` is the user's ID. A user without a name (a deleted account) is named "Former user" in the requester's language. WhatsApp numbers are left out until the milestone 2 features that show them.
+People use the `PersonRef` shape from [API §3](../../../docs/05-API.md#3-openapi-definition-of-the-main-endpoints), `{ id, name }`, where `id` is the user's ID. `personName` names a user "Former user", in the requester's language, when `users.deleted_at` is set, not merely when the name is missing: a live user whose provider gave no name is named by the part of their email before the `@` (adversarial review, finding 1). WhatsApp numbers are left out until the milestone 2 features that show them.
 
 The schemas are registered by name in the OpenAPI registry (`Me`, `Membership`, `GroupSummary`, `GroupList`, `Group`, `GroupMember`, `PersonRef`, `MembershipType`), in `src/server/http/schemas.ts`, which imports the Zod extension first, as T-03's design requires. T-09 adds its item schemas there.
 

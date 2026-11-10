@@ -72,7 +72,13 @@ export async function getGroup(
   if (!group) throw new Error(`Group ${groupId} has a member but no row.`);
 
   const people = await db
-    .select({ id: users.id, name: users.name, type: memberships.type })
+    .select({
+      id: users.id,
+      name: users.name,
+      email: users.email,
+      deletedAt: users.deletedAt,
+      type: memberships.type,
+    })
     .from(memberships)
     .innerJoin(users, eq(users.id, memberships.userId))
     .where(
@@ -81,8 +87,9 @@ export async function getGroup(
     .orderBy(asc(memberships.joinedAt), asc(users.id));
 
   const named = people.map((person) => ({
-    ...person,
-    name: personName(person.name, language),
+    id: person.id,
+    type: person.type,
+    name: personName(person, language),
   }));
 
   return {

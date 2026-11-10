@@ -48,6 +48,12 @@ Tells the interface who is signed in, where they are in onboarding, which groups
 - **WHEN** they request `GET /me`
 - **THEN** the response reports that they have purchases
 
+#### Scenario: BR-11 a user whose access ended keeps My purchases for what they bought
+
+- **GIVEN** the seed's former buyer, whose membership has ended and who still has a purchased item
+- **WHEN** they request `GET /me`
+- **THEN** the response has no memberships and reports that they have purchases, so their only tab is My purchases
+
 #### Scenario: FR-08 a member with only shipped or no items has no purchases
 
 - **GIVEN** a seed member who is the buyer of no reserved or purchased item
@@ -82,6 +88,12 @@ One shared rule SHALL decide a user's tabs from their memberships and purchases,
 - **GIVEN** a user who is a member of one group and a buyer in another
 - **WHEN** their tabs are decided
 - **THEN** they are Lists, People, Group, To buy, and My purchases
+
+#### Scenario: BR-11 a user with no group but purchases to ship gets only My purchases
+
+- **GIVEN** a user with no active membership who has purchases
+- **WHEN** their tabs are decided
+- **THEN** the only tab is My purchases
 
 #### Scenario: FR-08 a user with no group gets no tabs
 
