@@ -10,11 +10,13 @@ import {
 } from "../shared/languages";
 import en from "./en.json";
 import es from "./es.json";
+import { formats, TIME_ZONE } from "./formats";
 
 // The language of each page (FR-37, docs/02-UX-DESIGN.md, section 2.8): the
 // signed-in user's, then the one chosen on Welcome or One last step, then the
 // browser's, then Spanish. Addresses carry no language (design decision 6 of
-// the T-04 change).
+// the T-04 change). Dates and numbers are formatted in the same language
+// (FR-38).
 
 const messages = { en, es } as const;
 
@@ -31,5 +33,5 @@ export async function pageLanguage(): Promise<Language> {
 
 export default getRequestConfig(async () => {
   const locale = await pageLanguage();
-  return { locale, messages: messages[locale] };
+  return { locale, messages: messages[locale], formats, timeZone: TIME_ZONE };
 });

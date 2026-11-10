@@ -11,6 +11,14 @@ import {
 // Profile (docs/02-UX-DESIGN.md, section 2.3, screen 12; FR-04). Each test
 // signs up its own user, so the seed users stay as they are.
 
+/**
+ * Opens Profile once its form can take input. Screens in the shell stream in
+ * after it, so the form can show before the browser has made it interactive.
+ */
+async function openProfile(page: Page) {
+  await page.goto("/profile", { waitUntil: "networkidle" });
+}
+
 function profile(page: Page, language: Language) {
   const t = messages[language];
   return {
@@ -28,7 +36,7 @@ test("AC-04 Profile doesn't let the user remove their WhatsApp number", async ({
   page,
 }) => {
   await signUpOnboarded(page, { language: "en" });
-  await page.goto("/profile");
+  await openProfile(page);
   const screen = profile(page, "en");
 
   await screen.number.fill("");
@@ -44,7 +52,7 @@ test("AC-04 Profile doesn't let the user remove their WhatsApp number", async ({
 test("AC-99 Profile in English", async ({ page }) => {
   await signUpOnboarded(page, { language: "en" });
 
-  await page.goto("/profile");
+  await openProfile(page);
 
   const screen = profile(page, "en");
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
@@ -66,7 +74,7 @@ test("FR-04 changing the language in Profile switches the screen", async ({
   page,
 }) => {
   await signUpOnboarded(page, { language: "es" });
-  await page.goto("/profile");
+  await openProfile(page);
   await expect(profile(page, "es").heading).toBeVisible();
 
   await profile(page, "es").languageOption("en").click();
@@ -78,7 +86,7 @@ test("FR-04 changing the language in Profile switches the screen", async ({
 
 test("FR-04 turning the daily email off is saved", async ({ page }) => {
   await signUpOnboarded(page, { language: "en" });
-  await page.goto("/profile");
+  await openProfile(page);
   const screen = profile(page, "en");
 
   await screen.emails.click();
@@ -89,7 +97,7 @@ test("FR-04 turning the daily email off is saved", async ({ page }) => {
 
 test("FR-04 changing the WhatsApp number is saved", async ({ page }) => {
   await signUpOnboarded(page, { language: "en" });
-  await page.goto("/profile");
+  await openProfile(page);
   const screen = profile(page, "en");
 
   await screen.number.fill("202 555 0144");
@@ -101,19 +109,19 @@ test("FR-04 changing the WhatsApp number is saved", async ({ page }) => {
 
 test("BR-03 signing out from Profile", async ({ page }) => {
   await signUpOnboarded(page, { language: "en" });
-  await page.goto("/profile");
+  await openProfile(page);
 
   await profile(page, "en").signOut.click();
 
   await expect(page).toHaveURL("/");
-  await page.goto("/profile");
+  await openProfile(page);
   await expect(page).toHaveURL("/");
   expect((await page.request.get("/api/v1/me")).status()).toBe(401);
 });
 
 test("T-04 a failed save keeps what the user typed", async ({ page }) => {
   await signUpOnboarded(page, { language: "en" });
-  await page.goto("/profile");
+  await openProfile(page);
   await page.route("**/api/v1/me", (route) =>
     route.request().method() === "PATCH" ? route.abort() : route.continue(),
   );
@@ -136,7 +144,7 @@ for (const language of ["en", "es"] as const) {
     page,
   }) => {
     await signUpOnboarded(page, { language });
-    await page.goto("/profile");
+    await openProfile(page);
     await expect(profile(page, language).heading).toBeVisible();
 
     await expectNoAccessibilityViolations(page);

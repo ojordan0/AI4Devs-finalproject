@@ -1,6 +1,6 @@
 # UX design
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.8 · **Date:** November 10, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.9 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -87,8 +87,9 @@ Header:  [García Group ▾]      ↻     (avatar)
 ```
 
 - A person who only requests sees Lists, People, and Group. A person who only buys sees To buy and My purchases. A member who reserves an item also gets My purchases while they have reserved or purchased items, with no mode switch.
-- The group selector appears only if the user belongs to more than one group.
-- Profile opens from the avatar in the header, for every user.
+- The group selector chooses the group that Lists, People, and Group show. It lists the groups the user is a member of and appears only when there are two or more; the choice is remembered on the device. With one such group the header shows its name, and with none, the product name. To buy and My purchases show all the user's groups, with their own filters.
+- Profile opens from the avatar in the header, for every user. The avatar shows the user's initials.
+- **Main screen:** the user's first tab, or Profile when they have none. A signed-in user lands there, and "This page isn't available" leads back to it.
 - **Refresh (↻)** in the header reloads the current screen. Screens also load fresh data when opened; there are no live updates.
 - Lists has a floating **+ Add** button.
 - On desktop: a sidebar with the same tabs, and list and item side by side.
@@ -292,7 +293,7 @@ The same page serves everyone. The example shows the buyer who reserved the item
 - **Loading:** skeletons in lists and in the link preview.
 - **Errors with a way out:** "Couldn't save. Check your connection and try again", keeping what the user typed.
 - **No access (BR-13):** "This page isn't available." with a button back to the main screen.
-- **No groups:** a user with no remaining group access sees "You're not in any group yet.", a **Create a group** button, and "Ask someone to invite you." If they still have purchased items to ship (BR-11), they also get My purchases, with the message above it.
+- **No groups:** a user with no remaining group access sees "You're not in any group yet.", a **Create a group** button, and "Ask someone to invite you." above every screen. If they still have purchased items to ship (BR-11), they also get My purchases, which is their main screen; otherwise their main screen is Profile.
 - **Session expired (BR-03):** after signing in again, the user is back on the same screen with their text filled in.
 - **Field limits (BR-32):** text fields show a character counter as they near their limit and stop accepting text at it. Invalid values, such as a quantity of 0 or a link that isn't a web address, are pointed out under the field.
 - **Default address (BR-27):** "Choose another default address first."
@@ -339,6 +340,10 @@ The same page serves everyone. The example shows the buyer who reserved the item
 | Sign out | Cerrar sesión |
 | Couldn't save. Check your connection and try again | No se pudo guardar. Revisa tu conexión e inténtalo de nuevo |
 | Development sign-in | Acceso de desarrollo |
+| Refresh | Actualizar |
+| Choose a group | Elegir grupo |
+| Go to the start | Ir al inicio |
+| Loading… | Cargando… |
 | Member / Buyer | Miembro / Comprador |
 | Invite a member | Invitar a un miembro |
 | Invite a buyer | Invitar a un comprador |

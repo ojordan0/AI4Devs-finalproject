@@ -37,7 +37,7 @@ The layout renders `AppShell` (`src/components/app-shell/app-shell.tsx`, a serve
 
 ### 2. One navigation element, restyled by width
 
-`TabNav` renders one `<nav>` with a translated label. Below `md` (768 px) it is fixed to the bottom, at least 64 px tall plus the device's bottom safe area, with tabs sharing the width equally; tab names may wrap to two lines, because "Mis compras" and "Por comprar" don't fit one line at 16 px in a fifth of 360 px. From `md` it is a fixed left sidebar, 272 px wide, with the app name above the tabs. The current tab gets `aria-current="page"` and the primary color with a filled indicator, so color isn't the only cue.
+`TabNav` renders one `<nav>` with a translated label. Below `md` (768 px) it is fixed to the bottom, at least 64 px tall plus the device's bottom safe area, with tabs sharing the width equally; tab names may wrap to two lines and hyphenate in the page's language, because "Personas", "Por comprar", and "Mis compras" don't fit one line at 16 px in a fifth of 360 px. From `md` it is a fixed left sidebar, 272 px wide, with the app name above the tabs. The current tab gets `aria-current="page"` and the primary color with a filled indicator, so color isn't the only cue.
 
 The content column keeps the 640 px maximum, centered in the space next to the sidebar, and has bottom padding equal to the bar's height on phones so nothing hides behind it. The header is sticky at the top of the content area, with the level 2 shadow (DESIGN.md). A "Skip to content" link is the first focusable element.
 
@@ -49,7 +49,7 @@ Icons (`lucide-react`): Lists `ListChecks`, People `Users`, Group `House`, To bu
 
 The group selector writes the chosen group's ID to the `group` cookie (`CURRENT_GROUP_COOKIE` in `src/shared/navigation.ts`), with `Path=/`, `SameSite=Lax`, and a one-year lifetime, then calls `router.refresh()`. `chooseCurrentGroup(memberGroups, remembered)` returns the remembered group when the user is currently a member of it, and otherwise the first member group by name, or none. A tampered or stale cookie therefore never grants anything (BR-12): the services still check every request.
 
-The selector is a shadcn/ui `DropdownMenu` with a radio group of the member groups, opened by a button showing the current group's name and a chevron, at least 48 px tall. The name truncates first when the header is narrow.
+The selector is a shadcn/ui `DropdownMenu` with a radio group of the member groups, opened by a button showing the current group's name and a chevron, at least 48 px tall. The menu is not modal: a modal menu hides the rest of the page from screen readers while its controls stay focusable, which the automated accessibility checks report (`aria-hidden-focus`). The group name wraps to two lines, breaking only between words, before it is cut short.
 
 *Alternatives:* the group in the address (`/groups/{groupId}/lists`). Rejected for now: it would fix T-10's addresses before T-10 is designed, and the list links in WhatsApp messages (flow D) already identify their group through the list. A `users.current_group_id` column with a `PATCH /me` field. Rejected: a migration and an API change for something the docs don't ask to follow the user across devices. Both remain possible later without changing the specs' observable behavior on one device.
 
@@ -60,6 +60,8 @@ The selector is a shadcn/ui `DropdownMenu` with a radio group of the member grou
 `requireTab(tab)` in `src/app/(app)/shell-data.ts` calls `notFound()` when the user doesn't have the tab. Every tab page, including Lists, calls it, so the "not available" state renders from `src/app/(app)/not-found.tsx`, inside the shell. Addresses that match no route use a new root `src/app/not-found.tsx`, outside the shell; its button goes to `/`, which sends a signed-in user to their main screen and anyone else to Welcome.
 
 ### 5. Shared states are plain components in `src/components/screen-states.tsx`
+
+The states that render on the server are in `screen-states.tsx`; `ScreenError`, which needs a click handler, is a client component in `src/components/screen-error.tsx`, so the server states can take an icon component as a prop.
 
 - `EmptyState`: icon, message, optional action. Used by the placeholder screens.
 - `NotAvailable`: the `NOT_AVAILABLE` message from the `errors` namespace and a button to the main screen.
@@ -90,13 +92,15 @@ The unit test builds a formatter with next-intl's `createFormatter` and the same
 A new `tests/e2e/app-shell.spec.ts` covers the app-shell and screen-states scenarios. Additions to `tests/e2e/support.ts`:
 
 - `signInAsSeedUser(page, name)` signs in as `juan`, `luis`, or `pedro` `@example.com` through the development sign-in. These scenarios only read, so the seed users stay as they are (Security and testing §2.3).
-- `addMemberGroup(email, name)` opens a connection to the test database and uses `createGroup` and `createMembership` from `tests/support/factories.ts`, because no milestone 1 endpoint creates a second group for a user.
+- `addMemberGroup(email, name)` opens a connection to the test database and inserts the group and the membership with Drizzle, because no milestone 1 endpoint creates a second group for a user. It doesn't reuse `tests/support/factories.ts`, which imports Vitest's `expect` and can't load in Playwright.
 - The loading scenario delays the browser's React Server Components request (identified by its `RSC` header) with Playwright's request routing, so the skeleton is visible for a known time.
 - The 360 px scenario sets the viewport and checks that the document's scroll width equals its client width.
+- Screens in the shell stream in after it (the `loading.tsx` boundary), so a form can be on screen before the browser has made it interactive. Tests that type or click right after opening a screen wait for the network to go idle first; this applies to the existing Profile tests too.
+- The keyboard scenario runs in Chromium only: WebKit, like Safari, moves focus to links only with Option-Tab.
 
 ## Risks / Trade-offs
 
-- [Five tabs at 360 px are tight] → Equal-width tabs with names that wrap to two lines; the 360 px browser test checks the 48 px targets and the absence of horizontal scrolling.
+- [Five tabs at 360 px are tight] → Equal-width tabs with names that hyphenate onto two lines; browser tests check the 48 px targets and the absence of horizontal scrolling, with three tabs and with five.
 - [Refresh's label plus a long group name may not fit at 360 px] → The group name truncates first; Refresh keeps its visible label, because DESIGN.md allows no icon-only controls. The avatar is the one exception, as UX §2.2 defines it.
 - [The remembered group is per device] → A user on two devices may see different groups until they choose; the selector is one tap away.
 - [Delaying the RSC request depends on Next.js's request header] → If it changes, the loading test fails loudly rather than passing falsely, since it asserts the skeleton is visible.

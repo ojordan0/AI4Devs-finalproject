@@ -13,6 +13,30 @@
     "couldNotSave": "Couldn't save. Check your connection and try again",
     "tryAgain": "Try again"
   },
+  "shell": {
+    "navigation": "Main navigation",
+    "skipToContent": "Skip to content",
+    "refresh": "Refresh",
+    "refreshing": "Refreshing…",
+    "chooseGroup": "Choose a group",
+    "profile": "Profile"
+  },
+  "tabs": {
+    "lists": "Lists",
+    "people": "People",
+    "group": "Group",
+    "toBuy": "To buy",
+    "purchases": "My purchases"
+  },
+  "states": {
+    "loading": "Loading…",
+    "goToStart": "Go to the start",
+    "notInGroup": "You're not in any group yet.",
+    "askForInvitation": "Ask someone to invite you."
+  },
+  "placeholder": {
+    "comingSoon": "This screen is coming soon."
+  },
   "welcome": {
     "title": "ComproParaTi",
     "tagline": "I buy for you. Shopping lists your family shares.",
@@ -59,10 +83,7 @@
   "lists": {
     "title": "Lists",
     "comingSoon": "This is where the items on your list will show up.",
-    "noLists": "No lists yet. Create one.",
-    "notInGroup": "You're not in any group yet.",
-    "askForInvitation": "Ask someone to invite you.",
-    "profile": "Profile"
+    "noLists": "No lists yet. Create one."
   },
   "errors": {
     "NOT_SIGNED_IN": "Sign in to continue.",

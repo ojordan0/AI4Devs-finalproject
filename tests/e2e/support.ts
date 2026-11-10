@@ -2,9 +2,14 @@ import { randomUUID } from "node:crypto";
 
 import AxeBuilder from "@axe-core/playwright";
 import { expect, type Page, test } from "@playwright/test";
+import { eq } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
 
 import en from "../../src/i18n/en.json";
 import es from "../../src/i18n/es.json";
+import * as schema from "../../src/server/db/schema";
+import { testDatabaseUrl } from "../support/test-database";
 
 // Helpers for the browser tests. Each scenario signs up its own users through
 // the development-only sign-in, so the seed users never change
@@ -26,7 +31,7 @@ function appOrigin(): string {
 }
 
 /** Changes carry the app's own origin, as the browser sends it (docs/07-SECURITY-AND-TESTING.md, section 1). */
-function sameOrigin() {
+export function sameOrigin() {
   return { origin: appOrigin() };
 }
 
@@ -79,4 +84,45 @@ export async function expectNoAccessibilityViolations(page: Page) {
       targets: nodes.map((node) => node.target),
     })),
   ).toEqual([]);
+}
+
+/** The seed users (docs/04-DATA-MODEL.md, section 3) that browser tests sign in as, only to look. */
+export type SeedUser = "ana" | "juan" | "luis" | "pedro";
+
+/** Signs in as a seed user. Scenarios that sign in this way change nothing. */
+export async function signInAsSeedUser(page: Page, name: SeedUser) {
+  return signInAs(page, `${name}@example.com`);
+}
+
+/**
+ * Makes the user with this email a member of a new group with this name, and
+ * returns the group's ID. No milestone 1 endpoint gives a user a second group,
+ * so this writes to the test database that the app under test uses.
+ */
+export async function addMemberGroup(email: string, groupName: string) {
+  const pool = new Pool({
+    connectionString: testDatabaseUrl(process.env.DATABASE_URL),
+  });
+  try {
+    const db = drizzle(pool, { schema });
+    const [user] = await db
+      .select({ id: schema.users.id })
+      .from(schema.users)
+      .where(eq(schema.users.email, email));
+    if (!user) throw new Error(`No user has the email ${email}.`);
+    const [group] = await db
+      .insert(schema.groups)
+      .values({ name: groupName, ownerId: user.id })
+      .returning({ id: schema.groups.id });
+    if (!group) throw new Error("The group insert returned no row.");
+    await db.insert(schema.memberships).values({
+      groupId: group.id,
+      userId: user.id,
+      type: "member",
+      joinedAt: new Date(),
+    });
+    return group.id;
+  } finally {
+    await pool.end();
+  }
 }

@@ -35,3 +35,45 @@ export function visibleTabs({ memberships, hasPurchases }: TabInput): Tab[] {
     }
   });
 }
+
+/** Each tab's address (docs/03-ARCHITECTURE.md, section 2). */
+export const TAB_PATHS: Record<Tab, string> = {
+  lists: "/lists",
+  people: "/people",
+  group: "/group",
+  toBuy: "/to-buy",
+  purchases: "/purchases",
+};
+
+/**
+ * Where the user starts: their first tab, or Profile when they have none
+ * (docs/02-UX-DESIGN.md, section 2.2).
+ */
+export function mainScreenPath(tabs: readonly Tab[]): string {
+  const [first] = tabs;
+  return first ? TAB_PATHS[first] : "/profile";
+}
+
+/** The cookie that remembers the group chosen in the group selector, on this device. */
+export const CURRENT_GROUP_COOKIE = "group";
+
+/**
+ * The group that Lists, People, and Group show: the remembered one while the
+ * user is a member of it, otherwise their first member group by name. The
+ * cookie only picks among the user's own groups, so it never grants access
+ * (BR-12).
+ */
+export function chooseCurrentGroup<
+  Group extends { groupId: string; groupName: string },
+>(
+  memberGroups: readonly Group[],
+  remembered: string | undefined,
+): Group | undefined {
+  const chosen = memberGroups.find(({ groupId }) => groupId === remembered);
+  if (chosen) return chosen;
+  return [...memberGroups].sort(
+    (a, b) =>
+      a.groupName.localeCompare(b.groupName) ||
+      a.groupId.localeCompare(b.groupId),
+  )[0];
+}
