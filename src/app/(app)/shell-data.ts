@@ -8,6 +8,7 @@ import {
   chooseCurrentGroup,
   CURRENT_GROUP_COOKIE,
   mainScreenPath,
+  sortGroupsByName,
   type Tab,
   visibleTabs,
 } from "@/shared/navigation";
@@ -22,7 +23,10 @@ export const loadShell = cache(async () => {
   const sessionUser = await requireOnboardedUser();
   const user = await getCurrentUser(db, sessionUser.id);
   const tabs = visibleTabs(user);
-  const memberGroups = user.memberships.filter(({ type }) => type === "member");
+  // Sorted here, not by the database, whose order depends on its collation.
+  const memberGroups = sortGroupsByName(
+    user.memberships.filter(({ type }) => type === "member"),
+  );
   const remembered = (await cookies()).get(CURRENT_GROUP_COOKIE)?.value;
   return {
     user,

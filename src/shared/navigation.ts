@@ -58,6 +58,23 @@ export function mainScreenPath(tabs: readonly Tab[]): string {
 export const CURRENT_GROUP_COOKIE = "group";
 
 /**
+ * The groups in the order the group selector lists them: by name, ignoring
+ * case and accents, the same everywhere. The database's own order depends on
+ * its collation, which differs between environments.
+ */
+export function sortGroupsByName<
+  Group extends { groupId: string; groupName: string },
+>(groups: readonly Group[]): Group[] {
+  return [...groups].sort(
+    (a, b) =>
+      GROUP_NAME_ORDER.compare(a.groupName, b.groupName) ||
+      a.groupId.localeCompare(b.groupId),
+  );
+}
+
+const GROUP_NAME_ORDER = new Intl.Collator("es", { sensitivity: "base" });
+
+/**
  * The group that Lists, People, and Group show: the remembered one while the
  * user is a member of it, otherwise their first member group by name. The
  * cookie only picks among the user's own groups, so it never grants access
@@ -71,9 +88,5 @@ export function chooseCurrentGroup<
 ): Group | undefined {
   const chosen = memberGroups.find(({ groupId }) => groupId === remembered);
   if (chosen) return chosen;
-  return [...memberGroups].sort(
-    (a, b) =>
-      a.groupName.localeCompare(b.groupName) ||
-      a.groupId.localeCompare(b.groupId),
-  )[0];
+  return sortGroupsByName(memberGroups)[0];
 }

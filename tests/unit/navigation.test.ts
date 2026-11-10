@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   chooseCurrentGroup,
   mainScreenPath,
+  sortGroupsByName,
   visibleTabs,
 } from "../../src/shared/navigation";
 
@@ -82,5 +83,19 @@ describe("chooseCurrentGroup", () => {
 
   it("T-05 with nothing remembered, the first group by name is current", () => {
     expect(chooseCurrentGroup([perez, garcia], undefined)).toBe(garcia);
+  });
+});
+
+describe("sortGroupsByName", () => {
+  it("T-05 groups are listed by name, ignoring case and accents", () => {
+    const zeta = { groupId: "1", groupName: "Zeta family" };
+    const own = { groupId: "2", groupName: "e2e-user's group" };
+    const alvarez = { groupId: "3", groupName: "Álvarez" };
+    expect(sortGroupsByName([zeta, own, alvarez])).toEqual([
+      alvarez,
+      own,
+      zeta,
+    ]);
+    expect(chooseCurrentGroup([zeta, own], undefined)).toBe(own);
   });
 });

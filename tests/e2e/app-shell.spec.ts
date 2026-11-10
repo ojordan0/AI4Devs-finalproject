@@ -452,7 +452,11 @@ test.describe("languages and accessibility", () => {
     expect(ring).not.toBe("none");
 
     await page.keyboard.press("Enter");
-    await expect(page.getByRole("menu")).toBeVisible();
+    // Opened from the keyboard, the menu moves focus to its first group, the
+    // user's own, which sorts before "Zeta family".
+    const groups = page.getByRole("menuitemradio");
+    await expect(groups).toHaveCount(2);
+    await expect(groups.first()).toBeFocused();
     await page.keyboard.press("ArrowDown");
     await expect(
       page.getByRole("menuitemradio", { name: "Zeta family" }),

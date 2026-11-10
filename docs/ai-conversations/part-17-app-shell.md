@@ -8,13 +8,13 @@
 - **Model:** Claude Opus 5.5 (Anthropic) · **Effort:** the level already set when the session started; it wasn't changed during the session.
 - **Session:** one session for T-05, from the proposal to archiving the change. It started after `/clear`, so it carries nothing from part 16's session. The context was not summarized, so every turn below comes from the session itself.
 - **Subagents:** `adversarial-reviewer`, once, on pull request #57. Its report isn't reproduced here; its findings are in a comment on the pull request, and turn 4's reply says what was done about each.
-- **What's included:** every prompt, copied as written, and the visible text of each response, in order. In turn 4, the work continued without a new prompt after the background review finished; that point is marked.
+- **What's included:** every prompt, copied as written, and the visible text of each response, in order. Turn 6's reply ends with the commit it describes. In turn 4, the work continued without a new prompt after the background review finished; that point is marked.
 - **What's left out:**
   - system instructions, internal reasoning, and tool call details. Tool activity is summarized in one line, and files are named instead of embedded;
   - the text of the skills that slash commands load (`/opsx:propose`, `/opsx:apply`, `/opsx:archive`, and the commit skill);
   - messages from the tool itself, such as the notices that background work finished;
   - the screenshots taken to check the layout, which were kept outside the repository;
-  - what happens after the commit that contains turn 6's changes, including turn 6's reply.
+  - what happens after the commit that contains turn 7's changes, including turn 7's reply.
 - **Formatting:** links in the responses are shown as plain text.
 
 ---
@@ -314,3 +314,25 @@ The PR description now links the archived change, and nothing else points to the
 For the session record: every prompts.md section that fits this session's prompts already has its 3, so I'll add the Sessions row but no representative prompts. Writing the export as part 17:
 
 *Tool activity: synced the delta specs into `openspec/specs/` (new `app-shell` and `screen-states`; updated `developer-environment` and `onboarding`), archived the change to `openspec/changes/archive/2026-11-10-t-05-app-shell`, pointed the pull request description to the archived change, wrote this export, and updated `prompts.md`.*
+
+---
+
+## Turn 7
+
+### Prompt
+
+```text
+one check is failing in the PR for T-05 CI / e2e (pull_request)Failing after 3m. Fix it
+```
+
+### Response
+
+Only one test fails, in both attempts: "T-05 the shell can be used with the keyboard", where the "Zeta family" menu item isn't focused after ArrowDown. I suspect the menu lists groups in a different order in CI. Checking how CI's Postgres sorts group names:
+
+Found it. Postgres on Alpine sorts names byte by byte (`'e2e…' < 'Zeta'` is false), so the database lists "Zeta family" first. `chooseCurrentGroup` sorts with `localeCompare`, which puts "e2e…" first. So the menu order and the default group disagree. The test also pressed ArrowDown without waiting for the menu to move focus to its first item, a timing race that went the other way in CI. Fixing both: the shell sorts member groups with the same comparator the default choice uses, and the test waits for the menu's initial focus.
+
+The `memberGroups` replacement didn't apply because the file's formatting differed from what I matched. Fixing it directly:
+
+The fix works: 554 unit and integration tests pass, and the shell suite passes three times in a row in both browsers. Running the full browser suite once, then adding this turn to the session export so the record stays in the last commit:
+
+*Tool activity: read the failing CI run's log, compared the CI and local Postgres images and collation, added `sortGroupsByName` to `src/shared/navigation.ts` and used it in `src/app/(app)/shell-data.ts`, added a unit test, made the keyboard browser test wait for the menu's initial focus, ran lint, type checks, `npm test`, and the browser suite, updated this export, committed, and pushed.*
