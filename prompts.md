@@ -68,6 +68,7 @@ Build sessions start with delivery 2. Each one lists the work tickets it covers,
 | Part 15 | T-09 | Lists and items API: lists, quick add and the item form's fields, editing within the status rules, moving and deleting items, and pull request #55, continuing part 14's session | Claude Code | Claude Opus 5.5 | [part-15-lists-items-api.md](docs/ai-conversations/part-15-lists-items-api.md) |
 | Part 16 | T-04 | Sign-in and onboarding: Google sign-in and sessions, the development sign-in, One last step and Profile, the interface foundation, sign-in methods for later providers, and pull request #56 | Claude Code | Claude Fable 5.2 for turn 1, then Claude Opus 5.5 | [part-16-sign-in-onboarding.md](docs/ai-conversations/part-16-sign-in-onboarding.md) |
 | Part 17 | T-05 | App shell: tab navigation and the header, the current group, the main screen, shared screen states, date and number formats, and pull request #57 | Claude Code | Claude Opus 5.5 | [part-17-app-shell.md](docs/ai-conversations/part-17-app-shell.md) |
+| Part 18 | T-10 | Lists screens: the Lists screen with quick add, filters, and New list, the item form, the item page, the side-by-side desktop layout, and pull request #58 | Claude Code | Claude Opus 5.5 | [part-18-lists-screens.md](docs/ai-conversations/part-18-lists-screens.md) |
 
 ## Tools and phases
 
