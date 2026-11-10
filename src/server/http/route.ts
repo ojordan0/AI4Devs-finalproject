@@ -15,18 +15,15 @@ import {
 import { requestLanguage } from "./language";
 import { errorSchema, registerPath } from "./openapi";
 import { enforceRateLimit } from "./rate-limit";
+import { readSession } from "../auth";
 import { apiSecurityHeaders } from "./security-headers";
-import {
-  noSessionReader,
-  type SessionReader,
-  type SessionUser,
-} from "./session";
-import type { Language } from "./session";
+import type { Language, SessionReader, SessionUser } from "./session";
 
 // Every /api/v1 route handler is built with defineRoute, so each endpoint gets
 // the same checks in the same order (design decision 1 of the T-03 change):
-// origin, session, rate limits, validation, then the handler, which calls a
-// service. Results and errors leave in the format of docs/05-API.md, section 1.
+// origin, session, onboarding, rate limits, validation, then the handler, which
+// calls a service. Results and errors leave in the format of docs/05-API.md,
+// section 1, with the renewed session cookie when there is one (BR-03).
 
 export type HttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
 
@@ -49,12 +46,16 @@ export function defaultRouteDependencies(): RouteDependencies {
   return {
     db: defaultDb,
     clock: systemClock,
-    readSession: noSessionReader,
+    readSession,
     appUrl: process.env.APP_URL,
   };
 }
 
-type Access = "signed-in" | "public";
+/**
+ * "signed-in" requires a user who has completed onboarding; "before-onboarding"
+ * any signed-in user; "public" no sign-in (docs/05-API.md, section 1).
+ */
+type Access = "signed-in" | "before-onboarding" | "public";
 
 type Parsed<T> = T extends z.ZodType ? z.output<T> : undefined;
 
@@ -77,7 +78,10 @@ export type RouteDefinition<
   /** The OpenAPI path under /api/v1, for example /groups/{groupId}. */
   path: string;
   summary?: string;
-  /** Defaults to "signed-in". Only the invitation preview is public (docs/05-API.md, section 1). */
+  /**
+   * Defaults to "signed-in". `GET /me` and `POST /me/onboarding` work before
+   * onboarding, and only the invitation preview is public (docs/05-API.md, section 1).
+   */
   access?: A;
   /** Path parameters. A value that fails them answers 404, like a missing resource (BR-13). */
   params?: P;
@@ -113,6 +117,11 @@ function isSameOrigin(request: Request, appUrl: string | undefined): boolean {
   }
 }
 
+/** Every signed-in endpoint needs a completed onboarding unless it says otherwise. */
+function requiresOnboarding(access: Access | undefined): boolean {
+  return access === undefined || access === "signed-in";
+}
+
 function validate<T extends z.ZodType>(schema: T, input: unknown): z.output<T> {
   const result = schema.safeParse(input);
   if (!result.success) {
@@ -131,8 +140,15 @@ async function readJsonBody(request: Request): Promise<unknown> {
   }
 }
 
-function json(body: unknown, status: number): Response {
-  return Response.json(body, { status, headers: apiSecurityHeaders });
+function withHeaders(extra: Headers): Headers {
+  const headers = new Headers(apiSecurityHeaders);
+  for (const cookie of extra.getSetCookie())
+    headers.append("set-cookie", cookie);
+  return headers;
+}
+
+function json(body: unknown, status: number, extra: Headers): Response {
+  return Response.json(body, { status, headers: withHeaders(extra) });
 }
 
 /** Builds the route handler with the given dependencies; tests pass their own. */
@@ -150,6 +166,8 @@ export function createRouteHandler<
 
   return async (request, nextContext) => {
     let language = requestLanguage(null, request.headers);
+    // Cookies the session reader sets when it renews the session.
+    const sessionHeaders = new Headers();
     try {
       if (
         CHANGING_METHODS.has(definition.method) &&
@@ -158,10 +176,13 @@ export function createRouteHandler<
         throw new RequestError("FORBIDDEN");
       }
 
-      const user = await readSession(request.headers);
+      const user = await readSession(request.headers, sessionHeaders);
       language = requestLanguage(user, request.headers);
       if (definition.access !== "public" && !user) {
         throw new RequestError("NOT_SIGNED_IN");
+      }
+      if (requiresOnboarding(definition.access) && !user?.onboarded) {
+        throw new RequestError("FORBIDDEN");
       }
 
       if (user) {
@@ -197,7 +218,10 @@ export function createRouteHandler<
       );
 
       if (!definition.response) {
-        return new Response(null, { status: 204, headers: apiSecurityHeaders });
+        return new Response(null, {
+          status: 204,
+          headers: withHeaders(sessionHeaders),
+        });
       }
       // Only what the response schema documents leaves the server: unknown
       // properties, such as extra columns from a query, are stripped, and a
@@ -205,10 +229,11 @@ export function createRouteHandler<
       return json(
         definition.response.parse(result),
         definition.successStatus ?? 200,
+        sessionHeaders,
       );
     } catch (error) {
       const { status, body } = toErrorResult(error, language);
-      return json(body, status);
+      return json(body, status, sessionHeaders);
     }
   };
 }
@@ -240,7 +265,8 @@ export function routeErrorCodes(definition: {
 }): ErrorCode[] {
   const signedIn = definition.access !== "public";
   return [
-    ...(CHANGING_METHODS.has(definition.method)
+    ...(CHANGING_METHODS.has(definition.method) ||
+    requiresOnboarding(definition.access)
       ? (["FORBIDDEN"] as const)
       : []),
     ...(signedIn ? (["NOT_SIGNED_IN", "RATE_LIMITED"] as const) : []),

@@ -109,7 +109,7 @@ Better Auth renews a session by moving `expiresAt` and resending the cookie with
 
 - **Integration** tests build the auth instance with `createAuth` against the test database and use `createSessionReader` in the route dependencies. `tests/support/sessions.ts` inserts session rows with chosen dates and builds the signed cookie with Better Auth's `makeSignature` (from `better-auth/crypto`) and `BETTER_AUTH_SECRET`, as Security and testing §2.4 allows ("Integration tests create sessions directly in the database").
 - **Time:** Better Auth reads the system time and can't take the services' clock. The session tests set the dates on the session rows instead: AC-05 has `createdAt` 45 days ago, `updatedAt` 20 days ago, and `expiresAt` in 10 days, and expects `expiresAt` to move to 30 days from now; AC-06 has an `expiresAt` from yesterday. The services keep taking the clock.
-- **Factories:** `tests/support/factories.ts` users are onboarded unless a test asks otherwise, so the new onboarding check doesn't change existing tests' meaning.
+- **Factories** stay as they are. The test session reader carries the onboarding flag with the user, so existing tests keep their meaning, and tests that need an onboarded factory user set `onboardedAt`.
 - **Unit** tests cover `checkProviderProfile`, `checkDevSignInSetting`, and the auth options for BR-02 and BR-03.
 - **Browser** tests in `tests/e2e/` sign in through the development sign-in. Each scenario uses a new `@example.com` email, so seed users are never changed. A failed save is simulated with Playwright's `page.route` aborting the request. Axe checks run on each screen in both languages. `playwright.config.ts` sets `DEV_SIGN_IN=true` for the web server. `placeholder.spec.ts` is replaced by Welcome's tests.
 

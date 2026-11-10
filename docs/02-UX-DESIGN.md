@@ -1,6 +1,6 @@
 # UX design
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 10, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.8 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -329,6 +329,16 @@ The same page serves everyone. The example shows the buyer who reserved the item
 | To buy | Por comprar |
 | My purchases | Mis compras |
 | Profile | Perfil |
+| One last step | Un último paso |
+| Language | Idioma |
+| I am 18 or older and accept the terms | Tengo 18 años o más y acepto los términos |
+| WhatsApp number | Número de WhatsApp |
+| Continue | Continuar |
+| Save | Guardar |
+| Daily email with the group's changes | Correo diario con los cambios del grupo |
+| Sign out | Cerrar sesión |
+| Couldn't save. Check your connection and try again | No se pudo guardar. Revisa tu conexión e inténtalo de nuevo |
+| Development sign-in | Acceso de desarrollo |
 | Member / Buyer | Miembro / Comprador |
 | Invite a member | Invitar a un miembro |
 | Invite a buyer | Invitar a un comprador |

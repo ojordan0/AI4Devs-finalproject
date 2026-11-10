@@ -1,7 +1,68 @@
 {
-  "placeholder": {
+  "common": {
+    "appName": "ComproParaTi",
+    "language": "Language",
+    "languageNames": {
+      "es": "Español",
+      "en": "English"
+    },
+    "continue": "Continue",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "couldNotSave": "Couldn't save. Check your connection and try again",
+    "tryAgain": "Try again"
+  },
+  "welcome": {
     "title": "ComproParaTi",
-    "message": "We're getting the app ready."
+    "tagline": "I buy for you. Shopping lists your family shares.",
+    "continueWithGoogle": "Continue with Google",
+    "signingIn": "Signing in…",
+    "signInError": "We couldn't sign you in. Try again.",
+    "signInUnavailable": "Sign-in isn't available right now. Try again later."
+  },
+  "devSignIn": {
+    "title": "Development sign-in",
+    "description": "Only on this computer. Enter a seed user's email, or a new one to sign up.",
+    "email": "Email",
+    "submit": "Sign in",
+    "invalidEmail": "Enter a valid email address.",
+    "failed": "Couldn't sign in. Check your connection and try again"
+  },
+  "onboarding": {
+    "title": "One last step",
+    "intro": "It only takes a few seconds.",
+    "acceptsTerms": "I am 18 or older and accept the terms",
+    "acceptsTermsRequired": "Check this box to continue.",
+    "whatsappHelp": "The members and buyers of your groups use it to reach you on WhatsApp. You can change it later."
+  },
+  "phoneField": {
+    "label": "WhatsApp number",
+    "country": "Country",
+    "chooseCountry": "Choose a country",
+    "number": "Number",
+    "required": "Enter your WhatsApp number. It can be changed but not removed.",
+    "invalid": "Enter a valid number, with its country."
+  },
+  "profile": {
+    "title": "Profile",
+    "contact": "Contact",
+    "whatsappHelp": "It can be changed but not removed. Only the members and buyers of your groups see it.",
+    "preferences": "Preferences",
+    "emails": "Daily email with the group's changes",
+    "emailsHelp": "One email a day with what was purchased, shipped, or couldn't be bought.",
+    "account": "Account",
+    "signOut": "Sign out",
+    "signingOut": "Signing out…",
+    "signOutFailed": "Couldn't sign out. Check your connection and try again"
+  },
+  "lists": {
+    "title": "Lists",
+    "comingSoon": "This is where the items on your list will show up.",
+    "noLists": "No lists yet. Create one.",
+    "notInGroup": "You're not in any group yet.",
+    "askForInvitation": "Ask someone to invite you.",
+    "profile": "Profile"
   },
   "errors": {
     "NOT_SIGNED_IN": "Sign in to continue.",

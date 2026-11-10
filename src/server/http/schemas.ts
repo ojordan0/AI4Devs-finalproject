@@ -10,7 +10,10 @@ import {
   createListRequestShape,
   ITEM_STATUSES,
   itemFiltersShape,
+  namesAField,
+  onboardingRequestShape,
   updateItemRequestShape,
+  updateMeRequestShape,
 } from "../../shared/requests";
 import { openApiRegistry } from "./openapi";
 
@@ -166,3 +169,17 @@ export const updateItemRequestSchema = openApiRegistry.register(
 );
 
 export const itemFiltersSchema = z.object(itemFiltersShape);
+
+// Onboarding and profile (docs/05-API.md, section 2).
+
+export const onboardingRequestSchema = openApiRegistry.register(
+  "OnboardingRequest",
+  z.object(onboardingRequestShape),
+);
+
+export const updateMeRequestSchema = openApiRegistry.register(
+  "UpdateMeRequest",
+  z.object(updateMeRequestShape).refine(namesAField, {
+    message: "nothing to change",
+  }),
+);

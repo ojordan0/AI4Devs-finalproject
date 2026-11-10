@@ -1,6 +1,6 @@
 # Architecture
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.8 · **Date:** November 9, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.9 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -277,7 +277,7 @@ The structure groups code by layer first and by capability second, matching [sec
 | API style | REST endpoints (Next.js route handlers), not Server Actions | Can be documented in OpenAPI, permission rules can be tested with direct requests, and a native app could reuse it later. |
 | Where authorization lives | In the domain services | Server-rendered pages and the REST API apply exactly the same checks. |
 | Preview environment | None for the MVP | Google sign-in requires fixed redirect addresses, and a second environment needs its own database and setup. Revisit with Terraform ([PRD §18](01-PRD.md#18-future-features)). |
-| Local sign-in | A development-only sign-in as a seed user, through a small Better Auth plugin | Developers can run the app without creating Google credentials. The plugin is registered only when the app runs locally with an explicit setting ([Infrastructure §2](06-INFRASTRUCTURE.md#2-environments)), and the app refuses to start if that setting is on and the app is not served from localhost, so a wrong environment variable cannot expose it. Browser tests sign in with it, locally and in CI. |
+| Local sign-in | A development-only sign-in by email, through a small Better Auth plugin: it signs in the user with that email, such as a seed user, or creates a new user who hasn't completed onboarding | Developers can run the app without creating Google credentials. The plugin is registered only when `DEV_SIGN_IN` is `true` ([Infrastructure §7](06-INFRASTRUCTURE.md#7-configuration)), and the app refuses to start if it is on and `APP_URL` is not on localhost, so a wrong environment variable cannot expose it. Browser tests sign in with it, locally and in CI; each scenario signs up as a new user, which is why it can create users. |
 | Build approach | Spec-driven development with OpenSpec and Claude Code | Each work ticket becomes one OpenSpec change, generated from the ticket and the documents it references, and reviewed before any code is written ([Work tickets §1](08-WORK-TICKETS.md#1-how-tickets-work)). Reviewing the plan first catches gaps in the documentation before they turn into code, and the specs record what each ticket built. `CLAUDE.md` gives Claude Code the project rules. |
 | Rate limit storage | Postgres | No extra service; request volume is low. |
 | Concurrency | A version number on items, and conditional updates for status changes | Enforces BR-20 and BR-23 without database locks. |

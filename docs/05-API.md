@@ -1,6 +1,6 @@
 # API specification
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 10, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.8 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -24,7 +24,7 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 | Status | Code | When |
 | --- | --- | --- |
 | 401 | `NOT_SIGNED_IN` | No valid session |
-| 403 | `FORBIDDEN` | The user can see the resource but not take this action (BR-12), or a change came from another site's origin ([Security and testing §1](07-SECURITY-AND-TESTING.md#1-security)). The interface never offers such actions, so this only happens when it is bypassed. |
+| 403 | `FORBIDDEN` | The user can see the resource but not take this action (BR-12), the user hasn't completed onboarding and the endpoint requires it, or a change came from another site's origin ([Security and testing §1](07-SECURITY-AND-TESTING.md#1-security)). The interface never offers such actions, so this only happens when it is bypassed. |
 | 404 | `NOT_AVAILABLE` | Outside the user's groups, deleted, or archived (BR-13) |
 | 409 | `ALREADY_RESERVED` | Someone else reserved the item first (BR-23) |
 | 409 | `ITEM_CHANGED` | The item changed since the user loaded it (BR-20), or the action no longer applies to its status |
@@ -39,7 +39,7 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 | Method | Path | Purpose | Rules |
 | --- | --- | --- | --- |
 | GET | `/me` | Current user, memberships, and onboarding state | FR-08 |
-| POST | `/me/onboarding` | Language, WhatsApp number, and age and terms acceptance; completing it without an invitation creates the user's group and first list | FR-02, BR-01, BR-04, BR-06 |
+| POST | `/me/onboarding` | Language, WhatsApp number, and age and terms acceptance; completing it without an invitation creates the user's group and first list. Returns the current user, as `GET /me` does; if onboarding is already complete, it changes nothing. | FR-02, BR-01, BR-04, BR-06 |
 | PATCH | `/me` | Change language, WhatsApp number, or email setting | FR-04 |
 | DELETE | `/me` | Delete the account | BR-05 |
 | GET, POST | `/groups` | List the user's groups; create a group | BR-07 |
