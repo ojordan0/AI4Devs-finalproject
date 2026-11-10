@@ -73,6 +73,15 @@ A recipient deleted under BR-15 (milestone 2) leaves `recipient_id` null and `re
 
 Integration tests per endpoint, building handlers from the declarations with `testDependencies({ db })`, in `tests/integration/lists-endpoints.test.ts` and `tests/integration/items-endpoints.test.ts`. They use the seed users and items, and factories for a third group with a list and an item, and for items in the archived list. Every 200 and 201 response is checked against its schema. The concurrency test sends two edits from the same version at once through the pool's separate connections.
 
+## Open points in the documents
+
+The documents left these points open. Each was settled in the document that owns it, in this pull request; this section records why.
+
+- **Listing a group's lists.** [API §2](../../../../docs/05-API.md#2-endpoints) has `GET /groups/{groupId}/lists`, but the T-09 scope only named creating lists, and [T-10](../../../../docs/08-WORK-TICKETS.md#t-10-lists-screen-item-form-and-item-page) needs the list of lists to switch between them. *Chosen:* T-09 builds it, without `?archived=true`, which comes with archiving in milestone 2. *Changed:* the scope of [T-09](../../../../docs/08-WORK-TICKETS.md#t-09-lists-and-items-api).
+- **Moving an item to another group.** FR-16 allowed moving an item to another list without saying whose. *Chosen:* only lists of the same group, because an item's recipient belongs to its group, so a move across groups would leave the item with a recipient the new group doesn't have (decision 3). *Changed:* FR-16 in [PRD §13.4](../../../../docs/01-PRD.md#134-lists-and-items).
+
+The other choices this change made are technical and are recorded above: the field errors for a recipient or list from another group (decision 3), `409 ITEM_CHANGED` for a refused edit or delete, clearing the buyer of an unavailable item that is edited, and resetting the link fields only when the link changes (decision 4), and the `Item` response (decision 6). No package outside [Architecture §1.6](../../../../docs/03-ARCHITECTURE.md#16-dependencies) was needed.
+
 ## Risks / Trade-offs
 
 - [The target list is checked before the `UPDATE`, so a list archived in between could receive the moved item.] → Archiving is milestone 2; that ticket guards the move in the statement itself (adversarial review, finding 3).
