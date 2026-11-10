@@ -101,6 +101,23 @@ The field limits and schemas SHALL live in one shared place that the interface a
 - **THEN** no file in the shared schemas imports from the server code
 - Verified by a lint rule in CI.
 
+### Requirement: Responses carry only what their schema documents
+
+A success response SHALL contain only the properties its documented response schema defines, so data a service returns by accident, such as extra columns from a query, never reaches the client. A result that doesn't match its schema SHALL answer `500 INTERNAL_ERROR` instead of being sent.
+
+#### Scenario: T-03 only properties the response schema documents are sent
+
+- **GIVEN** an endpoint whose service returns a property its response schema doesn't define
+- **WHEN** the endpoint answers
+- **THEN** the response body has only the documented properties
+- Verified by an integration test.
+
+#### Scenario: T-03 a result that breaks the response schema becomes a 500
+
+- **GIVEN** an endpoint whose service returns a result missing a required property
+- **WHEN** the endpoint answers
+- **THEN** the response is 500 `INTERNAL_ERROR`, and the result isn't sent
+
 ### Requirement: Generated OpenAPI document
 
 `docs/openapi.yaml` SHALL be generated from the same Zod schemas the endpoints use, with the base path, the session cookie security scheme, and the error format in API §3. Each endpoint ticket adds its paths through the same generator.

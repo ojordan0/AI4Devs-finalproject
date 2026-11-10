@@ -81,8 +81,15 @@ Every response, for pages and for the API, SHALL include the headers in Security
 - **THEN** the response has each header, and the policy includes `frame-ancestors 'none'` and allows no inline script that the app didn't mark with its per-request value
 - Verified by a browser test that also checks the page renders with no policy violations in the console.
 
+#### Scenario: T-03 inline script added to the page doesn't run
+
+- **GIVEN** a page from a production build
+- **WHEN** HTML with an inline event handler is added to it, as user text shown as HTML would
+- **THEN** the handler doesn't run, and with the policy turned off the same handler does run
+- Verified by a browser test in Chromium and WebKit.
+
 #### Scenario: T-03 an API response has the security headers
 
-- **WHEN** an `/api/v1` request is answered, including an error
+- **WHEN** an `/api/v1` request is answered, including an error and an address with no route
 - **THEN** the response has `X-Content-Type-Options: nosniff`, the referrer policy, HSTS, and a policy with `frame-ancestors 'none'`
 - Verified by an integration test.

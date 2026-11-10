@@ -276,6 +276,21 @@ describe("rate limits", () => {
       apiRequest("/things", { method: "POST", as: "ana" }),
     );
     expect(otherAction.status).toBe(200);
+
+    // The limit for any request still counts every one of them, including
+    // those on the action-limited route.
+    const windowStart = new Date(time.clock());
+    windowStart.setUTCSeconds(0, 0);
+    const [general] = await db
+      .select({ count: rateLimitRows.count })
+      .from(rateLimitRows)
+      .where(
+        eq(
+          rateLimitRows.key,
+          `api:${seedIds.users.ana}:${windowStart.toISOString()}`,
+        ),
+      );
+    expect(general.count).toBe(actionLimit.limit + 2);
   });
 
   it("T-03 requests without a session are not counted", async () => {

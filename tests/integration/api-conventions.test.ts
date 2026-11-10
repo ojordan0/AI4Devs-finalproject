@@ -46,22 +46,57 @@ async function errorOf(response: Response) {
 }
 
 describe("schema check helper", () => {
-  it("T-03 a response that breaks its schema fails the test", async () => {
+  it("T-03 a response that breaks its schema fails the test", () => {
     const schema = z.object({ id: z.number(), name: z.string() });
+    // The body leaves out `name`, which the schema requires.
+    expect(() => expectMatchesSchema(schema, { id: 1 })).toThrow(/name/);
+    expect(() =>
+      expectMatchesSchema(schema, { id: 1, name: "x" }),
+    ).not.toThrow();
+  });
+});
+
+describe("response schema", () => {
+  const schema = z.object({ id: z.number(), name: z.string() });
+
+  it("T-03 only properties the response schema documents are sent", async () => {
+    const handler = createRouteHandler(
+      {
+        method: "GET",
+        path: "/person",
+        response: schema,
+        // A service that returns a whole row, with a column the response doesn't document.
+        handler: async () => {
+          const row = { id: 1, name: "Ana", whatsappNumber: "+12025550101" };
+          return row;
+        },
+      },
+      dependencies,
+    );
+
+    const response = await handler(apiRequest("/person", { as: "ana" }));
+
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ id: 1, name: "Ana" });
+  });
+
+  it("T-03 a result that breaks the response schema becomes a 500", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
     const handler = createRouteHandler(
       {
         method: "GET",
         path: "/broken",
         response: schema,
-        // The handler leaves out `name`, which the schema requires.
         handler: async () => ({ id: 1 }) as z.input<typeof schema>,
       },
       dependencies,
     );
-    const body = await (
-      await handler(apiRequest("/broken", { as: "ana" }))
-    ).json();
-    expect(() => expectMatchesSchema(schema, body)).toThrow(/name/);
+
+    const response = await handler(apiRequest("/broken", { as: "ana" }));
+
+    expect(response.status).toBe(500);
+    expect((await errorOf(response)).code).toBe("INTERNAL_ERROR");
+    log.mockRestore();
   });
 });
 

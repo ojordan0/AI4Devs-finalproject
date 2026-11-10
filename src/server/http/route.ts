@@ -199,7 +199,13 @@ export function createRouteHandler<
       if (!definition.response) {
         return new Response(null, { status: 204, headers: apiSecurityHeaders });
       }
-      return json(result, definition.successStatus ?? 200);
+      // Only what the response schema documents leaves the server: unknown
+      // properties, such as extra columns from a query, are stripped, and a
+      // result that doesn't match becomes a 500 instead of a leak.
+      return json(
+        definition.response.parse(result),
+        definition.successStatus ?? 200,
+      );
     } catch (error) {
       const { status, body } = toErrorResult(error, language);
       return json(body, status);

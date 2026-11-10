@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 import messages from "../../src/i18n/es.json";
 
@@ -31,7 +31,6 @@ test("T-03 a page has the security headers", async ({ page }) => {
 
   const policy = headers["content-security-policy"];
   expect(policy).toContain("frame-ancestors 'none'");
-  expect(policy).not.toContain("'unsafe-inline' 'nonce");
   const nonce = /'nonce-([^']+)'/.exec(policy)?.[1];
   expect(nonce).toBeTruthy();
   expect(policy).toMatch(/script-src [^;]*'strict-dynamic'/);
@@ -71,4 +70,55 @@ test("T-03 each page request gets its own nonce", async ({ request }) => {
   const second = await nonceOf();
   expect(first).toBeTruthy();
   expect(second).not.toBe(first);
+});
+
+/**
+ * Adds HTML with an inline event handler to the page, the way user text shown
+ * as HTML would, and returns what ran. (A <script> set through HTML never runs,
+ * and a script that page code creates itself is trusted under 'strict-dynamic',
+ * so neither tests the policy.)
+ */
+async function injectInlineHandler(page: Page): Promise<string[]> {
+  await page.goto("/");
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  return page.evaluate(async () => {
+    const state = window as unknown as { __injected: string[] };
+    state.__injected = [];
+    const holder = document.createElement("div");
+    holder.innerHTML =
+      '<img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt="" onerror="window.__injected.push(\'handler\')" onload="window.__injected.push(\'handler\')">';
+    document.body.append(holder);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return state.__injected;
+  });
+}
+
+test("T-03 inline script added to the page doesn't run", async ({
+  page,
+  browser,
+}) => {
+  expect(await injectInlineHandler(page)).toEqual([]);
+
+  // The control: with the policy turned off, the same handler runs, so the
+  // policy is what stopped it above.
+  const withoutPolicy = await browser.newContext({ bypassCSP: true });
+  try {
+    const ran = await injectInlineHandler(await withoutPolicy.newPage());
+    expect(ran).toEqual(["handler"]);
+  } finally {
+    await withoutPolicy.close();
+  }
+});
+
+test("T-03 an API address that has no route still gets the API policy", async ({
+  request,
+}) => {
+  const response = await request.get("/api/v1/no-such-endpoint");
+  const headers = response.headers();
+
+  expect(response.status()).toBe(404);
+  expect(headers["content-security-policy"]).toBe(
+    "default-src 'none'; frame-ancestors 'none'",
+  );
+  expect(headers["x-content-type-options"]).toBe("nosniff");
 });

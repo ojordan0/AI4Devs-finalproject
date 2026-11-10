@@ -36,6 +36,7 @@ T-03 keeps one acceptance criterion with an ID, AC-97, whose test is task 5.4. A
 - [x] 4.8 Test the scenarios "T-03 invalid body answers with the failing fields" and "T-03 body that isn't JSON is rejected". Verify that the tests pass and that the service isn't called.
 - [x] 4.9 Test the `group-access` scenarios "BR-13 another group's data gets the same 404 as missing data" and "BR-13 a malformed ID gets the same 404" through a test endpoint that calls the membership check. Verify that the two 404 responses have identical status, headers, and bodies.
 - [x] 4.10 Add the 500 `INTERNAL_ERROR` row to the error table in `docs/05-API.md` §1, name the origin check in its `FORBIDDEN` row, and update the header. Verify with `npm run check:links`.
+- [x] 4.11 Parse each success result with the route's response schema, so only documented properties are sent and a mismatch becomes a 500 (adversarial review, finding 1). Test the scenarios "T-03 only properties the response schema documents are sent" and "T-03 a result that breaks the response schema becomes a 500". Verify that the tests pass.
 
 ## 5. Origin check, rate limits, and security headers
 
@@ -47,6 +48,9 @@ T-03 keeps one acceptance criterion with an ID, AC-97, whose test is task 5.4. A
 - [x] 5.6 Add `src/server/http/security-headers.ts`, the request proxy in `src/proxy.ts` with the per-request nonce policy, the static headers in `next.config.ts`, the API headers in the wrapper, and a `connection()` call in `src/app/layout.tsx` so pages render per request (design decision 8). Verify that `npm run build` succeeds.
 - [x] 5.7 Test the scenario "T-03 an API response has the security headers" in `tests/integration/`, for a success and an error response. Verify that the test passes.
 - [x] 5.8 Test the scenario "T-03 a page has the security headers" in `tests/e2e/`, against the production build, failing on any policy violation in the console. Verify that `npm run test:e2e` passes in Chromium and WebKit.
+- [x] 5.9 Test the scenario "T-03 inline script added to the page doesn't run" in `tests/e2e/`, with a control that turns the policy off, and remove the assertion that could never fail (adversarial review, finding 2). Verify that it passes in Chromium and WebKit.
+- [x] 5.10 Set the API policy for `/api/:path*` in `next.config.ts`, and test that an address with no route gets it (adversarial review, finding 3). Verify with `npm run test:e2e`.
+- [x] 5.11 Assert in the test "T-03 an action limit is counted separately" that the limit for any request also counts requests on the action-limited route (adversarial review, finding 9). Verify that the test passes.
 
 ## 6. OpenAPI document and its check
 

@@ -31,7 +31,7 @@ Each handler is built with one function that takes a declaration: whether sign-i
 3. Rate limits: the general API limit, then the action's limit if declared.
 4. Validation of path parameters, query, and body.
 5. The handler body, which calls a service.
-6. Mapping of the result or error into a response, with the security headers.
+6. Mapping of the result or error into a response, with the security headers. The result is parsed with the response schema first, so only documented properties are sent.
 
 The origin check runs first, so a cross-site request costs no database work, and the rate limit runs before validation, so invalid requests are counted too. The same declaration is registered with the OpenAPI registry, so the document can't drift from the handler.
 
@@ -77,7 +77,7 @@ The wrapper picks the language from the signed-in user's saved language, then fr
 
 - **Pages:** a request proxy (`src/proxy.ts`, Next.js 16's name for middleware) creates a nonce per request and sets the Content Security Policy with it, so Next.js marks its own scripts with the nonce. The root layout calls `connection()`, so every page renders per request: a page built once at build time would carry no nonce, and the policy would block its scripts. The policy is `default-src 'self'`, `script-src 'self' 'nonce-…' 'strict-dynamic'`, `style-src 'self' 'unsafe-inline'`, `img-src 'self' data: blob:`, `connect-src 'self'`, `object-src 'none'`, `base-uri 'self'`, `form-action 'self'`, and `frame-ancestors 'none'`. Locally, `script-src` also allows `'unsafe-eval'`, which React needs in development.
 - **Static headers** (HSTS, `nosniff`, and the referrer policy) for every route, in `next.config.ts`.
-- **API responses:** the wrapper adds the static headers and a policy of `default-src 'none'; frame-ancestors 'none'`, because JSON needs nothing else. This is what lets integration tests check them.
+- **API responses:** the wrapper adds the static headers and a policy of `default-src 'none'; frame-ancestors 'none'`, because JSON needs nothing else. This is what lets integration tests check them. `next.config.ts` sets the same policy for `/api/:path*`, so answers Next.js produces itself, such as a 404 for an address with no route, carry it too.
 
 `style-src` allows inline styles because Next.js and some Radix components set style attributes, which nonces don't cover. Script is what matters for AC-95, and inline script stays blocked. HSTS is `max-age=63072000; includeSubDomains`; browsers ignore it over plain `http` on localhost.
 

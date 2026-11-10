@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
-import { staticSecurityHeaders } from "./src/server/http/security-headers";
+import {
+  apiContentSecurityPolicy,
+  staticSecurityHeaders,
+} from "./src/server/http/security-headers";
 
 const nextConfig: NextConfig = {
   // Stops `next dev` from writing its own agent instructions into AGENTS.md, which
@@ -17,6 +20,14 @@ const nextConfig: NextConfig = {
           key,
           value,
         })),
+      },
+      {
+        // Also covers API answers the route wrapper doesn't produce, such as
+        // Next.js's own 404 and 405 responses.
+        source: "/api/:path*",
+        headers: [
+          { key: "Content-Security-Policy", value: apiContentSecurityPolicy },
+        ],
       },
     ];
   },
