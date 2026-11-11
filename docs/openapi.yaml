@@ -388,6 +388,53 @@ components:
           format: uuid
       required:
         - version
+    BuyerItem:
+      allOf:
+        - $ref: "#/components/schemas/Item"
+        - type: object
+          properties:
+            list:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+              required:
+                - id
+                - name
+            group:
+              type: object
+              properties:
+                id:
+                  type: string
+                  format: uuid
+                name:
+                  type: string
+              required:
+                - id
+                - name
+          required:
+            - list
+            - group
+    BuyerItemCollection:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/BuyerItem"
+      required:
+        - items
+    PurchaseRequest:
+      type: object
+      properties:
+        buyerNote:
+          type:
+            - string
+            - "null"
+          maxLength: 1000
     OnboardingRequest:
       type: object
       properties:
@@ -589,6 +636,175 @@ paths:
                 $ref: "#/components/schemas/Error"
         "403":
           description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /items/{itemId}/purchase:
+    post:
+      summary: Mark an item as purchased ("I bought it"), with an optional buyer note. Only the item's buyer, while it is reserved (FR-25, BR-12, BR-25).
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: true
+          name: itemId
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PurchaseRequest"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: ITEM_CHANGED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: VALIDATION_FAILED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /items/{itemId}/reservation:
+    post:
+      summary: Reserve an item ("I'll buy it"). Members and buyers of its group, only while it is pending; the first of two simultaneous requests wins (BR-23).
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: true
+          name: itemId
+          in: path
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: ALREADY_RESERVED or ITEM_CHANGED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    delete:
+      summary: Release a reservation. Only the item's buyer, while it is reserved (FR-24, BR-12).
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: true
+          name: itemId
+          in: path
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Item"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: NOT_AVAILABLE
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: ITEM_CHANGED
           content:
             application/json:
               schema:
@@ -939,6 +1155,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /me/purchases:
+    get:
+      summary: The user's reserved and purchased items, each with its list and group, including purchased items in a group they left (FR-21, BR-11)
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuyerItemCollection"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
   /me:
     get:
       summary: Current user, memberships, and onboarding state. Also available before onboarding is complete.
@@ -981,6 +1231,59 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Me"
+        "401":
+          description: NOT_SIGNED_IN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: FORBIDDEN
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "422":
+          description: VALIDATION_FAILED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: RATE_LIMITED
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: INTERNAL_ERROR
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /me/to-buy:
+    get:
+      summary: Pending items in all the user's groups, each with its list and group, filterable by group and list (FR-21)
+      parameters:
+        - schema:
+            type: string
+            format: uuid
+          required: false
+          name: groupId
+          in: query
+        - schema:
+            type: string
+            format: uuid
+          required: false
+          name: listId
+          in: query
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuyerItemCollection"
         "401":
           description: NOT_SIGNED_IN
           content:

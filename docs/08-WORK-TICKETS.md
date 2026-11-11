@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.16 · **Date:** November 10, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.17 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -263,7 +263,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 - Only the transitions in BR-22 for these actions, each recorded in the status history.
 - `GET /me/to-buy` and `GET /me/purchases` (FR-21).
 
-**Acceptance criteria:** AC-58, AC-59, AC-60, AC-61, AC-62.
+**Acceptance criteria:** AC-58 (API), AC-59, AC-60, AC-61, AC-62 (API).
 
 ### T-12 To buy, My purchases, and buyer actions
 
@@ -277,7 +277,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 - Buyer's item page: notes first, then the person's details, "Open in store", "I'll buy it", "I bought it", and release (FR-15, FR-22, FR-23).
 - Reservation conflict and changed-item messages, and Refresh.
 
-**Acceptance criteria:** AC-56, AC-57, AC-67, AC-68.
+**Acceptance criteria:** AC-56, AC-57, AC-58 (interface), AC-67, AC-68.
 
 ### T-13 People and their details
 
@@ -304,7 +304,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 - "Couldn't buy it" with a required note (FR-26, BR-25); a member's edit returns the item to pending (BR-19).
 - Timeline on the item page (FR-32, BR-26).
 
-**Acceptance criteria:** AC-50 (interface), AC-63.
+**Acceptance criteria:** AC-50 (interface), AC-62 (interface), AC-63.
 
 ### T-15 Delivery addresses
 

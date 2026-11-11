@@ -5,7 +5,14 @@ import type { Language } from "../../shared/languages";
 import type { ItemStatus } from "../../shared/requests";
 import type { Clock } from "../clock";
 import type { Database } from "../db/client";
-import { items, lists, recipients, statusHistory, users } from "../db/schema";
+import {
+  groups,
+  items,
+  lists,
+  recipients,
+  statusHistory,
+  users,
+} from "../db/schema";
 import { requireMemberAccess, resolveGroupAccess } from "./access";
 import {
   InvalidFieldsError,
@@ -72,11 +79,17 @@ const DELETABLE: readonly ItemStatus[] = ["pending", "unavailable"];
 
 const uuid = z.uuid();
 
-/** Item rows with the recipient's and buyer's names, in one query. */
-function selectItems(db: Database, where: SQL | undefined) {
+/**
+ * Item rows with the recipient's and buyer's names, and the list and group
+ * they belong to, in one query. Items in archived lists are left out (BR-13).
+ */
+export function selectItems(db: Database, where: SQL | undefined) {
   return db
     .select({
       item: items,
+      listName: lists.name,
+      groupId: groups.id,
+      groupName: groups.name,
       recipientName: recipients.name,
       buyerName: users.name,
       buyerEmail: users.email,
@@ -84,15 +97,16 @@ function selectItems(db: Database, where: SQL | undefined) {
     })
     .from(items)
     .innerJoin(lists, eq(lists.id, items.listId))
+    .innerJoin(groups, eq(groups.id, lists.groupId))
     .leftJoin(recipients, eq(recipients.id, items.recipientId))
     .leftJoin(users, eq(users.id, items.buyerId))
     .where(and(isNull(lists.archivedAt), where))
     .orderBy(asc(items.createdAt), asc(items.id));
 }
 
-type ItemRow = Awaited<ReturnType<typeof selectItems>>[number];
+export type ItemRow = Awaited<ReturnType<typeof selectItems>>[number];
 
-function toView(row: ItemRow, language: Language): ItemView {
+export function toView(row: ItemRow, language: Language): ItemView {
   const { item } = row;
   return {
     id: item.id,
@@ -131,22 +145,27 @@ function toView(row: ItemRow, language: Language): ItemView {
   };
 }
 
-async function readItem(db: Database, itemId: string, language: Language) {
+export async function readItem(
+  db: Database,
+  itemId: string,
+  language: Language,
+) {
   const [row] = await selectItems(db, eq(items.id, itemId));
   if (!row) throw new NotAvailableError();
   return toView(row, language);
 }
 
 /**
- * The item's status, version, and group, or null when the ID is malformed,
- * the item doesn't exist, or its list is archived (BR-13).
+ * The item's status, buyer, version, and group, or null when the ID is
+ * malformed, the item doesn't exist, or its list is archived (BR-13).
  */
-async function loadItem(db: Database, itemId: string) {
+export async function loadItem(db: Database, itemId: string) {
   if (!uuid.safeParse(itemId).success) return null;
   const [item] = await db
     .select({
       id: items.id,
       status: items.status,
+      buyerId: items.buyerId,
       version: items.version,
       url: items.url,
       groupId: lists.groupId,

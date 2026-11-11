@@ -92,3 +92,12 @@ export const itemFiltersShape = {
 };
 
 export const itemFilters = z.object(itemFiltersShape);
+
+/** Mark as purchased (FR-25): an optional buyer note (BR-25, BR-32). */
+export const purchaseRequestShape = { buyerNote: optionalNote };
+
+/** To buy (FR-21): filter by group, by list, or both. */
+export const toBuyFiltersShape = {
+  groupId: z.uuid().optional(),
+  listId: z.uuid().optional(),
+};
