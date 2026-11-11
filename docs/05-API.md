@@ -1,6 +1,6 @@
 # API specification
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.8 · **Date:** November 10, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.9 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -64,8 +64,8 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 | POST | `/items/{itemId}/purchase` | Mark as purchased, with an optional buyer note | BR-22, BR-25 |
 | POST | `/items/{itemId}/unavailable` | Couldn't buy it, with a required note | BR-22, BR-25 |
 | POST | `/items/{itemId}/undo` | Undo the last step | BR-24 |
-| GET | `/me/to-buy` | Pending items for the buyer, filterable by group and list | FR-21 |
-| GET | `/me/purchases` | The user's reserved and purchased items | FR-21 |
+| GET | `/me/to-buy` | Pending items in all the user's groups, as a member or a buyer, each with its list and group; filterable by group and list | FR-21 |
+| GET | `/me/purchases` | The user's reserved and purchased items, each with its list and group, including purchased items in a group they left | FR-21, BR-11 |
 | GET, POST | `/groups/{groupId}/delivery-addresses` | List and add addresses | BR-27 |
 | PATCH, DELETE | `/delivery-addresses/{addressId}` | Edit, make default, or delete | BR-27 |
 | POST | `/groups/{groupId}/shipments` | Mark one or more items as shipped | BR-28 |

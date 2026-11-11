@@ -12,6 +12,8 @@ import {
   itemFiltersShape,
   namesAField,
   onboardingRequestShape,
+  purchaseRequestShape,
+  toBuyFiltersShape,
   updateItemRequestShape,
   updateMeRequestShape,
 } from "../../shared/requests";
@@ -169,6 +171,30 @@ export const updateItemRequestSchema = openApiRegistry.register(
 );
 
 export const itemFiltersSchema = z.object(itemFiltersShape);
+
+// Buying (docs/05-API.md, section 2).
+
+/** An item with the list and group it belongs to, for To buy and My purchases (FR-21). */
+export const buyerItemSchema = openApiRegistry.register(
+  "BuyerItem",
+  itemSchema.extend({
+    list: z.object({ id: z.uuid(), name: z.string() }),
+    group: z.object({ id: z.uuid(), name: z.string() }),
+  }),
+);
+
+export const buyerItemCollectionSchema = openApiRegistry.register(
+  "BuyerItemCollection",
+  z.object({ items: z.array(buyerItemSchema) }),
+);
+
+export const toBuyFiltersSchema = z.object(toBuyFiltersShape);
+
+/** The body is optional: a request without one is read as an empty body. */
+export const purchaseRequestSchema = openApiRegistry.register(
+  "PurchaseRequest",
+  z.object(purchaseRequestShape),
+);
 
 // Onboarding and profile (docs/05-API.md, section 2).
 

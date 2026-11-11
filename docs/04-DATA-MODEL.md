@@ -1,6 +1,6 @@
 # Data model
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.6 · **Date:** November 8, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.7 · **Date:** November 10, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -397,11 +397,11 @@ Deleting a group deletes its memberships, invitations, recipients, lists, items,
 | quantity | smallint | Not null, default 1, check 1 to 99 | |
 | status | item_status | Not null, default pending | BR-22 |
 | buyer_id | uuid | FK users; null exactly when status is pending | The item's buyer |
-| buyer_note | varchar(1000) | Nullable | FR-25 |
+| buyer_note | varchar(1000) | Nullable | FR-25. Kept when an item is purchased without a new note; cleared when the item returns to pending |
 | unavailable_note | varchar(1000) | Required when status is unavailable | BR-25 |
 | shipment_id | uuid | FK shipments, on delete set null; not null only when status is shipped | |
 | added_by | uuid | FK users, not null | |
-| updated_after_reservation | boolean | Not null, default false | The "Updated" marker (BR-19) |
+| updated_after_reservation | boolean | Not null, default false | The "Updated" marker (BR-19). Cleared by a new reservation and when the item returns to pending; it stays when the item is purchased |
 | version | integer | Not null, default 1 | Increases on every change; used to refuse stale edits (BR-20) |
 | created_at, updated_at | timestamptz | Not null | |
 
