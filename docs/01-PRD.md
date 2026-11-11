@@ -1,6 +1,6 @@
 # Product Requirements Document: Assisted Shopping Platform (MVP)
 
-**Version:** 1.8 · **Date:** November 10, 2026  
+**Version:** 1.9 · **Date:** November 10, 2026  
 **Project Manager and Product owner:** Odalys Jordan Enriquez  
 **Product Name:** ComproParaTi ("I buy for you", [section 16](#16-product-decisions))
 
@@ -376,7 +376,7 @@ Each requirement describes what users can do. The rules that apply are reference
 
 ### 13.6 Purchasing
 
-- **FR-21 To buy.** Buyers see the pending items of their groups, grouped by recipient, with filters by group and list. Items with no recipient appear under "No person". Items they reserved or purchased appear in My purchases.
+- **FR-21 To buy.** Buyers see the pending items of every group they belong to, as a member or a buyer, grouped by recipient, with filters by group and list. Items with no recipient appear under "No person". Items they reserved or purchased appear in My purchases.
 - **FR-22 Recipient details on items.** On every item, buyers see the item's notes and the details of the recipient it is for. Buyers who are not members see recipient details only inside items (BR-12).
 - **FR-23 Store link.** If the item has a link, "Open in store" opens it in a new tab.
 - **FR-24 Reserve and release.** The buyer taps "I'll buy it" and the item is reserved in their name (BR-23). The item's buyer can release the reservation.

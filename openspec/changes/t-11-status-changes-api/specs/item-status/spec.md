@@ -80,6 +80,13 @@ Changing an item's status within the transitions of BR-22, so a buyer can reserv
 - **THEN** the first two are purchased with no buyer note; the last is refused as a field error and stays reserved
 - Verified by an integration test.
 
+#### Scenario: BR-25 a purchase keeps, replaces, or clears an earlier buyer note
+
+- **GIVEN** items reserved by a buyer that already have a buyer note
+- **WHEN** they mark one as purchased with no note, one with a new note, and one with the note set to none
+- **THEN** the first keeps its note, the second has the new note, and the third has no note
+- Verified by an integration test.
+
 #### Scenario: BR-22 an item that isn't reserved can't be marked as purchased
 
 - **GIVEN** a pending item and an item the user already marked as purchased
@@ -89,13 +96,20 @@ Changing an item's status within the transitions of BR-22, so a buyer can reserv
 
 ### Requirement: Every status change raises the version and is recorded
 
-Reserving, releasing, and purchasing SHALL each raise the item's version, so a member's edit or delete based on the earlier version is refused (BR-20), and SHALL each record one status history entry with the previous and new status, the user, and the time (BR-26). A refused request SHALL change nothing and record nothing.
+Reserving and releasing SHALL clear the item's "Updated" marker (BR-19), and releasing SHALL clear its buyer note; purchasing SHALL leave the marker. Reserving, releasing, and purchasing SHALL each raise the item's version, so a member's edit or delete based on the earlier version is refused (BR-20), and SHALL each record one status history entry with the previous and new status, the user, and the time (BR-26). A refused request SHALL change nothing and record nothing.
 
 #### Scenario: BR-26 reserving, releasing, and purchasing are recorded
 
 - **GIVEN** a pending item
 - **WHEN** a buyer reserves it, releases it, reserves it again, and marks it as purchased
 - **THEN** its status history has, after its creation, pending to reserved, reserved to pending, pending to reserved, and reserved to purchased, each with the buyer as author, and its version rose by four
+- Verified by an integration test.
+
+#### Scenario: BR-19 reserving and releasing clear the Updated marker
+
+- **GIVEN** a pending item, and two items reserved by Juan, the first with a buyer note, all three marked as updated
+- **WHEN** Luis reserves the pending item, and Juan releases the first of his items and marks the second as purchased
+- **THEN** the item Luis reserved and the item Juan released are no longer marked as updated, the released item has no buyer note, and the purchased item is still marked
 - Verified by an integration test.
 
 #### Scenario: BR-20 a member's edit from before a reservation is refused

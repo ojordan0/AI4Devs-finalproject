@@ -44,6 +44,7 @@ T-11's acceptance criteria each have a test task named with their ID: AC-58 (5.3
 - [x] 6.1 Regenerate `docs/openapi.yaml` with `npm run openapi:generate`. Verify that it has the five new operations with their schemas and errors, that the reservation responses match API §3, that the purchase body is optional, and that a second run changes nothing.
 - [x] 6.2 Run `npm run lint`, `npx tsc --noEmit`, `npm test`, `npm run test:coverage`, `npm run check:links`, and `npm run build`. Verify that all pass and the domain services keep at least 80% line coverage.
 - [x] 6.3 Run `npm run test:e2e`. Verify that every browser test still passes, including T-10's item page tests.
+- [x] 6.4 Address the adversarial review: test that a purchase keeps, replaces, or clears an earlier buyer note and that reserving and releasing clear the "Updated" marker (finding 1); update FR-21 in `docs/01-PRD.md` (finding 2); record in `docs/04-DATA-MODEL.md` when `buyer_note` and `updated_after_reservation` are kept or cleared (finding 3); and keep only purchased items in My purchases for a group the user left, with its test (finding 4). Verify that the tests pass.
 
 ## Workflow follow-up
 

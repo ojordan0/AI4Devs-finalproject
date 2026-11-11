@@ -1,4 +1,4 @@
-import { and, eq, inArray, type SQL } from "drizzle-orm";
+import { and, eq, inArray, or, type SQL } from "drizzle-orm";
 
 import type { Language } from "../../shared/languages";
 import type { Database } from "../db/client";
@@ -24,6 +24,16 @@ function toBuyerView(row: ItemRow, language: Language): BuyerItemView {
   };
 }
 
+/** The groups where the user's membership is active, as a subquery. */
+function activeGroups(db: Database, userId: string) {
+  return db
+    .select({ groupId: memberships.groupId })
+    .from(memberships)
+    .where(
+      and(eq(memberships.userId, userId), eq(memberships.status, "active")),
+    );
+}
+
 /**
  * Pending items in every group where the user's membership is active, as a
  * member or a buyer (docs/02-UX-DESIGN.md §2.2), optionally of one group or
@@ -35,15 +45,9 @@ export async function listToBuy(
   filters: ToBuyFilters,
   language: Language,
 ): Promise<BuyerItemView[]> {
-  const myGroups = db
-    .select({ groupId: memberships.groupId })
-    .from(memberships)
-    .where(
-      and(eq(memberships.userId, userId), eq(memberships.status, "active")),
-    );
   const conditions: SQL[] = [
     eq(items.status, "pending"),
-    inArray(lists.groupId, myGroups),
+    inArray(lists.groupId, activeGroups(db, userId)),
   ];
   if (filters.groupId) conditions.push(eq(lists.groupId, filters.groupId));
   if (filters.listId) conditions.push(eq(items.listId, filters.listId));
@@ -52,9 +56,9 @@ export async function listToBuy(
 }
 
 /**
- * The items the user reserved or purchased, the same ones that give them the
- * My purchases tab (FR-08). There is no membership condition, so purchased
- * items stay after the user left the group, until they ship them (BR-11).
+ * The items the user reserved or purchased (FR-21). Purchased items stay after
+ * the user left the group, until they ship them; reservations don't, since
+ * leaving releases them (BR-11).
  */
 export async function listPurchases(
   db: Database,
@@ -65,7 +69,13 @@ export async function listPurchases(
     db,
     and(
       eq(items.buyerId, userId),
-      inArray(items.status, ["reserved", "purchased"]),
+      or(
+        eq(items.status, "purchased"),
+        and(
+          eq(items.status, "reserved"),
+          inArray(lists.groupId, activeGroups(db, userId)),
+        ),
+      ),
     ),
   );
   return rows.map((row) => toBuyerView(row, language));

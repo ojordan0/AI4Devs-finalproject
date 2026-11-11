@@ -168,6 +168,16 @@ describe("GET /me/purchases", () => {
   });
 
   it("BR-11 My purchases keeps purchased items after the user left the group", async () => {
+    // A reservation left behind in the group Pedro left; leaving releases
+    // reservations (BR-11), so it isn't his to act on.
+    await createItem(db, {
+      listId: lists.medicine,
+      addedBy: users.ana,
+      status: "reserved",
+      buyerId: users.pedro,
+      version: 2,
+    });
+
     const items = await itemsOf(await purchasesAs("pedro"));
 
     expect(items).toHaveLength(1);

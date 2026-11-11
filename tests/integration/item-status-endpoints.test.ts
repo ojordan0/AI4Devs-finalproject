@@ -102,13 +102,17 @@ function pendingItem() {
 }
 
 /** An item a seed user reserved (version 2, as after one status change). */
-function reservedItem(buyer: SeedSessionUser) {
+function reservedItem(
+  buyer: SeedSessionUser,
+  values: Partial<typeof items.$inferInsert> = {},
+) {
   return createItem(db, {
     listId: lists.birthday,
     addedBy: users.ana,
     status: "reserved",
     buyerId: users[buyer],
     version: 2,
+    ...values,
   });
 }
 
@@ -333,6 +337,27 @@ describe("POST /items/{itemId}/purchase", () => {
     expect(await itemRow(tooLong.id)).toMatchObject({ status: "reserved" });
   });
 
+  it("BR-25 a purchase keeps, replaces, or clears an earlier buyer note", async () => {
+    const withNote = { buyerNote: "Earlier note" };
+    const kept = await reservedItem("juan", withNote);
+    const replaced = await reservedItem("juan", withNote);
+    const cleared = await reservedItem("juan", withNote);
+
+    const responses = [
+      await purchaseAs("juan", kept.id),
+      await purchaseAs("juan", replaced.id, { buyerNote: "New note" }),
+      await purchaseAs("juan", cleared.id, { buyerNote: null }),
+    ];
+
+    expect(responses.map((r) => r.status)).toEqual([200, 200, 200]);
+    expect(await itemRow(kept.id)).toMatchObject({
+      status: "purchased",
+      buyerNote: "Earlier note",
+    });
+    expect(await itemRow(replaced.id)).toMatchObject({ buyerNote: "New note" });
+    expect(await itemRow(cleared.id)).toMatchObject({ buyerNote: null });
+  });
+
   it("BR-22 an item that isn't reserved can't be marked as purchased", async () => {
     const pending = await pendingItem();
     const purchased = await reservedItem("juan");
@@ -382,6 +407,37 @@ describe("status history and versions", () => {
       { fromStatus: "reserved", toStatus: "purchased", authorId: users.juan },
     ]);
     expect(await itemRow(item.id)).toMatchObject({ version: 5 });
+  });
+
+  it("BR-19 reserving and releasing clear the Updated marker", async () => {
+    const updated = { updatedAfterReservation: true };
+    const pending = await createItem(db, {
+      listId: lists.birthday,
+      addedBy: users.ana,
+      ...updated,
+    });
+    const released = await reservedItem("juan", {
+      ...updated,
+      buyerNote: "Earlier note",
+    });
+    const purchased = await reservedItem("juan", updated);
+
+    expect((await reserveAs("luis", pending.id)).status).toBe(200);
+    expect((await releaseAs("juan", released.id)).status).toBe(200);
+    expect((await purchaseAs("juan", purchased.id)).status).toBe(200);
+
+    expect(await itemRow(pending.id)).toMatchObject({
+      updatedAfterReservation: false,
+    });
+    expect(await itemRow(released.id)).toMatchObject({
+      status: "pending",
+      buyerNote: null,
+      updatedAfterReservation: false,
+    });
+    expect(await itemRow(purchased.id)).toMatchObject({
+      status: "purchased",
+      updatedAfterReservation: true,
+    });
   });
 
   it("BR-20 a member's edit from before a reservation is refused", async () => {

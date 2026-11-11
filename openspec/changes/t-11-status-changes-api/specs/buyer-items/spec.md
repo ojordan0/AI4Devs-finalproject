@@ -44,7 +44,7 @@ What a user can buy and what they bought, across all their groups: the pending i
 
 ### Requirement: My purchases lists the user's reserved and purchased items
 
-`GET /me/purchases` SHALL return every item the user reserved or purchased and hasn't shipped, the same items that give them the My purchases tab (FR-08, FR-21), each with its list and group. Purchased items in a group the user has left SHALL be included, so they can still ship them (BR-11). Other people's items, shipped items, and unavailable items SHALL NOT be included.
+`GET /me/purchases` SHALL return every item the user reserved or purchased and hasn't shipped (FR-21), each with its list and group. Purchased items in a group the user has left SHALL be included, so they can still ship them; reserved items there SHALL NOT, since leaving releases them (BR-11). Other people's items, shipped items, and unavailable items SHALL NOT be included.
 
 #### Scenario: FR-21 My purchases has the buyer's reserved and purchased items
 
@@ -55,9 +55,9 @@ What a user can buy and what they bought, across all their groups: the pending i
 
 #### Scenario: BR-11 My purchases keeps purchased items after the user left the group
 
-- **GIVEN** the seed user Pedro, whose membership in García Group ended, with an item he purchased there
+- **GIVEN** the seed user Pedro, whose membership in García Group ended, with an item he purchased there and an item still reserved in his name there
 - **WHEN** he reads My purchases
-- **THEN** he gets that item, with its list and group
+- **THEN** he gets the purchased item, with its list and group, and not the reserved one
 - Verified by an integration test.
 
 #### Scenario: FR-21 a user with nothing reserved or purchased
