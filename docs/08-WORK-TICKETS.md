@@ -1,6 +1,6 @@
 # Work tickets
 
-**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.17 · **Date:** November 10, 2026
+**Assisted Shopping Platform: ComproParaTi** · **Version:** 1.18 · **Date:** November 12, 2026
 
 Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`, `US`, `AC`) are defined in the [PRD](01-PRD.md).
 
@@ -16,11 +16,12 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 - **Spec first:** each ticket is built as one OpenSpec change, named like its branch without the type prefix (branch `feat/t-07-groups-api`, change `t-07-groups-api`). The change is generated from the ticket and the documents it references; its proposal links the ticket's issue, its requirements cite the PRD IDs instead of copying rule text, and each scenario is named after the acceptance criterion it verifies, for example `AC-59`. A ticket without acceptance criterion IDs names its scenarios as described in [Security and testing §2.6](07-SECURITY-AND-TESTING.md#26-coverage-targets). The change is reviewed before implementation, and archived in the ticket's pull request as its last commit before the merge. If the documents leave a question open, they are updated first.
 - **Branching:** one branch and one pull request per ticket, merged into `main`. The branch is named `<type>/t-<NN>-<slug>`, after the ticket ID, where `<type>` is `feat`, `fix`, `chore`, `docs`, or `refactor`; for example `feat/t-07-groups-api`. Each ticket's branch name is in the [ticket overview](#3-ticket-overview).
 - **Work outside a ticket** happens only when agreed with the project owner, on a branch named `<type>/<slug>`, through a pull request, and without an OpenSpec change.
+- **Design tickets** (type Design) restyle screens that are already built to [DESIGN.md](../DESIGN.md) and the Stitch screens in `design/stitch/`, and change no behavior. They have no OpenSpec change. Before work starts, the screens in scope are summarized and approved. A design ticket depends on the tickets that build its screens. If the work needs a behavior change, that change is a separate ticket with an OpenSpec change. The pull request says how each "Done when" condition was checked.
 - **Course deliveries:** at each deadline, the state of `main` is pushed to the delivery branch: `feature/entrega-1-OJE` for D1, `feature/entrega-2-OJE` for D2, and `final-project-OJE` for D3.
 
 **Definition of done** for every ticket:
 
-1. The ticket's OpenSpec change was reviewed before implementation, and is archived in the pull request before the merge.
+1. The ticket's OpenSpec change was reviewed before implementation, and is archived in the pull request before the merge. Design tickets have no OpenSpec change ([above](#1-how-tickets-work)).
 2. The listed acceptance criteria have automated tests named with their IDs. A ticket without acceptance criterion IDs has each of its conditions verified instead ([Security and testing §2.6](07-SECURITY-AND-TESTING.md#26-coverage-targets)). All tests pass in CI.
 3. Linting and type checks pass, and the generated OpenAPI document is up to date.
 4. Interface text comes from the translation files, in Spanish and English.
@@ -82,7 +83,22 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 | T-15 | [#41](https://github.com/ojordan0/AI4Devs-finalproject/issues/41) | Delivery addresses | E-06 | US-18 | Full stack | 5 | D3 | M | T-07, T-05 | `feat/t-15-delivery-addresses` |
 | T-16 | [#42](https://github.com/ojordan0/AI4Devs-finalproject/issues/42) | Marking items as shipped | E-06 | US-19, US-21 | Full stack | 5 | D3 | L | T-12, T-15 | `feat/t-16-shipments` |
 | T-17 | [#43](https://github.com/ojordan0/AI4Devs-finalproject/issues/43) | End-to-end test of the core cycle and test suite completion | E-08 | None | QA | All | D3 | M | T-16 | `chore/t-17-e2e-core-cycle` |
-| T-18 | [#44](https://github.com/ojordan0/AI4Devs-finalproject/issues/44) | Deployment evidence and final documentation | E-08 | None | Documentation | All | D3 | S | T-17 | `docs/t-18-final-documentation` |
+| T-18 | [#44](https://github.com/ojordan0/AI4Devs-finalproject/issues/44) | Deployment evidence and final documentation | E-08 | None | Documentation | All | D3 | S | T-17, T-21, T-22, T-23, T-24, T-25, T-26, T-27, T-28, T-29, T-30, T-31, T-32, T-33 | `docs/t-18-final-documentation` |
+| T-19 | [#62](https://github.com/ojordan0/AI4Devs-finalproject/issues/62) | Tests that survive a restyle | E-08 | None | Design | All | D3 | S | None | `chore/t-19-restyle-safe-tests` |
+| T-20 | [#63](https://github.com/ojordan0/AI4Devs-finalproject/issues/63) | Design tokens and base components | E-08 | None | Design | All | D3 | M | T-19 | `feat/t-20-design-foundation` |
+| T-21 | [#64](https://github.com/ojordan0/AI4Devs-finalproject/issues/64) | Welcome design | E-08 | None | Design | 1 | D3 | S | T-20, T-04 | `feat/t-21-design-welcome` |
+| T-22 | [#65](https://github.com/ojordan0/AI4Devs-finalproject/issues/65) | One last step design | E-08 | None | Design | 1 | D3 | S | T-20, T-04 | `feat/t-22-design-one-last-step` |
+| T-23 | [#66](https://github.com/ojordan0/AI4Devs-finalproject/issues/66) | Invitation design | E-08 | None | Design | 2 | D3 | S | T-20, T-08 | `feat/t-23-design-invitation` |
+| T-24 | [#67](https://github.com/ojordan0/AI4Devs-finalproject/issues/67) | Lists design | E-08 | None | Design | 3 | D3 | M | T-20, T-10 | `feat/t-24-design-lists` |
+| T-25 | [#68](https://github.com/ojordan0/AI4Devs-finalproject/issues/68) | Item form design | E-08 | None | Design | 3 | D3 | M | T-20, T-10, T-13 | `feat/t-25-design-item-form` |
+| T-26 | [#69](https://github.com/ojordan0/AI4Devs-finalproject/issues/69) | Item page design | E-08 | None | Design | 5 | D3 | M | T-20, T-12, T-14, T-16 | `feat/t-26-design-item-page` |
+| T-27 | [#70](https://github.com/ojordan0/AI4Devs-finalproject/issues/70) | People design | E-08 | None | Design | 3 | D3 | M | T-20, T-13 | `feat/t-27-design-people` |
+| T-28 | [#71](https://github.com/ojordan0/AI4Devs-finalproject/issues/71) | Group design | E-08 | None | Design | 5 | D3 | M | T-20, T-08, T-15 | `feat/t-28-design-group` |
+| T-29 | [#72](https://github.com/ojordan0/AI4Devs-finalproject/issues/72) | To buy design | E-08 | None | Design | 4 | D3 | S | T-20, T-12 | `feat/t-29-design-to-buy` |
+| T-30 | [#73](https://github.com/ojordan0/AI4Devs-finalproject/issues/73) | My purchases design | E-08 | None | Design | 5 | D3 | S | T-20, T-12, T-16 | `feat/t-30-design-my-purchases` |
+| T-31 | [#74](https://github.com/ojordan0/AI4Devs-finalproject/issues/74) | Mark as shipped design | E-08 | None | Design | 5 | D3 | S | T-20, T-16 | `feat/t-31-design-mark-as-shipped` |
+| T-32 | [#75](https://github.com/ojordan0/AI4Devs-finalproject/issues/75) | Profile design | E-08 | None | Design | 1 | D3 | S | T-20, T-04 | `feat/t-32-design-profile` |
+| T-33 | [#76](https://github.com/ojordan0/AI4Devs-finalproject/issues/76) | Design for screens and states without a Stitch screen | E-08 | None | Design | 5 | D3 | M | T-20, T-14, T-15 | `feat/t-33-design-unstitched-states` |
 
 ## 4. Tickets
 
@@ -349,7 +365,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 ### T-18 Deployment evidence and final documentation
 
-**Epic:** E-08 · **Stories:** None · **Type:** Documentation · **Increment:** all of milestone 1 · **Delivery:** D3 · **Size:** S · **Depends on:** T-17
+**Epic:** E-08 · **Stories:** None · **Type:** Documentation · **Increment:** all of milestone 1 · **Delivery:** D3 · **Size:** S · **Depends on:** T-17 and the design tickets, T-21 to T-33
 
 **Goal:** everything the final course delivery requires, besides the code.
 
@@ -358,3 +374,188 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 - Public URL, screenshots, and a short video of the core cycle on the deployed app.
 - README updated: project and repository URLs, installation commands as built, design screenshots, and work tickets and pull requests sections.
 - `prompts.md` complete for the build.
+
+### T-19 Tests that survive a restyle
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** all of milestone 1 · **Delivery:** D3 · **Size:** S · **Depends on:** none
+
+**Goal:** the tests check behavior rather than markup or styling, so the design tickets can change how screens look without breaking tests that still hold.
+
+**Scope:**
+
+- Review the unit and browser tests for checks that depend on markup, class names, or styling. Change them to find elements by role, label, or translated text.
+- The AC-95 browser test checks the notes element for injected markup, instead of counting every `b`, `img`, and `script` in the main area, which a restyle can add.
+- Keep the layout checks that come from [DESIGN.md](../DESIGN.md): sidebar width, content width, and no sideways scroll at 360 px. The restyle has to keep these rules.
+- Run the automated accessibility checks on every built screen in each of its main states, such as each item status, so a token that fails contrast also fails a test.
+
+**Done when:** no test depends on markup or styling that a restyle may change, and all tests pass.
+
+### T-20 Design tokens and base components
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** all of milestone 1 · **Delivery:** D3 · **Size:** M · **Depends on:** T-19
+
+**Goal:** every screen draws on the tokens and components in DESIGN.md.
+
+**Scope:**
+
+- The Tailwind theme in `src/app/globals.css`: colors, status colors, typography (Plus Jakarta Sans), radius, and spacing, from the front matter of [DESIGN.md](../DESIGN.md).
+- The components in `src/components/ui`, restyled to [DESIGN.md, Components](../DESIGN.md#components): buttons, inputs, checkbox, switch, dialog, dropdown menu, and skeleton, with the focus ring and touch targets it defines.
+- The app shell in `src/components/app-shell` (header, group selector, Refresh, and navigation) and the status chip, which appear on every screen ([DESIGN.md, Navigation](../DESIGN.md#navigation) and [Status Chips](../DESIGN.md#status-chips)).
+
+**Done when:** the theme, the components, the app shell, and the status chip follow DESIGN.md, and all tests pass.
+
+### T-21 Welcome design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 1 · **Delivery:** D3 · **Size:** S · **Depends on:** T-20, T-04
+
+**Goal:** Welcome looks like its approved Stitch screen.
+
+**Screens:** Welcome (screen 1) ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/01-welcome`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-22 One last step design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 1 · **Delivery:** D3 · **Size:** S · **Depends on:** T-20, T-04
+
+**Goal:** One last step looks like its approved Stitch screen.
+
+**Screens:** One last step (screen 2) ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/02-one-last-step`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-23 Invitation design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 2 · **Delivery:** D3 · **Size:** S · **Depends on:** T-20, T-08
+
+**Goal:** The Invitation screen looks like its approved Stitch screen.
+
+**Screens:** Invitation (screen 3), in each of its states ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/03-invitation`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-24 Lists design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 3 · **Delivery:** D3 · **Size:** M · **Depends on:** T-20, T-10
+
+**Goal:** Lists looks like its approved Stitch screen.
+
+**Screens:** Lists (screen 4) ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/04-lists`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-25 Item form design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 3 · **Delivery:** D3 · **Size:** M · **Depends on:** T-20, T-10, T-13
+
+**Goal:** The item form looks like its approved Stitch screen.
+
+**Screens:** Add or edit item (screen 5) ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/05-item-form`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-26 Item page design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 5 · **Delivery:** D3 · **Size:** M · **Depends on:** T-20, T-12, T-14, T-16
+
+**Goal:** The item page looks like its approved Stitch screen.
+
+**Screens:** Item page (screen 6), for each status and role ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/06-item-page`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-27 People design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 3 · **Delivery:** D3 · **Size:** M · **Depends on:** T-20, T-13
+
+**Goal:** People looks like its approved Stitch screen.
+
+**Screens:** People (screen 7): the list of people and the person page ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/07-person-list`, `design/stitch/07-person-detail`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-28 Group design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 5 · **Delivery:** D3 · **Size:** M · **Depends on:** T-20, T-08, T-15
+
+**Goal:** The Group screen looks like its approved Stitch screen.
+
+**Screens:** Group (screen 8), with delivery addresses ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/08-group`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-29 To buy design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 4 · **Delivery:** D3 · **Size:** S · **Depends on:** T-20, T-12
+
+**Goal:** To buy looks like its approved Stitch screen.
+
+**Screens:** To buy (screen 9) ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/09-to-buy`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-30 My purchases design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 5 · **Delivery:** D3 · **Size:** S · **Depends on:** T-20, T-12, T-16
+
+**Goal:** My purchases looks like its approved Stitch screen.
+
+**Screens:** My purchases (screen 10) ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/10-my-purchases`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-31 Mark as shipped design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 5 · **Delivery:** D3 · **Size:** S · **Depends on:** T-20, T-16
+
+**Goal:** The Mark as shipped sheet looks like its approved Stitch screen.
+
+**Screens:** Mark as shipped (screen 11) ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/11-mark-as-shipped`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-32 Profile design
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 1 · **Delivery:** D3 · **Size:** S · **Depends on:** T-20, T-04
+
+**Goal:** Profile looks like its approved Stitch screen.
+
+**Screens:** Profile (screen 12) ([UX design §2.3](02-UX-DESIGN.md#23-screens)).
+
+**Stitch folders:** `design/stitch/12-profile`, with the differences to ignore listed in [DESIGN.md, Using the Stitch Screens](../DESIGN.md#using-the-stitch-screens).
+
+**Done when:** the screen follows DESIGN.md and its Stitch screen, and all tests pass.
+
+### T-33 Design for screens and states without a Stitch screen
+
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 5 · **Delivery:** D3 · **Size:** M · **Depends on:** T-20, T-14, T-15
+
+**Goal:** the parts of the app with no Stitch screen match the rest of the design.
+
+**Screens:** the address form (T-15), the "No lo pude comprar" sheet (T-14), and the shared empty, loading, and error states (T-05), built from [UX design §2.4](02-UX-DESIGN.md#24-key-screens) and [§2.7](02-UX-DESIGN.md#27-empty-states-loading-and-errors).
+
+**Stitch folders:** none. The ticket uses the components in [DESIGN.md](../DESIGN.md).
+
+**Done when:** these screens and states follow DESIGN.md, and all tests pass.

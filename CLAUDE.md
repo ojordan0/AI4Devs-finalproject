@@ -25,7 +25,7 @@ Use the traceability table (PRD §19) to find every story, rule, endpoint, and e
 
 - **The docs are the source of truth.** If a task needs behavior the docs don't define, or the code and docs disagree, stop and ask instead of choosing.
 - **One source per fact.** When behavior changes, update the document that owns it, in the same pull request. Refer to rules by ID (for example `BR-23`); don't copy rule text into other documents or code comments.
-- **Spec first:** every ticket starts as an OpenSpec change, reviewed before implementation, following [docs/08-WORK-TICKETS.md §1](docs/08-WORK-TICKETS.md#1-how-tickets-work). The PRD stays the source of truth for rules; specs cite its IDs.
+- **Spec first:** every ticket except design tickets starts as an OpenSpec change, reviewed before implementation, following [docs/08-WORK-TICKETS.md §1](docs/08-WORK-TICKETS.md#1-how-tickets-work). The PRD stays the source of truth for rules; specs cite its IDs.
 - **Design tickets:** a ticket that restyles built screens to DESIGN.md and the Stitch screens changes no behavior, so it skips the OpenSpec steps: no /opsx:propose, /opsx:apply or /opsx:archive, no tasks.md, and no OpenSpec link in the PR. Before starting, summarize the screens in scope and wait for approval, as with a proposal. If the work needs a behavior change, stop: that is a separate ticket with an OpenSpec change.
 - **Dependencies:** install only packages listed in [Architecture §1.6](docs/03-ARCHITECTURE.md#16-dependencies). If a task needs another one, stop and ask.
 - **Layering:** pages and route handlers never query the database directly. Business rules and authorization live in the domain services (`src/server/services`).

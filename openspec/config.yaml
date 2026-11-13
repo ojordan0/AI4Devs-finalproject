@@ -22,6 +22,11 @@ context: |
   If the ticket needs behavior the documents don't define, or the documents
   and the code disagree, stop and ask. The documents are updated first.
 
+  DESIGN.md owns the visual design, and design/screens.md maps each screen
+  to its route, component, Stitch folder, tickets, fit and status. Screens
+  are being restyled in design tickets. If a change touches a screen whose
+  Status is In progress, stop and tell the user.
+
 rules:
   proposal:
     - Name the change like the ticket's branch in the ticket overview (docs/08-WORK-TICKETS.md §3) without the type prefix, for example t-07-groups-api for branch feat/t-07-groups-api (docs/08-WORK-TICKETS.md §1).
@@ -38,6 +43,8 @@ rules:
   design:
     - Follow docs/03-ARCHITECTURE.md for structure and layering, docs/04-DATA-MODEL.md for the schema, and docs/05-API.md for endpoints and errors.
     - Use only packages listed in docs/03-ARCHITECTURE.md §1.6. If another one is needed, stop and ask.
+    - New or changed UI follows DESIGN.md and reuses the components in
+      src/components/ui.
   tasks:
     - Ensure tasks are atomic and testable independently.
     - Include one task per acceptance criterion for its automated test, named with its ID (docs/07-SECURITY-AND-TESTING.md §2). In a ticket without acceptance criterion IDs, include one task per scenario instead.
