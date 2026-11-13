@@ -13,7 +13,7 @@ Part of the project documentation ([readme](../readme.md)). IDs (`BR`, `FR`, `E`
 - **Epic and stories:** each ticket belongs to one epic and implements one or more user stories ([PRD §14](01-PRD.md#14-epics-and-user-stories)). The first story listed is the ticket's main story. Tickets with no story are foundation work in E-08.
 - **Delivery** is the course deadline the ticket must meet: D2 or D3 ([PRD §8.1](01-PRD.md#81-milestone-1-core-cycle-end-to-end)).
 - **Size:** S (up to half a day), M (one to two days), L (three to five days).
-- **Spec first:** each ticket is built as one OpenSpec change, named like its branch without the type prefix (branch `feat/t-07-groups-api`, change `t-07-groups-api`). The change is generated from the ticket and the documents it references; its proposal links the ticket's issue, its requirements cite the PRD IDs instead of copying rule text, and each scenario is named after the acceptance criterion it verifies, for example `AC-59`. A ticket without acceptance criterion IDs names its scenarios as described in [Security and testing §2.6](07-SECURITY-AND-TESTING.md#26-coverage-targets). The change is reviewed before implementation, and archived in the ticket's pull request as its last commit before the merge. If the documents leave a question open, they are updated first.
+- **Spec first:** each ticket except design tickets (below) is built as one OpenSpec change, named like its branch without the type prefix (branch `feat/t-07-groups-api`, change `t-07-groups-api`). The change is generated from the ticket and the documents it references; its proposal links the ticket's issue, its requirements cite the PRD IDs instead of copying rule text, and each scenario is named after the acceptance criterion it verifies, for example `AC-59`. A ticket without acceptance criterion IDs names its scenarios as described in [Security and testing §2.6](07-SECURITY-AND-TESTING.md#26-coverage-targets). The change is reviewed before implementation, and archived in the ticket's pull request as its last commit before the merge. If the documents leave a question open, they are updated first.
 - **Branching:** one branch and one pull request per ticket, merged into `main`. The branch is named `<type>/t-<NN>-<slug>`, after the ticket ID, where `<type>` is `feat`, `fix`, `chore`, `docs`, or `refactor`; for example `feat/t-07-groups-api`. Each ticket's branch name is in the [ticket overview](#3-ticket-overview).
 - **Work outside a ticket** happens only when agreed with the project owner, on a branch named `<type>/<slug>`, through a pull request, and without an OpenSpec change.
 - **Design tickets** (type Design) restyle screens that are already built to [DESIGN.md](../DESIGN.md) and the Stitch screens in `design/stitch/`, and change no behavior. They have no OpenSpec change. Before work starts, the screens in scope are summarized and approved. A design ticket depends on the tickets that build its screens. If the work needs a behavior change, that change is a separate ticket with an OpenSpec change. The pull request says how each "Done when" condition was checked.
@@ -85,17 +85,17 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 | T-17 | [#43](https://github.com/ojordan0/AI4Devs-finalproject/issues/43) | End-to-end test of the core cycle and test suite completion | E-08 | None | QA | All | D3 | M | T-16 | `chore/t-17-e2e-core-cycle` |
 | T-18 | [#44](https://github.com/ojordan0/AI4Devs-finalproject/issues/44) | Deployment evidence and final documentation | E-08 | None | Documentation | All | D3 | S | T-17, T-21, T-22, T-23, T-24, T-25, T-26, T-27, T-28, T-29, T-30, T-31, T-32, T-33 | `docs/t-18-final-documentation` |
 | T-19 | [#62](https://github.com/ojordan0/AI4Devs-finalproject/issues/62) | Tests that survive a restyle | E-08 | None | Design | All | D2 | S | None | `chore/t-19-restyle-safe-tests` |
-| T-20 | [#63](https://github.com/ojordan0/AI4Devs-finalproject/issues/63) | Design tokens and base components | E-08 | None | Design | All | D2 | M | T-19 | `feat/t-20-design-foundation` |
+| T-20 | [#63](https://github.com/ojordan0/AI4Devs-finalproject/issues/63) | Design tokens and base components | E-08 | None | Design | All | D2 | M | T-19, T-05 | `feat/t-20-design-foundation` |
 | T-21 | [#64](https://github.com/ojordan0/AI4Devs-finalproject/issues/64) | Welcome design | E-08 | None | Design | 1 | D3 | S | T-20, T-04 | `feat/t-21-design-welcome` |
 | T-22 | [#65](https://github.com/ojordan0/AI4Devs-finalproject/issues/65) | One last step design | E-08 | None | Design | 1 | D3 | S | T-20, T-04 | `feat/t-22-design-one-last-step` |
 | T-23 | [#66](https://github.com/ojordan0/AI4Devs-finalproject/issues/66) | Invitation design | E-08 | None | Design | 2 | D3 | S | T-20, T-08 | `feat/t-23-design-invitation` |
 | T-24 | [#67](https://github.com/ojordan0/AI4Devs-finalproject/issues/67) | Lists design | E-08 | None | Design | 3 | D3 | M | T-20, T-10 | `feat/t-24-design-lists` |
 | T-25 | [#68](https://github.com/ojordan0/AI4Devs-finalproject/issues/68) | Item form design | E-08 | None | Design | 3 | D3 | M | T-20, T-10, T-13 | `feat/t-25-design-item-form` |
-| T-26 | [#69](https://github.com/ojordan0/AI4Devs-finalproject/issues/69) | Item page design | E-08 | None | Design | 5 | D3 | M | T-20, T-12, T-14, T-16 | `feat/t-26-design-item-page` |
+| T-26 | [#69](https://github.com/ojordan0/AI4Devs-finalproject/issues/69) | Item page design | E-08 | None | Design | 5 | D3 | M | T-20, T-12, T-13, T-14, T-16 | `feat/t-26-design-item-page` |
 | T-27 | [#70](https://github.com/ojordan0/AI4Devs-finalproject/issues/70) | People design | E-08 | None | Design | 3 | D3 | M | T-20, T-13 | `feat/t-27-design-people` |
 | T-28 | [#71](https://github.com/ojordan0/AI4Devs-finalproject/issues/71) | Group design | E-08 | None | Design | 5 | D3 | M | T-20, T-08, T-15 | `feat/t-28-design-group` |
-| T-29 | [#72](https://github.com/ojordan0/AI4Devs-finalproject/issues/72) | To buy design | E-08 | None | Design | 4 | D3 | S | T-20, T-12 | `feat/t-29-design-to-buy` |
-| T-30 | [#73](https://github.com/ojordan0/AI4Devs-finalproject/issues/73) | My purchases design | E-08 | None | Design | 5 | D3 | S | T-20, T-12, T-16 | `feat/t-30-design-my-purchases` |
+| T-29 | [#72](https://github.com/ojordan0/AI4Devs-finalproject/issues/72) | To buy design | E-08 | None | Design | 4 | D3 | S | T-20, T-12, T-13 | `feat/t-29-design-to-buy` |
+| T-30 | [#73](https://github.com/ojordan0/AI4Devs-finalproject/issues/73) | My purchases design | E-08 | None | Design | 5 | D3 | S | T-20, T-12, T-13, T-16 | `feat/t-30-design-my-purchases` |
 | T-31 | [#74](https://github.com/ojordan0/AI4Devs-finalproject/issues/74) | Mark as shipped design | E-08 | None | Design | 5 | D3 | S | T-20, T-16 | `feat/t-31-design-mark-as-shipped` |
 | T-32 | [#75](https://github.com/ojordan0/AI4Devs-finalproject/issues/75) | Profile design | E-08 | None | Design | 1 | D3 | S | T-20, T-04 | `feat/t-32-design-profile` |
 | T-33 | [#76](https://github.com/ojordan0/AI4Devs-finalproject/issues/76) | Design for screens and states without a Stitch screen | E-08 | None | Design | 5 | D3 | M | T-20, T-14, T-15 | `feat/t-33-design-unstitched-states` |
@@ -386,13 +386,13 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 - Review the unit and browser tests for checks that depend on markup, class names, or styling. Change them to find elements by role, label, or translated text.
 - The AC-95 browser test checks the notes element for injected markup, instead of counting every `b`, `img`, and `script` in the main area, which a restyle can add.
 - Keep the layout checks that come from [DESIGN.md](../DESIGN.md): sidebar width, content width, and no sideways scroll at 360 px. The restyle has to keep these rules.
-- Run the automated accessibility checks on every built screen in each of its main states, such as each item status, so a token that fails contrast also fails a test.
+- Run the automated accessibility checks on every screen built so far in each of its main states, such as each item status, so a token that fails contrast also fails a test. Screens built later get their checks in their own tickets and in T-17.
 
 **Done when:** no test depends on markup or styling that a restyle may change, and all tests pass.
 
 ### T-20 Design tokens and base components
 
-**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** all of milestone 1 · **Delivery:** D2 · **Size:** M · **Depends on:** T-19
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** all of milestone 1 · **Delivery:** D2 · **Size:** M · **Depends on:** T-19, T-05
 
 **Goal:** every screen draws on the tokens and components in DESIGN.md.
 
@@ -466,7 +466,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 ### T-26 Item page design
 
-**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 5 · **Delivery:** D3 · **Size:** M · **Depends on:** T-20, T-12, T-14, T-16
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 5 · **Delivery:** D3 · **Size:** M · **Depends on:** T-20, T-12, T-13, T-14, T-16
 
 **Goal:** The item page looks like its approved Stitch screen.
 
@@ -502,7 +502,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 ### T-29 To buy design
 
-**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 4 · **Delivery:** D3 · **Size:** S · **Depends on:** T-20, T-12
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 4 · **Delivery:** D3 · **Size:** S · **Depends on:** T-20, T-12, T-13
 
 **Goal:** To buy looks like its approved Stitch screen.
 
@@ -514,7 +514,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 ### T-30 My purchases design
 
-**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 5 · **Delivery:** D3 · **Size:** S · **Depends on:** T-20, T-12, T-16
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** 5 · **Delivery:** D3 · **Size:** S · **Depends on:** T-20, T-12, T-13, T-16
 
 **Goal:** My purchases looks like its approved Stitch screen.
 
