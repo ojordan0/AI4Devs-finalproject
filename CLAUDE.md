@@ -25,7 +25,8 @@ Use the traceability table (PRD §19) to find every story, rule, endpoint, and e
 
 - **The docs are the source of truth.** If a task needs behavior the docs don't define, or the code and docs disagree, stop and ask instead of choosing.
 - **One source per fact.** When behavior changes, update the document that owns it, in the same pull request. Refer to rules by ID (for example `BR-23`); don't copy rule text into other documents or code comments.
-- **Spec first:** every ticket starts as an OpenSpec change, reviewed before implementation, following [docs/08-WORK-TICKETS.md §1](docs/08-WORK-TICKETS.md#1-how-tickets-work). The PRD stays the source of truth for rules; specs cite its IDs.
+- **Spec first:** every ticket except design tickets starts as an OpenSpec change, reviewed before implementation, following [docs/08-WORK-TICKETS.md §1](docs/08-WORK-TICKETS.md#1-how-tickets-work). The PRD stays the source of truth for rules; specs cite its IDs.
+- **Design tickets:** a ticket that restyles built screens to DESIGN.md and the Stitch screens changes no behavior, so it skips the OpenSpec steps: no /opsx:propose, /opsx:apply or /opsx:archive, no tasks.md, and no OpenSpec link in the PR. Before starting, summarize the screens in scope and wait for approval, as with a proposal. If the work needs a behavior change, stop: that is a separate ticket with an OpenSpec change.
 - **Dependencies:** install only packages listed in [Architecture §1.6](docs/03-ARCHITECTURE.md#16-dependencies). If a task needs another one, stop and ask.
 - **Layering:** pages and route handlers never query the database directly. Business rules and authorization live in the domain services (`src/server/services`).
 - **Tests:** every acceptance criterion has at least one automated test whose name starts with its ID, for example `AC-59`. Tickets without acceptance criterion IDs follow [docs/07-SECURITY-AND-TESTING.md §2.6](docs/07-SECURITY-AND-TESTING.md#26-coverage-targets). Follow the testing strategy in [docs/07-SECURITY-AND-TESTING.md §2](docs/07-SECURITY-AND-TESTING.md#2-testing-strategy): services take the clock as input, tests never call outside services, and the domain services keep at least 80% line coverage.
@@ -52,6 +53,8 @@ Work is organized by tickets (see `/docs/08-WORK-TICKETS.md`). One ticket = one 
   2. Run `/opsx:propose <change-name>`, where the change name is the branch name without the type prefix (e.g. `t-07-groups-api`).
   3. Stop and give the user a short summary of the proposal: the scope as you understood it, your assumptions, and anything the documents leave open or contradict. Don't run `/opsx:apply` until the user approves the proposal.
   4. Commit the approved proposal on its own with `/commit`, then run `/opsx:apply`. If the plan changes later, update the change with `/opsx:update` instead of letting the code drift from the specs.
+
+  A design ticket replaces steps 2–4 with the summary of screens in scope.
 - **Commits are per request:** when you finish each request, use the `/commit` skill. If the branch already has an open PR, push after committing.
 - **Finishing a ticket.** The user decides when the ticket is done (e.g. "open the PR"); don't open one on your own. Then, in this order:
   1. Check that every task in the change's `tasks.md` is done, and that `npm run lint`, `npx tsc --noEmit`, and `npm test` pass.
@@ -60,6 +63,8 @@ Work is organized by tickets (see `/docs/08-WORK-TICKETS.md`). One ticket = one 
   4. Fix what's warranted, commit, push. Re-run the review at most once. Then reply with the PR URL plus one line on any unresolved review findings. Don't repeat the PR summary in chat: the session will be lost; the PR won't.
   5. When the user says the PR is ready to merge: run `/opsx:archive`, point the PR description's OpenSpec link to the archived change, record the session (AI usage record, above), commit, and push. This is the last commit before the merge.
   6. The user merges the PR. Don't merge it yourself.
+
+  A design ticket skips `tasks.md` in step 1, has no OpenSpec link in step 2, and only records the session in step 5.
 - **Finishing work outside a ticket** follows the same steps, with these differences: step 1 has no `tasks.md` to check; the PR in step 2 has a descriptive title, with no ticket ID, OpenSpec link, or `Closes`; and step 5 only records the session.
 
 ## Course deliveries

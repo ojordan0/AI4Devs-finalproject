@@ -1,6 +1,6 @@
 # Product Requirements Document: Assisted Shopping Platform (MVP)
 
-**Version:** 1.9 · **Date:** November 10, 2026  
+**Version:** 1.10 · **Date:** November 12, 2026  
 **Project Manager and Product owner:** Odalys Jordan Enriquez  
 **Product Name:** ComproParaTi ("I buy for you", [section 16](#16-product-decisions))
 
@@ -124,8 +124,8 @@ Flows A, B, C, E, and F ([UX design §1](02-UX-DESIGN.md#1-user-flows)) work fro
 | Phase | Deadline | Course deliverable | Content |
 | --- | --- | --- | --- |
 | Documentation | Thursday, October 22, 2026 | Delivery 1: technical documentation | This documentation, the work tickets ([08-WORK-TICKETS.md](08-WORK-TICKETS.md)), and the AI usage record ([prompts.md](../prompts.md)) |
-| Build, part 1 | Thursday, November 19, 2026 | Delivery 2: working code | Increments 1 and 2 without deployment and buyer invitations, lists and items, and reserve, release, and purchase without the buyer screens |
-| Build, part 2 | Wednesday, December 9, 2026 | Delivery 3: final delivery | Deployment, buyer invitations, the buyer screens (To buy and My purchases), the rest of increments 3 to 5, the full test suite with an end-to-end test of the core cycle, deployment evidence, and the complete AI usage record |
+| Build, part 1 | Thursday, November 19, 2026 | Delivery 2: working code | Increments 1 and 2 without deployment and buyer invitations, lists and items, and reserve, release, and purchase without the buyer screens, and the design foundation: restyle-safe tests and the design tokens and base components ([DESIGN.md](../DESIGN.md)) |
+| Build, part 2 | Wednesday, December 9, 2026 | Delivery 3: final delivery | Deployment, buyer invitations, the buyer screens (To buy and My purchases), the rest of increments 3 to 5, the screens restyled to the approved design, the full test suite with an end-to-end test of the core cycle, deployment evidence, and the complete AI usage record |
 
 **Build increments:**
 
