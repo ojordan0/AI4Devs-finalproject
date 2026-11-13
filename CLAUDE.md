@@ -53,6 +53,8 @@ Work is organized by tickets (see `/docs/08-WORK-TICKETS.md`). One ticket = one 
   2. Run `/opsx:propose <change-name>`, where the change name is the branch name without the type prefix (e.g. `t-07-groups-api`).
   3. Stop and give the user a short summary of the proposal: the scope as you understood it, your assumptions, and anything the documents leave open or contradict. Don't run `/opsx:apply` until the user approves the proposal.
   4. Commit the approved proposal on its own with `/commit`, then run `/opsx:apply`. If the plan changes later, update the change with `/opsx:update` instead of letting the code drift from the specs.
+
+  A design ticket replaces steps 2–4 with the summary of screens in scope.
 - **Commits are per request:** when you finish each request, use the `/commit` skill. If the branch already has an open PR, push after committing.
 - **Finishing a ticket.** The user decides when the ticket is done (e.g. "open the PR"); don't open one on your own. Then, in this order:
   1. Check that every task in the change's `tasks.md` is done, and that `npm run lint`, `npx tsc --noEmit`, and `npm test` pass.
@@ -61,6 +63,8 @@ Work is organized by tickets (see `/docs/08-WORK-TICKETS.md`). One ticket = one 
   4. Fix what's warranted, commit, push. Re-run the review at most once. Then reply with the PR URL plus one line on any unresolved review findings. Don't repeat the PR summary in chat: the session will be lost; the PR won't.
   5. When the user says the PR is ready to merge: run `/opsx:archive`, point the PR description's OpenSpec link to the archived change, record the session (AI usage record, above), commit, and push. This is the last commit before the merge.
   6. The user merges the PR. Don't merge it yourself.
+
+  A design ticket skips `tasks.md` in step 1, has no OpenSpec link in step 2, and only records the session in step 5.
 - **Finishing work outside a ticket** follows the same steps, with these differences: step 1 has no `tasks.md` to check; the PR in step 2 has a descriptive title, with no ticket ID, OpenSpec link, or `Closes`; and step 5 only records the session.
 
 ## Course deliveries
