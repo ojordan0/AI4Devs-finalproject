@@ -56,5 +56,5 @@ rules:
 operations:
   apply:
     guidance:
-      - Do not change styling or layout
+      - Do not restyle existing UI beyond what the ticket's new UI needs; restyling is done in design tickets
       - Unless the ticket's scope includes the UI, stop and tell the user if the issue needs a UI change
