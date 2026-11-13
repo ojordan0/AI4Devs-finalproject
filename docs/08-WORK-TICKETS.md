@@ -84,8 +84,8 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 | T-16 | [#42](https://github.com/ojordan0/AI4Devs-finalproject/issues/42) | Marking items as shipped | E-06 | US-19, US-21 | Full stack | 5 | D3 | L | T-12, T-15 | `feat/t-16-shipments` |
 | T-17 | [#43](https://github.com/ojordan0/AI4Devs-finalproject/issues/43) | End-to-end test of the core cycle and test suite completion | E-08 | None | QA | All | D3 | M | T-16 | `chore/t-17-e2e-core-cycle` |
 | T-18 | [#44](https://github.com/ojordan0/AI4Devs-finalproject/issues/44) | Deployment evidence and final documentation | E-08 | None | Documentation | All | D3 | S | T-17, T-21, T-22, T-23, T-24, T-25, T-26, T-27, T-28, T-29, T-30, T-31, T-32, T-33 | `docs/t-18-final-documentation` |
-| T-19 | [#62](https://github.com/ojordan0/AI4Devs-finalproject/issues/62) | Tests that survive a restyle | E-08 | None | Design | All | D3 | S | None | `chore/t-19-restyle-safe-tests` |
-| T-20 | [#63](https://github.com/ojordan0/AI4Devs-finalproject/issues/63) | Design tokens and base components | E-08 | None | Design | All | D3 | M | T-19 | `feat/t-20-design-foundation` |
+| T-19 | [#62](https://github.com/ojordan0/AI4Devs-finalproject/issues/62) | Tests that survive a restyle | E-08 | None | Design | All | D2 | S | None | `chore/t-19-restyle-safe-tests` |
+| T-20 | [#63](https://github.com/ojordan0/AI4Devs-finalproject/issues/63) | Design tokens and base components | E-08 | None | Design | All | D2 | M | T-19 | `feat/t-20-design-foundation` |
 | T-21 | [#64](https://github.com/ojordan0/AI4Devs-finalproject/issues/64) | Welcome design | E-08 | None | Design | 1 | D3 | S | T-20, T-04 | `feat/t-21-design-welcome` |
 | T-22 | [#65](https://github.com/ojordan0/AI4Devs-finalproject/issues/65) | One last step design | E-08 | None | Design | 1 | D3 | S | T-20, T-04 | `feat/t-22-design-one-last-step` |
 | T-23 | [#66](https://github.com/ojordan0/AI4Devs-finalproject/issues/66) | Invitation design | E-08 | None | Design | 2 | D3 | S | T-20, T-08 | `feat/t-23-design-invitation` |
@@ -377,7 +377,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 ### T-19 Tests that survive a restyle
 
-**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** all of milestone 1 · **Delivery:** D3 · **Size:** S · **Depends on:** none
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** all of milestone 1 · **Delivery:** D2 · **Size:** S · **Depends on:** none
 
 **Goal:** the tests check behavior rather than markup or styling, so the design tickets can change how screens look without breaking tests that still hold.
 
@@ -392,7 +392,7 @@ Issue descriptions contain the goal, the related stories, and the acceptance cri
 
 ### T-20 Design tokens and base components
 
-**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** all of milestone 1 · **Delivery:** D3 · **Size:** M · **Depends on:** T-19
+**Epic:** E-08 · **Stories:** None · **Type:** Design · **Increment:** all of milestone 1 · **Delivery:** D2 · **Size:** M · **Depends on:** T-19
 
 **Goal:** every screen draws on the tokens and components in DESIGN.md.
 
